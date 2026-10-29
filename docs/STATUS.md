@@ -4,19 +4,19 @@
 
 ## Where we are
 
-- Planning is complete; the build plan is in `docs/build-plan.docx`.
-- Repository documentation is in place (module 0, in progress).
-- No code has been written yet.
+- Module 0 (Repo setup) is complete and approved.
+- Module 1 (Server foundation) is complete: pull request #1 approved by the
+  owner, merged by the owner. All 26 tests pass.
+- No design work yet (Claude may propose a design once the design phase is reached).
 
 ## Current module
 
-[`modules/00-repo-setup.md`](modules/00-repo-setup.md)
+None in progress. Last completed: [`modules/01-server-foundation.md`](modules/01-server-foundation.md)
 
 ## Exact next step
 
-Owner to review this documentation. Then confirm with the owner which module
-to start next: **1. Server foundation** (backend track) and/or
-**D1. Brand and design system** (design track).
+Confirm with the owner whether to start **Module 2. Database**
+([`modules/02-database.md`](modules/02-database.md)).
 
 ## Waiting on the owner
 

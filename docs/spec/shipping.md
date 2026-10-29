@@ -12,8 +12,9 @@ carrier rates at checkout.
 4. After payment, the shipping label and tracking number are created
    automatically and sent to the customer.
 
-**Duties and taxes:** international customers are told whether duties are paid
-at checkout or on delivery (decision pending — see `docs/TASKS.md`).
+**Duties and taxes:** international duties and taxes are paid by the receiver
+on delivery, not by hairbydemj (owner's decision, 2026-10-29). Checkout and the
+shipping information page must tell international customers this clearly.
 
 **Note:** FedEx requires its labels to pass a certification check before real
 shipments.

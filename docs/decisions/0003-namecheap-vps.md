@@ -1,6 +1,6 @@
 # 0003 — Namecheap Quasar VPS instead of shared hosting
 
-**Date:** 2026-10-29 · **Status:** Recommended; awaiting owner approval
+**Date:** 2026-10-29 · **Status:** Accepted (approved by owner 2026-10-29)
 
 ## Decision
 

@@ -4,23 +4,24 @@ Update this file at the end of every session.
 
 ## Open
 
-- [ ] Owner review of the repository documentation (module 0)
-- [ ] Confirm the next module to start: 1. Server foundation and/or D1. Brand and design system
+- [ ] Module 1 — Server foundation (in progress)
 
 ## Blocked / waiting on owner
 
-- [ ] Approve the build plan and the Namecheap Quasar VPS
 - [ ] Decide whether the repository should be private (it is currently public)
 - [ ] Paystack business account
 - [ ] Stripe business account (needs a business registered in a supported country, e.g. a UK or US company or Stripe Atlas)
 - [ ] Apple Developer account ($99/year) and Google Play Console account ($25 one-time)
-- [ ] Business accounts with DHL, UPS and FedEx
 - [ ] WhatsApp Business number for customer support
 - [ ] Google account for backups and a free Cloudflare account
-- [ ] Brand assets (logo, colours, fonts), or approval for a proposed design
-- [ ] Decision on international duties: paid at checkout or on delivery
+- [ ] Buy the Namecheap Quasar VPS (needed by module 19)
 
 ## Completed
 
 - [x] 2026-10-29 — Build plan written and approved for documentation
 - [x] 2026-10-29 — Repository documentation created (CLAUDE.md, spec, modules, design inventory, decisions)
+- [x] 2026-10-29 — Owner reviewed and approved the documentation (module 0 complete)
+- [x] 2026-10-29 — Owner approved the build plan and the Namecheap Quasar VPS
+- [x] 2026-10-29 — Owner created business accounts with UPS, FedEx and DHL
+- [x] 2026-10-29 — Owner approved Claude proposing a design, but only when the design phase is reached
+- [x] 2026-10-29 — Decided: international duties and taxes are paid by the receiver on delivery

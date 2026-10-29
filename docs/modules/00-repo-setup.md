@@ -1,6 +1,6 @@
 # Module 0 — Repo setup
 
-**Status:** In progress
+**Status:** Complete (approved by owner 2026-10-29)
 
 ## Goal
 
@@ -17,7 +17,7 @@ what to do next.
 - [x] Record decisions in docs/decisions/
 - [x] Write the first session log
 - [x] Add the build plan document
-- [ ] Owner reviews and approves the documentation
+- [x] Owner reviews and approves the documentation
 
 ## Done when
 

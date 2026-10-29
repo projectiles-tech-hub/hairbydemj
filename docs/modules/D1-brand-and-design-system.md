@@ -1,6 +1,6 @@
 # Module D1 — Brand and design system
 
-**Status:** Not started · **Needs from owner:** brand assets (logo, colours, fonts) or approval for a proposed design
+**Status:** Not started · **Owner approval:** Claude may propose a design, but only when the project reaches the design phase (approved 2026-10-29)
 
 ## Goal
 

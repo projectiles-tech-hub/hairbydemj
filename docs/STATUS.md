@@ -5,18 +5,18 @@
 ## Where we are
 
 - Module 0 (Repo setup) is complete and approved.
-- Module 1 (Server foundation) is built and in review: pull request from
-  `feature/server-foundation` into `develop`. All 26 tests pass.
+- Module 1 (Server foundation) is complete: pull request #1 approved by the
+  owner, merged by the owner. All 26 tests pass.
 - No design work yet (Claude may propose a design once the design phase is reached).
 
 ## Current module
 
-[`modules/01-server-foundation.md`](modules/01-server-foundation.md)
+None in progress. Last completed: [`modules/01-server-foundation.md`](modules/01-server-foundation.md)
 
 ## Exact next step
 
-Owner reviews and approves the Module 1 pull request so it can be merged into
-`develop`. Then confirm with the owner whether to start **Module 2. Database**.
+Confirm with the owner whether to start **Module 2. Database**
+([`modules/02-database.md`](modules/02-database.md)).
 
 ## Waiting on the owner
 

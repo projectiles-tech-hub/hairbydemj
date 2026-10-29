@@ -1,6 +1,6 @@
 # Module 1 — Server foundation
 
-**Status:** In review (pull request into `develop`, awaiting owner approval)
+**Status:** Complete (pull request #1 approved by owner 2026-10-29; merged by the owner)
 
 ## Goal
 
@@ -17,7 +17,7 @@ their own hostnames, with no frameworks.
 - [x] Static file serving for public/
 - [x] Health-check route
 - [x] Basic tests and a GitHub Actions check on pull requests
-- [ ] Owner approves the pull request and it is merged into `develop`
+- [x] Owner approves the pull request and it is merged into `develop`
 
 ## Done when
 

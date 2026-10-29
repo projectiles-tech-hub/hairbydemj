@@ -7,7 +7,7 @@ goal, steps, "done when" criteria and status.
 | # | Module | Track | Status |
 | --- | --- | --- | --- |
 | 0 | [Repo setup](00-repo-setup.md) | Backend | Complete |
-| 1 | [Server foundation](01-server-foundation.md) | Backend | In review |
+| 1 | [Server foundation](01-server-foundation.md) | Backend | Complete |
 | 2 | [Database](02-database.md) | Backend | Not started |
 | 3 | [Accounts](03-accounts.md) | Backend | Not started |
 | 4 | [Catalog](04-catalog.md) | Backend | Not started |

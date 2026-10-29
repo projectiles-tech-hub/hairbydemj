@@ -4,7 +4,8 @@ Update this file at the end of every session.
 
 ## Open
 
-- [ ] Module 1 — Server foundation (in progress)
+- [ ] Owner review and approval of the Module 1 pull request (server foundation)
+- [ ] Confirm whether to start Module 2 — Database
 
 ## Blocked / waiting on owner
 
@@ -25,3 +26,4 @@ Update this file at the end of every session.
 - [x] 2026-10-29 — Owner created business accounts with UPS, FedEx and DHL
 - [x] 2026-10-29 — Owner approved Claude proposing a design, but only when the design phase is reached
 - [x] 2026-10-29 — Decided: international duties and taxes are paid by the receiver on delivery
+- [x] 2026-10-29 — Module 1 built: plain Node.js server, router, configuration, logging, error handling, static files, health check, tests and GitHub Actions check

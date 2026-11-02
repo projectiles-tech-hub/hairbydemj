@@ -12,9 +12,18 @@ exact values below are what the code uses.
 
 ## Colours
 
-| Token | Hex | Use |
-| --- | --- | --- |
-| _to be defined_ | | |
+Adopted by the owner on 2026-11-02. Exact values sampled from the owner's
+logo artwork.
+
+| Token | Name | Hex | Taken from | Use |
+| --- | --- | --- | --- | --- |
+| `noir` | Noir | `#040204` | Logo background | Backgrounds, header, footer |
+| `espresso` | Deep espresso | `#2F2119` | Hair silhouette | Dark panels and cards |
+| `gold` | Rich gold | `#CFA262` | "HD" monogram and "hair" | Primary buttons, key accents |
+| `gold-light` | Light gold | `#EAC27F` | Gold highlights | Highlights, badges |
+| `gold-deep` | Deep gold | `#AB7A40` | Gold shadows | Hover and pressed states |
+| `ivory` | Champagne ivory | `#E6D5BE` | "byde" in the wordmark | Text on dark, light sections |
+| `blush` | Blush | `#DCB597` | "mj" in the wordmark | Soft accents, tags |
 
 ## Typography
 

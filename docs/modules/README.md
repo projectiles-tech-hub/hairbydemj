@@ -1,6 +1,7 @@
 # Modules
 
-Built one at a time, in order. Design modules run alongside the backend work;
+Built one at a time, in order. Owner's decision (2026-10-29): design modules D1 to D5 are completed before
+backend module 2 onward;
 frontend modules are built only from approved designs. Each file lists its
 goal, steps, "done when" criteria and status.
 
@@ -19,7 +20,7 @@ goal, steps, "done when" criteria and status.
 | 10 | [Background jobs](10-background-jobs.md) | Backend | Not started |
 | 11 | [Notifications](11-notifications.md) | Backend | Not started |
 | 12 | [Search](12-search.md) | Backend | Not started |
-| D1 | [Brand and design system](D1-brand-and-design-system.md) | Design | Not started |
+| D1 | [Brand and design system](D1-brand-and-design-system.md) | Design | Complete |
 | D2 | [Journeys and wireframes](D2-journeys-and-wireframes.md) | Design | Not started |
 | D3 | [Website pages](D3-website-pages.md) | Design | Not started |
 | D4 | [App screens](D4-app-screens.md) | Design | Not started |

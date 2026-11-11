@@ -19,15 +19,19 @@
 
 ## Current module
 
-[`modules/D3-website-pages.md`](modules/D3-website-pages.md), in progress.
+D3 (website pages), D4 (app screens) and D5 (admin pages) are built in Figma
+and **in review**: pull requests #6, #7 and #8. The owner's merge of each is
+the approval.
 
 ## Exact next step
 
-Build **Module D3. Website pages** in Figma: the wireframes redrawn with the
-design system colours, fonts, logo and components, at phone, tablet and
-desktop widths. Then D4 (app screens) and D5 (admin screens). Each is
-recorded in `docs/design/` and sent to the owner as a pull request; the
-owner's merge is the approval.
+1. Owner reviews the Figma pages Website, App and Admin, and merges or
+   comments on pull requests #6, #7 and #8.
+2. Owner supplies photographs and the real figures for the sample values.
+3. Then: the frames listed under "Not yet drawn" in
+   `docs/design/website-designs.md`, `app-designs.md` and `admin-designs.md`,
+   if the owner wants them before the frontend; otherwise back to the backend,
+   **Module 2. Database** ([`modules/02-database.md`](modules/02-database.md)).
 
 ## Waiting on the owner
 

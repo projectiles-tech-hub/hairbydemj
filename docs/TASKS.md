@@ -8,6 +8,8 @@ Update this file at the end of every session.
 
 ## Blocked / waiting on owner
 
+- [ ] Review and merge pull requests #6 (D3 website), #7 (D4 app), #8 (D5 admin)
+
 - [ ] Decide whether the repository should be private (it is currently public)
 - [ ] Paystack business account
 - [ ] Stripe business account (needs a business registered in a supported country, e.g. a UK or US company or Stripe Atlas)
@@ -39,3 +41,4 @@ Update this file at the end of every session.
 - [x] 2026-11-11 — Missing journeys added (verify account, update profile, add a card and others); every page in the inventory wireframed; website drawn at phone, tablet and desktop widths
 - [x] 2026-11-11 — Owner approved pull request #4 (Module D2, Journeys and wireframes); module D2 complete
 - [x] 2026-11-11 — Owner instructed to go ahead with D3, D4 and D5
+- [x] 2026-11-11 — D3, D4 and D5 built in Figma: 112 website frames, 43 app screens, 23 admin pages; six supporting colour tokens and shared components added

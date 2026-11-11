@@ -3,6 +3,7 @@
 
 import type { AccountDeps } from '../accounts/deps.js';
 import { customerAuthRoutes } from '../accounts/routes.js';
+import { shopCatalogRoutes } from '../catalog/routes.js';
 import { Router } from '../router.js';
 import { sendJson } from '../http.js';
 
@@ -10,7 +11,10 @@ export function apiRoutes(accounts?: AccountDeps): Router {
   const router = new Router().get('/v1', ({ res }) => {
     sendJson(res, 200, { name: 'hairbydemj API', version: 1 });
   });
-  // Account addresses need the database, so they exist only when one is set up.
-  if (accounts) customerAuthRoutes(router, accounts, '/v1/auth', 'bearer');
+  // Account and catalogue addresses need the database, so they exist only when one is set up.
+  if (accounts) {
+    customerAuthRoutes(router, accounts, '/v1/auth', 'bearer');
+    shopCatalogRoutes(router, accounts, '/v1/catalog');
+  }
   return router;
 }

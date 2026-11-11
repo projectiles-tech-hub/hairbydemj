@@ -3,6 +3,7 @@
 
 import type { AccountDeps } from '../accounts/deps.js';
 import { staffRoutes } from '../accounts/routes.js';
+import { adminCatalogRoutes } from '../catalog/routes.js';
 import { Router } from '../router.js';
 import { sendHtml } from '../http.js';
 
@@ -17,6 +18,9 @@ export function adminRoutes(accounts?: AccountDeps): Router {
         '<title>hairbydemj admin</title></head><body><h1>hairbydemj admin</h1></body></html>',
     );
   });
-  if (accounts) staffRoutes(router, accounts);
+  if (accounts) {
+    staffRoutes(router, accounts);
+    adminCatalogRoutes(router, accounts);
+  }
   return router;
 }

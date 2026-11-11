@@ -66,6 +66,8 @@ same content, split by topic, is in `docs/spec/`.
 | `server/db/` | Database connection, migration runner and its command line |
 | `docs/accounts.md` | Accounts and sign-in: addresses, settings, rules, commands |
 | `server/accounts/` | Customer and staff accounts, sessions, two-step verification |
+| `docs/catalogue.md` | Catalogue: products, variants, prices, stock, collections; addresses and rules |
+| `server/catalog/` | Catalogue code: what the shop reads and what staff manage |
 | `docs/preview.md` | The online design preview: what it is, how to build and publish it |
 | `server/site/`, `browser/`, `public/` | Website page code, browser script, styles, fonts and logo |
 | `server/admin/` | Admin page code |

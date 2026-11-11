@@ -11,7 +11,7 @@ Full designs for every app screen on iOS and Android.
 - [x] Shopping screens (see docs/design/pages.md)
 - [x] Account screens
 - [x] Onboarding and camera try-on
-- [ ] Notification and camera permission prompts (not yet drawn as their own frames)
+- [x] Notification and camera permission screens, splash, three onboarding slides, sort sheet\n- [x] Tablet layouts (768 px) for every screen
 - [x] System screens
 - [x] Record each Figma link and status in docs/design/pages.md
 - [ ] Owner approval, screen by screen

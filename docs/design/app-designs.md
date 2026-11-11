@@ -28,12 +28,21 @@ Each screen's link is in [pages.md](pages.md).
 
 - Photographs and sample content, as for the website designs.
 
-## Not yet drawn
+## Added 2026-11-11
 
-- One design serves iOS and Android. Platform differences (system back
-  gesture and button, share sheet, date pickers, Apple Pay and Google Pay
-  buttons) follow each platform's own controls in Flutter and are not drawn
-  twice.
-- The notification and camera permission prompts, bottom sheets (sort,
-  filters open state) and the three onboarding slides as separate frames.
-- Tablet layouts for the app.
+- Section "App: splash, onboarding, permissions and sheets", 9 frames:
+  splash, onboarding slides 1 to 3, notifications (ask, system prompt),
+  camera (ask, refused), and the sort sheet.
+- Tablet layouts at 768 px, 44 frames in two sections. 30 screens share the
+  layout of the matching tablet website page, with the app's status bar,
+  title bar and tab bar. 14 app-only screens keep the phone layout in a
+  centred 480 px column.
+
+The App page now holds 96 frames. Re-checked by script: contrast, 14 px
+minimum, tokens and text styles all pass.
+
+## Not drawn twice
+
+One design serves iOS and Android. The system prompts, back gesture, share
+sheet, date pickers and the Apple Pay and Google Pay buttons are drawn by
+each phone in its own style; Flutter uses the platform's own controls.

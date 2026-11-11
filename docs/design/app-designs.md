@@ -1,7 +1,7 @@
 # App designs (module D4)
 
-**Status:** In review. Built in Figma on 2026-11-11, awaiting the owner's
-approval. Figma page: [App](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-12564).
+**Status:** Approved. Built in Figma on 2026-11-11; pull request #7 merged by
+the owner on 2026-11-11. Figma page: [App](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-12564).
 
 ## What is there
 

@@ -8,6 +8,7 @@ import { cp, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { each, esc } from '../server/site/html.js';
 import { page } from '../server/site/layout.js';
+import { ADMIN_DIALOGS, ADMIN_PAGES, renderAdminPage } from '../server/admin/pages.js';
 import { renderNotFound, renderPage, SITE_PAGES } from '../server/site/pages.js';
 
 const OUT = 'preview-dist';
@@ -51,6 +52,7 @@ async function main(): Promise<void> {
   await cp('public', OUT, { recursive: true });
 
   for (const p of SITE_PAGES) await write(p.path, renderPage(p, { preview: true }));
+  for (const p of ADMIN_PAGES) await write(p.path, renderAdminPage(p, { preview: true }));
   await writeFile(join(OUT, '404.html'), renderNotFound({ preview: true }));
 
   const app = await shots('app');
@@ -73,16 +75,18 @@ async function main(): Promise<void> {
       title: 'Every page',
       preview: true,
       body:
-        `<h1 class="h1">Every page in this preview</h1><p class="muted">The website pages below are real pages: open them on a phone, a tablet or a computer and tap through. Products, prices and photos are samples. The app and the staff admin are shown as pictures of the designs.</p>` +
+        `<h1 class="h1">Every page in this preview</h1><p class="muted">The website pages below are real pages: open them on a phone, a tablet or a computer and tap through. Products, prices and photos are samples. The staff admin pages are real pages too, made for a computer screen. The app is shown as pictures of the designs.</p>` +
         each(groups, (g) => `<section class="stack"><h2 class="h3">Website: ${g.toLowerCase()}</h2><div class="chips">${each(SITE_PAGES.filter((p) => p.group === g), (p) => `<a class="chip" href="${p.path}">${esc(p.title)}</a>`)}</div></section>`) +
         `<section class="stack"><h2 class="h3">Phone app</h2><p class="muted">${app.length} screens for iPhone and Android.</p><div class="row"><a class="btn btn--primary" href="/designs/app/">See the app screens</a></div></section>` +
-        `<section class="stack"><h2 class="h3">Staff admin</h2><p class="muted">${admin.length} pages that staff use to run the store.</p><div class="row"><a class="btn btn--secondary" href="/designs/admin/">See the admin pages</a></div></section>`,
+        `<section class="stack"><h2 class="h3">Staff admin</h2><p class="muted">${ADMIN_PAGES.filter((p) => p.group === 'Pages').length} pages that staff use to run the store. Best on a computer.</p><div class="chips">${each(ADMIN_PAGES.filter((p) => p.group === 'Pages'), (p) => `<a class="chip" href="${p.path}">${esc(p.title)}</a>`)}</div>` +
+        `<h3 class="strong">Dialogs and states</h3><div class="chips">${each(ADMIN_DIALOGS, ([t, path, id]) => `<a class="chip" href="${path}#${id}">${esc(t)}</a>`)}${each(ADMIN_PAGES.filter((p) => p.group === 'States'), (p) => `<a class="chip" href="${p.path}">${esc(p.title)}</a>`)}</div>` +
+        `<div class="row"><a class="btn btn--secondary" href="/designs/admin/">See the admin as pictures</a></div></section>`,
     }),
   );
   await write('designs/app', gallery('Phone app screens', 'Pictures of the app designs. Tap a picture to see it full size.', 'app', app, 220));
   await write('designs/admin', gallery('Staff admin pages', 'Pictures of the admin designs, made for a computer screen. Tap a picture to see it full size.', 'admin', admin, 320));
 
-  console.log(`Preview built: ${SITE_PAGES.length} website pages, ${app.length} app screens, ${admin.length} admin pages, in ${OUT}/`);
+  console.log(`Preview built: ${SITE_PAGES.length} website pages, ${ADMIN_PAGES.length} admin pages, ${app.length} app pictures, ${admin.length} admin pictures, in ${OUT}/`);
 }
 
 await main();

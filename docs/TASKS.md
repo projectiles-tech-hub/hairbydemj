@@ -4,12 +4,15 @@ Update this file at the end of every session.
 
 ## Open
 
-- [ ] Build Module D3 (Website pages), then D4 (App screens), then D5 (Admin screens)
+- [ ] Make the changes the owner and reviewer ask for after seeing the preview
+- [ ] Check the 20 icons added in Figma during D3 against the Phosphor originals
+- [ ] Connect the coded website and admin pages to the server's routes (modules 13 and 14)
 
 ## Blocked / waiting on owner
 
-- [ ] Review and merge pull requests #6 (D3 website), #7 (D4 app), #8 (D5 admin)
-
+- [ ] Merge the admin preview pull request
+- [ ] Look through the preview with the reviewer and list any changes
+- [ ] Supply product photographs
 - [ ] Decide whether the repository should be private (it is currently public)
 - [ ] Paystack business account
 - [ ] Stripe business account (needs a business registered in a supported country, e.g. a UK or US company or Stripe Atlas)
@@ -42,3 +45,8 @@ Update this file at the end of every session.
 - [x] 2026-11-11 — Owner approved pull request #4 (Module D2, Journeys and wireframes); module D2 complete
 - [x] 2026-11-11 — Owner instructed to go ahead with D3, D4 and D5
 - [x] 2026-11-11 — D3, D4 and D5 built in Figma: 112 website frames, 43 app screens, 23 admin pages; six supporting colour tokens and shared components added
+- [x] 2026-11-11 — Owner merged pull requests #6, #7 and #8: modules D3, D4 and D5 complete
+- [x] 2026-11-11 — Owner decided to preview the designs online before the backend (decision 0005)
+- [x] 2026-11-11 — Website preview built: 37 coded pages, app and admin picture galleries (pull request #9 merged)
+- [x] 2026-11-11 — Owner put the preview on Vercel: https://hairbydemj.vercel.app/
+- [x] 2026-11-11 — Admin preview built: 23 coded admin pages, 3 dialogs, 3 list states

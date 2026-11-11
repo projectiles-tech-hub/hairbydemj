@@ -1,7 +1,7 @@
 # Website designs (module D3)
 
-**Status:** In review. Built in Figma on 2026-11-11, awaiting the owner's
-approval. Figma page: [Website](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-8309).
+**Status:** Approved. Built in Figma on 2026-11-11; pull request #6 merged by
+the owner on 2026-11-11. Figma page: [Website](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-8309).
 
 ## What is there
 

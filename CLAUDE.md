@@ -63,6 +63,7 @@ same content, split by topic, is in `docs/spec/`.
 | `docs/build-plan.docx` | The owner's build plan document |
 | `docs/preview.md` | The online design preview: what it is, how to build and publish it |
 | `server/site/`, `browser/`, `public/` | Website page code, browser script, styles, fonts and logo |
+| `server/admin/` | Admin page code |
 | `preview/` | Builds the design preview; pictures of the app and admin designs |
 
 ### Specification files (`docs/spec/`)

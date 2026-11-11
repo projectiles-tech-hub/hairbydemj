@@ -4,6 +4,16 @@ All notable changes to this repository, newest first.
 
 ## 2026-11-11
 
+- Admin preview: the 23 admin pages as coded pages under `/admin/`
+  (`server/admin/`, `browser/admin.ts`, `public/css/admin.css`), with the
+  refund, adjust stock and invite staff dialogs, and the empty, loading and
+  error states of Orders. Sidebar folds into a menu on phones and tablets.
+- Design preview (decision 0005): the 37 website pages as coded pages in
+  `server/site/`, galleries of the app and admin designs, static build for
+  Vercel (`vercel.json`, `docs/preview.md`). Live at
+  https://hairbydemj.vercel.app/.
+- Modules D3, D4 and D5 approved by the owner (pull requests #6, #7 and #8
+  merged); design modules complete.
 - Module D2, Journeys and wireframes, approved by the owner (pull request #4
   merged); module D2 complete.
 - D2 in Figma: 20 journeys; 178 wireframe frames on a 16-part component kit;

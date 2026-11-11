@@ -15,6 +15,8 @@ export interface Config {
   };
   publicDir: string;
   logLevel: LogLevel;
+  /** Address of the PostgreSQL database, with its password. Null when not set (development only). */
+  databaseUrl: string | null;
 }
 
 export class ConfigError extends Error {
@@ -63,6 +65,15 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     throw new ConfigError('SITE_HOST, ADMIN_HOST and API_HOST must all be different');
   }
 
+  const databaseUrl = read(env, 'DATABASE_URL', '');
+  if (databaseUrl !== '' && !/^postgres(ql)?:\/\//.test(databaseUrl)) {
+    // The value is not printed: it normally holds the database password.
+    throw new ConfigError('DATABASE_URL must start with postgres:// or postgresql://');
+  }
+  if (databaseUrl === '' && production) {
+    throw new ConfigError('DATABASE_URL must be set in production');
+  }
+
   return {
     env: envName,
     host: read(env, 'HOST', '127.0.0.1'),
@@ -70,5 +81,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     hosts,
     publicDir: read(env, 'PUBLIC_DIR', 'public'),
     logLevel,
+    databaseUrl: databaseUrl === '' ? null : databaseUrl,
   };
 }

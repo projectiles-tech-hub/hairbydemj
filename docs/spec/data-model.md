@@ -13,3 +13,6 @@
 | Returns | Order items, reason, status, refund |
 | Marketing | Discount codes, gift cards, referrals, wishlists, reviews with photos |
 | Staff | Name, email, role, permissions, activity log |
+
+The tables built from this model, and the rules the database enforces, are
+listed in [`../database.md`](../database.md).

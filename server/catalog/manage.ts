@@ -137,7 +137,8 @@ async function writePrices(db: Q, variantId: number, prices: unknown, autoConver
     if (currency.isBase || given[currency.code] !== undefined) continue;
     await db.query(
       `insert into prices (variant_id, currency, amount_minor, is_converted) values ($1, $2, $3, true)
-       on conflict (variant_id, currency) do update set amount_minor = excluded.amount_minor, is_converted = true, compare_at_minor = null`,
+       on conflict (variant_id, currency) do update set amount_minor = excluded.amount_minor, is_converted = true, compare_at_minor = null
+       where prices.is_converted`,
       [variantId, currency.code, convertPrice(baseMinor, currency)],
     );
   }

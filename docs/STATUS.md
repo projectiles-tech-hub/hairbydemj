@@ -30,6 +30,9 @@
 - Module 3 (Accounts and sign-in) is built; pull request #12 is open.
 - Module 4 (Catalogue) is built; pull request #13 is open. By the owner's
   decision the shop shows the exact number in stock.
+- Module 5 (Media) is built; pull request #14 is open.
+- Owner instructed on 2026-11-11 ("finish all of them properly"): build every
+  remaining module, each with its own pull request, tests and records.
 - Owner decided on 2026-11-11: customers stay on `hairbydemj.com`; one Owner
   super user at `admin.hairbydemj.com`
   (`decisions/0006-sign-in-addresses-and-owner.md`).
@@ -39,26 +42,22 @@
 
 ## Current module
 
-[`modules/05-media.md`](modules/05-media.md): built and **in review** on
-branch `feature/media`, on top of modules 2 to 4. Photo and video uploads,
-resizing with libvips, video compression with ffmpeg, serving with long
-cache times, linking to products and (by colour) variants. 136 tests pass
-against PostgreSQL 16 with both tools installed.
+[`modules/06-cart-and-currencies.md`](modules/06-cart-and-currencies.md):
+built and **in review** on branch `feature/cart`, on top of modules 2 to 5.
+156 tests pass against PostgreSQL 16.
 
 ## Exact next step
 
-1. Owner merges, in this order: pull requests #11, #12, #13, then Module 5's.
-2. Then **Module 6. Cart and currencies**
-   ([`modules/06-cart-and-currencies.md`](modules/06-cart-and-currencies.md)),
-   confirmed with the owner before starting.
+1. Owner merges, in order: #11, #12, #13, #14, then Module 6's pull request.
+2. Building continues with **Module 7. Payments**, by the owner's instruction
+   to build every remaining module.
 
-## Modules left after Module 5
+## Modules left after Module 6
 
-6 Cart and currencies · 7 Payments · 8 Shipping · 9 Orders and returns ·
-10 Background jobs · 11 Notifications · 12 Search · 13 Website · 14 Admin
-dashboard · 15 Phone app · 16 AR try-on · 17 Reviews, loyalty, gift cards ·
-18 Live chat · 19 Deployment, backups, monitoring · 20 Testing and security
-review · 21 Launch.
+7 Payments · 8 Shipping · 9 Orders and returns · 10 Background jobs ·
+11 Notifications · 12 Search · 13 Website · 14 Admin dashboard · 15 Phone app
+· 16 AR try-on · 17 Reviews, loyalty, gift cards · 18 Live chat · 19
+Deployment, backups, monitoring · 20 Testing and security review · 21 Launch.
 
 ## Waiting on the owner
 

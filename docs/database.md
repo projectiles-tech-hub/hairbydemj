@@ -83,9 +83,10 @@ not need `createdb`.
 | `0009_jobs` | `jobs` (work waiting for the background worker) |
 | `0011_shop_the_look` | No new table: adds the look marker to `collections` and the chosen variant to `collection_products` |
 | `0012_media_processing` | No new table: adds status, sizes and the original's location to `product_media` |
+| `0013_cart` | `cart_gift_cards`; rate source on `currencies`; gift card codes added to the guessing limits |
 | `0010_sign_in_protection` | `sign_in_attempts` (used to slow down password guessing) |
 
-64 tables in all, counting `schema_migrations`.
+65 tables in all, counting `schema_migrations`.
 
 ## Rules the database itself enforces
 

@@ -4,6 +4,15 @@ All notable changes to this repository, newest first.
 
 ## 2026-11-11
 
+- Module 6, Cart and currencies (`server/cart/`): guest and customer carts
+  shared across website and app, merged on sign-in, priced fresh on every
+  read; currency from the visitor's country, switchable; exchange rates
+  typed or fetched daily with re-conversion of worked-out prices; discount
+  codes and automatic deals with combinations and the best deal chosen;
+  gift card redemption with guessing limits; stock held all-or-nothing so
+  the last item cannot be sold twice. Migration 0013. Guide: `docs/cart.md`.
+- Fixed: editing only the naira price with automatic conversion no longer
+  overwrites prices staff typed.
 - Module 5, Media (`server/media/`): staff upload product photos and
   videos; photos are resized into five widths as WebP and JPEG with libvips;
   videos are compressed to MP4 with a poster picture by ffmpeg; hidden

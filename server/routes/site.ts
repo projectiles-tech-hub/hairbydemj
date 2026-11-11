@@ -3,6 +3,7 @@
 
 import type { AccountDeps } from '../accounts/deps.js';
 import { customerAuthRoutes } from '../accounts/routes.js';
+import { shopCartRoutes } from '../cart/routes.js';
 import { shopCatalogRoutes } from '../catalog/routes.js';
 import { Router } from '../router.js';
 import { sendHtml } from '../http.js';
@@ -20,6 +21,7 @@ export function siteRoutes(accounts?: AccountDeps): Router {
   if (accounts) {
     customerAuthRoutes(router, accounts, '/api/auth', 'cookie');
     shopCatalogRoutes(router, accounts, '/api/catalog');
+    shopCartRoutes(router, accounts, '/api', 'cookie');
   }
   return router;
 }

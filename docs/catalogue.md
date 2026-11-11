@@ -113,8 +113,8 @@ All on the admin address. Changes are `POST` with a JSON body.
 - A product or variant that has ever been ordered is never deleted, so
   order history stays whole. It is unpublished or switched off instead.
 - Two products can share a name; the second gets a web name ending in `-2`.
-- Converting prices needs the exchange rates, which are set under Payments
-  and currencies (module 6). Until a rate is set, staff type that price.
+- Converting prices needs the exchange rates, set under Payments and
+  currencies (see `docs/cart.md`). Until a rate is set, staff type that price.
 
 ## Not in this module
 

@@ -26,6 +26,8 @@ export interface Config {
   appleClientIds: string[];
   /** True when the server sits behind our own proxy (Caddy), which passes on the visitor's address. */
   trustProxy: boolean;
+  /** Where daily exchange rates are fetched from (a free service, naira as the base). */
+  ratesUrl: string;
 }
 
 /** Used only in development, so sign-in works without any setup. Never valid in production. */
@@ -109,5 +111,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     googleClientIds: list('GOOGLE_CLIENT_IDS'),
     appleClientIds: list('APPLE_CLIENT_IDS'),
     trustProxy: trustProxyText === 'true',
+    ratesUrl: read(env, 'RATES_URL', 'https://open.er-api.com/v6/latest/NGN'),
   };
 }

@@ -3,6 +3,7 @@
 
 import type { AccountDeps } from '../accounts/deps.js';
 import { staffRoutes } from '../accounts/routes.js';
+import { adminCartRoutes } from '../cart/routes.js';
 import { adminCatalogRoutes } from '../catalog/routes.js';
 import type { MediaDeps } from '../media/media.js';
 import { mediaRoutes } from '../media/routes.js';
@@ -23,6 +24,7 @@ export function adminRoutes(accounts?: AccountDeps, media?: MediaDeps): Router {
   if (accounts) {
     staffRoutes(router, accounts);
     adminCatalogRoutes(router, accounts, media);
+    adminCartRoutes(router, accounts, { ratesUrl: accounts.config.ratesUrl });
     if (media) mediaRoutes(router, accounts, media);
   }
   return router;

@@ -277,14 +277,11 @@ export interface ProductDetail {
     capSize: string | null;
     priceMinor: number;
     compareAtMinor: number | null;
-    /** How many can be bought now. Capped, so the shop does not reveal exact stock. */
+    /** How many can be bought now: stock on hand less what is held for orders. */
     available: number;
     lowStock: boolean;
   }>;
 }
-
-/** The most the shop says it has of one variant. */
-const SHOWN_STOCK_CAP = 10;
 
 export async function getProduct(deps: CatalogDeps, slug: string, currencyCode: string): Promise<ProductDetail> {
   const currency = await currencyOf(deps.db, currencyCode);
@@ -335,7 +332,7 @@ export async function getProduct(deps: CatalogDeps, slug: string, currencyCode: 
         capSize: (v.cap_size as string | null) ?? null,
         priceMinor: Number(v.amount_minor),
         compareAtMinor: v.compare_at_minor === null ? null : Number(v.compare_at_minor),
-        available: Math.min(available, SHOWN_STOCK_CAP),
+        available,
         lowStock: available > 0 && available <= Number(v.threshold),
       };
     }),

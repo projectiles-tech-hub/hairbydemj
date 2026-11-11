@@ -42,8 +42,9 @@ Every change staff make is written to the activity log.
 - Only variants that are **switched on** and have a **price in the
   currency asked for**. A product with no such variant is not offered in
   that currency.
-- Stock is shown as "available" up to **10**, never the exact number, with
-  a low-stock flag.
+- Stock is shown as the **exact number that can be bought** (on hand less
+  what is held for orders), with a low-stock flag (owner's decision,
+  2026-11-11).
 - Draft collections are not shown.
 
 ## Product lists (endless scrolling)

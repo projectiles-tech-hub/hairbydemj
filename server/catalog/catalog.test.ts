@@ -199,8 +199,8 @@ describe('the catalogue over HTTP', { skip }, () => {
     assert.equal(page.variants.length, 6);
     assert.equal(page.variants[0].priceMinor, 19_900);
     assert.deepEqual([page.origin, page.texture, page.grade, page.category.slug], ['Vietnamese', 'Straight', 'Double drawn', 'lace-front-wigs']);
-    assert.equal(page.variants[0].available, 10, 'the shop never shows more than 10 in stock');
-    assert.equal(page.variants[0].onHand, undefined, 'exact stock is for staff only');
+    assert.equal(page.variants[0].available, 12, 'the shop shows the exact number that can be bought');
+    assert.equal(page.variants[0].reserved, undefined, 'what is held for other orders is for staff only');
     ids.boneFirstVariant = first.id;
     tick(60);
   });

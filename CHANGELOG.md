@@ -2,6 +2,17 @@
 
 All notable changes to this repository, newest first.
 
+## 2026-11-11
+
+- Module D2, Journeys and wireframes, approved by the owner (pull request #4
+  merged); module D2 complete.
+- D2 in Figma: 20 journeys; 178 wireframe frames on a 16-part component kit;
+  endless scrolling; website at phone, tablet and desktop widths; field
+  error states; design review with fixes.
+- Page inventory: added Payment methods (website and app), and Profile and
+  security and Verify account (app).
+- Status, tasks and module records updated; D3 is the current module.
+
 ## 2026-11-10
 
 - Module D1, Brand and design system, approved by the owner (pull request #2

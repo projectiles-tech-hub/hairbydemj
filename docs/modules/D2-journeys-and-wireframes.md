@@ -1,6 +1,6 @@
 # Module D2 — User journeys and wireframes
 
-**Status:** In progress (built in Figma, awaiting owner review)
+**Status:** Complete · **Owner approval:** pull request #4 merged by the owner on 2026-11-11
 
 ## Goal
 
@@ -19,7 +19,7 @@ Simple layouts for every path a customer takes and every staff task.
 - [x] Every page in the inventory wireframed (website, app, admin)
 - [x] Website drawn at three widths: phone 390, tablet 768, desktop 1280
 - [x] Field error states
-- [ ] Owner approval
+- [x] Owner approval
 
 ## Done when
 

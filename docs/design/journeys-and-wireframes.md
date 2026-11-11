@@ -1,6 +1,6 @@
 # User journeys and wireframes
 
-**Status:** Built in Figma (module D2), awaiting the owner's review.
+**Status:** Approved by the owner on 2026-11-11 (pull request #4 merged).
 
 Figma file: [hairbydemj Design System](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N),
 pages **Journeys** and **Wireframes**.

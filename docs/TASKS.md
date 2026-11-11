@@ -4,7 +4,7 @@ Update this file at the end of every session.
 
 ## Open
 
-- [ ] Confirm whether to start Module D2 (Journeys and wireframes)
+- [ ] Build Module D3 (Website pages), then D4 (App screens), then D5 (Admin screens)
 
 ## Blocked / waiting on owner
 
@@ -15,6 +15,7 @@ Update this file at the end of every session.
 - [ ] WhatsApp Business number for customer support
 - [ ] Google account for backups and a free Cloudflare account
 - [ ] Buy the Namecheap Quasar VPS (needed by module 19)
+- [ ] Give real figures for the sample values in docs/design/journeys-and-wireframes.md (return window, store credit bonus, loyalty points and tiers, delivery times, ship-from address, business hours)
 
 ## Completed
 
@@ -33,3 +34,8 @@ Update this file at the end of every session.
 - [x] 2026-11-02 — Fonts chosen: Source Sans 3 and Cormorant Garamond
 - [x] 2026-11-02 — Design system built in Figma: foundations, icons, components, logo vectors
 - [x] 2026-11-10 — Owner approved pull request #2 (Module D1, Brand and design system); module D1 complete
+- [x] 2026-11-10 — Journeys and first wireframes built in Figma (module D2)
+- [x] 2026-11-11 — Wireframes rebuilt on a component kit; endless scrolling designed; design review run and fixes applied
+- [x] 2026-11-11 — Missing journeys added (verify account, update profile, add a card and others); every page in the inventory wireframed; website drawn at phone, tablet and desktop widths
+- [x] 2026-11-11 — Owner approved pull request #4 (Module D2, Journeys and wireframes); module D2 complete
+- [x] 2026-11-11 — Owner instructed to go ahead with D3, D4 and D5

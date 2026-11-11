@@ -21,7 +21,7 @@ goal, steps, "done when" criteria and status.
 | 11 | [Notifications](11-notifications.md) | Backend | Not started |
 | 12 | [Search](12-search.md) | Backend | Not started |
 | D1 | [Brand and design system](D1-brand-and-design-system.md) | Design | Complete |
-| D2 | [Journeys and wireframes](D2-journeys-and-wireframes.md) | Design | Not started |
+| D2 | [Journeys and wireframes](D2-journeys-and-wireframes.md) | Design | Complete |
 | D3 | [Website pages](D3-website-pages.md) | Design | Not started |
 | D4 | [App screens](D4-app-screens.md) | Design | Not started |
 | D5 | [Admin screens](D5-admin-screens.md) | Design | Not started |

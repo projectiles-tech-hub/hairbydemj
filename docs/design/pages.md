@@ -89,35 +89,35 @@ About 45 website pages, 23 admin pages and 29 app screens.
 
 | Screen | What it does | Figma | Status |
 | --- | --- | --- | --- |
-| Splash | Logo while the app loads | | Not started |
-| Onboarding | Three intro slides, then notification permission | | Not started |
-| Region and currency | Chosen on first launch, changeable later | | Not started |
-| Home | Banners, collections, best-sellers, new arrivals, sets | | Not started |
-| Categories | All categories at a glance | | Not started |
-| Product list | Products in a category or collection, with sorting | | Not started |
-| Filters | Slide-up panel: texture, length, lace, colour, origin, price | | Not started |
-| Search | Suggestions and recent searches | | Not started |
-| Product | Gallery, video, variant picker, price, stock, reviews, AR try-on, add to cart | | Not started |
-| Media viewer | Full-screen photos and video | | Not started |
-| AR try-on | Camera try-on with style and colour switching | | Not started |
-| Wishlist | Saved products, synced with the website | | Not started |
-| Cart | Items, codes and totals | | Not started |
-| Checkout | Address, shipping option, payment, review | | Not started |
-| Order confirmation | Order number and summary | | Not started |
-| Sign in / Sign up / Forgot password | Email, Google or Apple | | Not started |
-| Account | Profile, points, quick links | | Not started |
-| Orders | Order list | | Not started |
-| Order detail and tracking | Status, live tracking, start a return | | Not started |
-| Returns | Request and track returns | | Not started |
-| Addresses | Saved addresses | | Not started |
-| Payment methods | Saved cards: add, set default, remove | | Not started |
-| Profile and security | Name, phone, email change, password change, sign-in methods, delete account | | Not started |
-| Verify account | 6-digit email code after sign-up or an email change | | Not started |
-| Loyalty and referrals | Points, history, referral link | | Not started |
-| Gift cards | Buy and check balance | | Not started |
-| Notifications | Inbox of order updates and offers | | Not started |
-| Write a review | Rating, text and photos for a purchased item | | Not started |
-| Help and chat | FAQ, live chat, WhatsApp | | Not started |
-| Settings | Currency, notification preferences, privacy, delete account | | Not started |
-| Information pages | Policies, shipping and returns info | | Not started |
-| System screens | No internet, something went wrong, update required | | Not started |
+| Splash | Logo while the app loads | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-12567) | In review |
+| Onboarding | Three intro slides, then notification permission | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-12567) | In review |
+| Region and currency | Chosen on first launch, changeable later | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-12576) | In review |
+| Home | Banners, collections, best-sellers, new arrivals, sets | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-12585) | In review |
+| Categories | All categories at a glance | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-12614) | In review |
+| Product list | Products in a category or collection, with sorting | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-12656) | In review |
+| Filters | Slide-up panel: texture, length, lace, colour, origin, price | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-12677) | In review |
+| Search | Suggestions and recent searches | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-12724) | In review |
+| Product | Gallery, video, variant picker, price, stock, reviews, AR try-on, add to cart | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-12752) | In review |
+| Media viewer | Full-screen photos and video | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-13572) | In review |
+| AR try-on | Camera try-on with style and colour switching | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-12804) | In review |
+| Wishlist | Saved products, synced with the website | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-13074) | In review |
+| Cart | Items, codes and totals | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-12819) | In review |
+| Checkout | Address, shipping option, payment, review | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-12861) | In review |
+| Order confirmation | Order number and summary | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-12905) | In review |
+| Sign in / Sign up / Forgot password | Email, Google or Apple | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-12918) | In review |
+| Account | Profile, points, quick links | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-12936) | In review |
+| Orders | Order list | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-13495) | In review |
+| Order detail and tracking | Status, live tracking, start a return | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-12989) | In review |
+| Returns | Request and track returns | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-13044) | In review |
+| Addresses | Saved addresses | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-13421) | In review |
+| Payment methods | Saved cards: add, set default, remove | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-13455) | In review |
+| Profile and security | Name, phone, email change, password change, sign-in methods, delete account | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-13333) | In review |
+| Verify account | 6-digit email code after sign-up or an email change | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-13304) | In review |
+| Loyalty and referrals | Points, history, referral link | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-13108) | In review |
+| Gift cards | Buy and check balance | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-13552) | In review |
+| Notifications | Inbox of order updates and offers | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-13144) | In review |
+| Write a review | Rating, text and photos for a purchased item | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-13530) | In review |
+| Help and chat | FAQ, live chat, WhatsApp | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-13172) | In review |
+| Settings | Currency, notification preferences, privacy, delete account | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-13204) | In review |
+| Information pages | Policies, shipping and returns info | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-13620) | In review |
+| System screens | No internet, something went wrong, update required | [screen](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-13632) | In review |

@@ -14,6 +14,8 @@ export interface Config {
     api: string;
   };
   publicDir: string;
+  /** Folder for uploaded photos and videos. Kept outside the code and backed up. */
+  mediaDir: string;
   logLevel: LogLevel;
   /** Address of the PostgreSQL database, with its password. Null when not set (development only). */
   databaseUrl: string | null;
@@ -101,6 +103,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     hosts,
     publicDir: read(env, 'PUBLIC_DIR', 'public'),
     logLevel,
+    mediaDir: read(env, 'MEDIA_DIR', 'uploads'),
     databaseUrl: databaseUrl === '' ? null : databaseUrl,
     authSecret,
     googleClientIds: list('GOOGLE_CLIENT_IDS'),

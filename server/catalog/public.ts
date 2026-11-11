@@ -7,6 +7,13 @@ import type { Db } from '../db/pool.js';
 import { ApiError } from '../http.js';
 import { rulesToSql, SOLD_SQL, storedRules, VISIBLE_SQL } from './rules.js';
 
+/** A photo: its address folder, description and the widths that exist (add "/640.webp" or "/640.jpg" under /media/). */
+export interface Picture {
+  path: string;
+  alt: string;
+  widths: number[];
+}
+
 export interface CatalogDeps {
   db: Db;
   now: () => Date;
@@ -40,7 +47,7 @@ export interface ProductCard {
   category: { slug: string; name: string } | null;
   texture: string | null;
   origin: string | null;
-  image: { path: string; alt: string } | null;
+  image: Picture | null;
   currency: string;
   priceFromMinor: number;
   priceToMinor: number;
@@ -146,7 +153,7 @@ export async function listProducts(deps: CatalogDeps, query: ProductQuery): Prom
            x.price_from, x.price_to, x.compare_at, x.lengths,
            coalesce(x.available, 0) as available,
            ${SOLD_SQL('p')}::bigint as sold,
-           (select jsonb_build_object('path', m.path, 'alt', m.alt) from product_media m where m.product_id = p.id and m.kind = 'image' order by m.position, m.id limit 1) as image
+           (select jsonb_build_object('path', m.path, 'alt', m.alt, 'widths', m.widths) from product_media m where m.product_id = p.id and m.kind = 'image' and m.status = 'ready' order by m.position, m.id limit 1) as image
     from products p
     left join categories c on c.id = p.category_id
     join lateral (
@@ -185,7 +192,7 @@ export async function listProducts(deps: CatalogDeps, query: ProductQuery): Prom
       category: r.category_slug ? { slug: String(r.category_slug), name: String(r.category_name) } : null,
       texture: (r.texture as string | null) ?? null,
       origin: (r.hair_origin as string | null) ?? null,
-      image: (r.image as { path: string; alt: string } | null) ?? null,
+      image: (r.image as Picture | null) ?? null,
       currency,
       priceFromMinor: Number(r.price_from),
       priceToMinor: Number(r.price_to),
@@ -266,7 +273,8 @@ export interface ProductDetail {
   seoTitle: string | null;
   seoDescription: string | null;
   currency: string;
-  media: Array<{ kind: 'image' | 'video'; path: string; alt: string; colour: string | null; width: number | null; height: number | null }>;
+  /** Photos and video, in the order staff set. A video's pictures are its poster; add "/video.mp4" for the film. */
+  media: Array<{ kind: 'image' | 'video'; path: string; alt: string; colour: string | null; width: number | null; height: number | null; widths: number[]; durationMs: number | null }>;
   variants: Array<{
     id: number;
     sku: string;
@@ -293,7 +301,7 @@ export async function getProduct(deps: CatalogDeps, slug: string, currencyCode: 
   const p = found.rows[0] as Record<string, unknown> | undefined;
   if (!p) throw notFound('product');
   const [media, variants] = await Promise.all([
-    deps.db.query('select kind, path, alt, colour, width, height from product_media where product_id = $1 order by position, id', [p.id]),
+    deps.db.query("select kind, path, alt, colour, width, height, widths, duration_ms from product_media where product_id = $1 and status = 'ready' order by position, id", [p.id]),
     deps.db.query(
       `select v.id, v.sku, v.length_inches, v.density_percent, v.colour, v.lace_type, v.cap_size, pr.amount_minor, pr.compare_at_minor,
               greatest(coalesce(i.on_hand - i.reserved, 0), 0) as available, coalesce(i.low_stock_threshold, 0) as threshold
@@ -319,7 +327,7 @@ export async function getProduct(deps: CatalogDeps, slug: string, currencyCode: 
     seoTitle: (p.seo_title as string | null) ?? null,
     seoDescription: (p.seo_description as string | null) ?? null,
     currency,
-    media: media.rows.map((m) => ({ kind: m.kind as 'image' | 'video', path: String(m.path), alt: String(m.alt), colour: (m.colour as string | null) ?? null, width: m.width === null ? null : Number(m.width), height: m.height === null ? null : Number(m.height) })),
+    media: media.rows.map((m) => ({ kind: m.kind as 'image' | 'video', path: String(m.path), alt: String(m.alt), colour: (m.colour as string | null) ?? null, width: m.width === null ? null : Number(m.width), height: m.height === null ? null : Number(m.height), widths: ((m.widths as number[] | null) ?? []).map(Number), durationMs: m.duration_ms === null ? null : Number(m.duration_ms) })),
     variants: variants.rows.map((v) => {
       const available = Number(v.available);
       return {
@@ -388,7 +396,7 @@ export async function listCollections(deps: CatalogDeps, options: { looks?: bool
 
 export interface Look extends CollectionSummary {
   currency: string;
-  items: Array<{ product: { slug: string; name: string; image: { path: string; alt: string } | null }; variantId: number; description: string; priceMinor: number; available: boolean }>;
+  items: Array<{ product: { slug: string; name: string; image: Picture | null }; variantId: number; description: string; priceMinor: number; available: boolean }>;
   /** The price of the whole look, and whether every piece can be bought now. */
   totalMinor: number;
   allAvailable: boolean;
@@ -404,7 +412,7 @@ export async function getLook(deps: CatalogDeps, slug: string, currencyCode: str
   const items = await deps.db.query(
     `select p.slug, p.name, v.id as variant_id, v.length_inches, v.density_percent, v.colour, pr.amount_minor,
             coalesce(i.on_hand - i.reserved, 0) > 0 as available,
-            (select jsonb_build_object('path', m.path, 'alt', m.alt) from product_media m where m.product_id = p.id and m.kind = 'image' order by m.position, m.id limit 1) as image
+            (select jsonb_build_object('path', m.path, 'alt', m.alt, 'widths', m.widths) from product_media m where m.product_id = p.id and m.kind = 'image' and m.status = 'ready' order by m.position, m.id limit 1) as image
      from collection_products cp
      join products p on p.id = cp.product_id and ${VISIBLE_SQL('p', '$3')}
      join lateral (
@@ -417,7 +425,7 @@ export async function getLook(deps: CatalogDeps, slug: string, currencyCode: str
     [c.id, currency, deps.now()],
   );
   const list = items.rows.map((r) => ({
-    product: { slug: String(r.slug), name: String(r.name), image: (r.image as { path: string; alt: string } | null) ?? null },
+    product: { slug: String(r.slug), name: String(r.name), image: (r.image as Picture | null) ?? null },
     variantId: Number(r.variant_id),
     description: [r.length_inches ? `${Number(r.length_inches)}"` : null, r.density_percent ? `${Number(r.density_percent)}%` : null, r.colour as string | null].filter(Boolean).join(' · '),
     priceMinor: Number(r.amount_minor),

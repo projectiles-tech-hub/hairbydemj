@@ -34,6 +34,8 @@ export interface StaticOptions {
   root: string;
   /** Seconds browsers may cache files; 0 means always revalidate. */
   maxAge: number;
+  /** True for files whose address never changes content, so caches need not check back. */
+  immutable?: boolean;
 }
 
 /**
@@ -72,7 +74,8 @@ export async function serveStatic(
   const etag = `"${info.size.toString(16)}-${Math.floor(info.mtimeMs).toString(16)}"`;
   const headers: Record<string, string> = {
     'Content-Type': CONTENT_TYPES[extname(file).toLowerCase()] ?? 'application/octet-stream',
-    'Cache-Control': options.maxAge > 0 ? `public, max-age=${options.maxAge}` : 'no-cache',
+    'Cache-Control': options.maxAge > 0 ? `public, max-age=${options.maxAge}${options.immutable ? ', immutable' : ''}` : 'no-cache',
+    'Accept-Ranges': 'bytes',
     'Last-Modified': info.mtime.toUTCString(),
     ETag: etag,
   };
@@ -83,15 +86,31 @@ export async function serveStatic(
     return true;
   }
 
-  headers['Content-Length'] = String(info.size);
-  res.writeHead(200, headers);
+  // A request for part of a file ("Range: bytes=100-199"), which video
+  // players use to start playing early and to jump ahead.
+  let range: { start: number; end: number } | null = null;
+  const wanted = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range ?? '');
+  if (wanted && (wanted[1] !== '' || wanted[2] !== '') && info.size > 0) {
+    const start = wanted[1] === '' ? Math.max(0, info.size - Number(wanted[2])) : Number(wanted[1]);
+    const end = wanted[1] === '' || wanted[2] === '' ? info.size - 1 : Math.min(Number(wanted[2]), info.size - 1);
+    if (start > end || start >= info.size) {
+      res.writeHead(416, { 'Content-Range': `bytes */${info.size}` });
+      res.end();
+      return true;
+    }
+    range = { start, end };
+    headers['Content-Range'] = `bytes ${start}-${end}/${info.size}`;
+  }
+
+  headers['Content-Length'] = String(range ? range.end - range.start + 1 : info.size);
+  res.writeHead(range ? 206 : 200, headers);
   if (req.method === 'HEAD') {
     res.end();
     return true;
   }
 
   await new Promise<void>((done, fail) => {
-    const stream = createReadStream(file);
+    const stream = createReadStream(file, range ?? {});
     stream.on('error', fail);
     res.on('close', done);
     stream.pipe(res);

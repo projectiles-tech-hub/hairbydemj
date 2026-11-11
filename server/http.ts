@@ -52,10 +52,16 @@ export async function readJson(req: IncomingMessage, maxBytes = 16 * 1024): Prom
   if (type !== 'application/json') throw new ApiError(415, 'json_required', 'Send the request as JSON');
   const chunks: Buffer[] = [];
   let size = 0;
-  for await (const chunk of req as AsyncIterable<Buffer>) {
-    size += chunk.length;
-    if (size > maxBytes) throw new ApiError(413, 'too_large', 'The request is too large');
-    chunks.push(chunk);
+  // A small request that takes this long is a stalled or hostile client.
+  const stalled = setTimeout(() => req.destroy(), 30_000);
+  try {
+    for await (const chunk of req as AsyncIterable<Buffer>) {
+      size += chunk.length;
+      if (size > maxBytes) throw new ApiError(413, 'too_large', 'The request is too large');
+      chunks.push(chunk);
+    }
+  } finally {
+    clearTimeout(stalled);
   }
   let data: unknown;
   try {

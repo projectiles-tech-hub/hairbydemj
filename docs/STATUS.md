@@ -28,6 +28,8 @@
 - Owner instructed on 2026-11-11 to start the backend.
 - Module 2 (Database) is built; pull request #11 is open.
 - Module 3 (Accounts and sign-in) is built; pull request #12 is open.
+- Module 4 (Catalogue) is built; pull request #13 is open. By the owner's
+  decision the shop shows the exact number in stock.
 - Owner decided on 2026-11-11: customers stay on `hairbydemj.com`; one Owner
   super user at `admin.hairbydemj.com`
   (`decisions/0006-sign-in-addresses-and-owner.md`).
@@ -37,26 +39,26 @@
 
 ## Current module
 
-[`modules/04-catalog.md`](modules/04-catalog.md): built and **in review** on
-branch `feature/catalogue`, on top of modules 2 and 3. Products, variants,
-prices in four currencies, stock, categories, collections with rules,
-shop-the-look sets; shop lists with filters and endless scrolling.
-121 tests pass against PostgreSQL 16.
+[`modules/05-media.md`](modules/05-media.md): built and **in review** on
+branch `feature/media`, on top of modules 2 to 4. Photo and video uploads,
+resizing with libvips, video compression with ffmpeg, serving with long
+cache times, linking to products and (by colour) variants. 136 tests pass
+against PostgreSQL 16 with both tools installed.
 
 ## Exact next step
 
-1. Owner merges, in this order: pull request #11 (Database), #12 (Accounts),
-   then the Module 4 pull request.
-2. Then **Module 5. Media** ([`modules/05-media.md`](modules/05-media.md)),
+1. Owner merges, in this order: pull requests #11, #12, #13, then Module 5's.
+2. Then **Module 6. Cart and currencies**
+   ([`modules/06-cart-and-currencies.md`](modules/06-cart-and-currencies.md)),
    confirmed with the owner before starting.
 
-## Modules left after Module 4
+## Modules left after Module 5
 
-5 Media · 6 Cart and currencies · 7 Payments · 8 Shipping · 9 Orders and
-returns · 10 Background jobs · 11 Notifications · 12 Search · 13 Website ·
-14 Admin dashboard · 15 Phone app · 16 AR try-on · 17 Reviews, loyalty, gift
-cards · 18 Live chat · 19 Deployment, backups, monitoring · 20 Testing and
-security review · 21 Launch.
+6 Cart and currencies · 7 Payments · 8 Shipping · 9 Orders and returns ·
+10 Background jobs · 11 Notifications · 12 Search · 13 Website · 14 Admin
+dashboard · 15 Phone app · 16 AR try-on · 17 Reviews, loyalty, gift cards ·
+18 Live chat · 19 Deployment, backups, monitoring · 20 Testing and security
+review · 21 Launch.
 
 ## Waiting on the owner
 

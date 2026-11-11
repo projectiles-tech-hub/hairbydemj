@@ -4,10 +4,12 @@
 import type { AccountDeps } from '../accounts/deps.js';
 import { staffRoutes } from '../accounts/routes.js';
 import { adminCatalogRoutes } from '../catalog/routes.js';
+import type { MediaDeps } from '../media/media.js';
+import { mediaRoutes } from '../media/routes.js';
 import { Router } from '../router.js';
 import { sendHtml } from '../http.js';
 
-export function adminRoutes(accounts?: AccountDeps): Router {
+export function adminRoutes(accounts?: AccountDeps, media?: MediaDeps): Router {
   const router = new Router().get('/', ({ res }) => {
     sendHtml(
       res,
@@ -20,7 +22,8 @@ export function adminRoutes(accounts?: AccountDeps): Router {
   });
   if (accounts) {
     staffRoutes(router, accounts);
-    adminCatalogRoutes(router, accounts);
+    adminCatalogRoutes(router, accounts, media);
+    if (media) mediaRoutes(router, accounts, media);
   }
   return router;
 }

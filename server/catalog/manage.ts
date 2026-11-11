@@ -395,7 +395,7 @@ export async function listAdminProducts(
             (select count(*)::int from variants v where v.product_id = p.id) as variants,
             ${stockSql}::int as stock,
             (select min(pr.amount_minor) from variants v join prices pr on pr.variant_id = v.id join currencies cu on cu.code = pr.currency and cu.is_base where v.product_id = p.id) as price_from,
-            (select m.path from product_media m where m.product_id = p.id and m.kind = 'image' order by m.position, m.id limit 1) as image
+            (select m.path from product_media m where m.product_id = p.id and m.kind = 'image' and m.status = 'ready' order by m.position, m.id limit 1) as image
      from products p left join categories c on c.id = p.category_id
      where ${where.join(' and ')} order by p.created_at desc, p.id desc limit ${param(perPage)} offset ${param((page - 1) * perPage)}`,
     values,

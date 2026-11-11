@@ -33,6 +33,8 @@ jobs:
         with:
           node-version: 24
           cache: npm
+      # The free command-line tools the media module uses, so its tests run here too.
+      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libvips-tools ffmpeg
       - run: npm ci
       - run: npm run typecheck
       - run: npm test

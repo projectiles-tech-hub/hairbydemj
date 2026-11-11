@@ -4,6 +4,8 @@
 import { randomUUID } from 'node:crypto';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { AccountDeps } from './accounts/deps.js';
+import type { MediaDeps } from './media/media.js';
+import { join } from 'node:path';
 import type { Config } from './config.js';
 import type { Logger } from './logger.js';
 import type { Router } from './router.js';
@@ -19,6 +21,8 @@ export interface AppOptions {
   routers?: Partial<Record<Area, Router>>;
   /** Database, mailer and the rest that accounts need. Without it the account addresses do not exist. */
   accounts?: AccountDeps;
+  /** Where uploaded photos and videos live. Without it nothing is served under /media/. */
+  media?: MediaDeps;
 }
 
 export type App = (req: IncomingMessage, res: ServerResponse) => void;
@@ -35,7 +39,7 @@ export function hostnameOf(hostHeader: string | undefined): string {
 export function createApp(config: Config, logger: Logger, options: AppOptions): App {
   const routers: Record<Area, Router> = {
     site: options.routers?.site ?? siteRoutes(options.accounts),
-    admin: options.routers?.admin ?? adminRoutes(options.accounts),
+    admin: options.routers?.admin ?? adminRoutes(options.accounts, options.media),
     api: options.routers?.api ?? apiRoutes(options.accounts),
   };
   const areaByHost = new Map<string, Area>([
@@ -93,6 +97,15 @@ export function createApp(config: Config, logger: Logger, options: AppOptions): 
         version: options.version,
         uptimeSeconds: Math.floor((Date.now() - startedAt) / 1000),
       });
+      return;
+    }
+
+    // Uploaded photos and videos, on every address. Each file's address
+    // contains a random key and its content never changes, so it may be
+    // cached for a year. (In production Caddy serves these straight from disk.)
+    if (path.startsWith('/media/') && options.media) {
+      const served = await serveStatic(req, res, path.slice('/media'.length), { root: join(options.media.mediaDir, 'public'), maxAge: 31_536_000, immutable: true });
+      if (!served) sendError(res, area, 404, 'Not found');
       return;
     }
 

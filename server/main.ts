@@ -10,6 +10,8 @@ import { accountDeps } from './accounts/deps.js';
 import { queueMailer } from './accounts/mailer.js';
 import { createIdentityVerifier, PROVIDER_DEFAULTS } from './accounts/oidc.js';
 import { createPool } from './db/pool.js';
+import { prepareMediaDir, processPending, type MediaDeps } from './media/media.js';
+import { toolsInstalled } from './media/tools.js';
 
 function readVersion(): string {
   try {
@@ -48,10 +50,24 @@ function main(): void {
       })
     : undefined;
   if (!db) logger.warn('DATABASE_URL is not set: running without accounts');
-  const server = createServer(createApp(config, logger, { version: readVersion(), accounts }));
+  const media: MediaDeps | undefined = db ? { db, now: () => new Date(), logger, mediaDir: config.mediaDir } : undefined;
+  if (media) {
+    prepareMediaDir(media)
+      .then(() => toolsInstalled())
+      .then((tools) => {
+        if (!tools.vips) logger.error('libvips is not installed: photo uploads will fail (install the libvips-tools package)');
+        if (!tools.ffmpeg) logger.error('ffmpeg is not installed: video uploads will fail (install the ffmpeg package)');
+        // Pick up any video that was still being compressed when the server last stopped.
+        return processPending(media);
+      })
+      .catch((error: unknown) => logger.error('media folder is not usable', { mediaDir: config.mediaDir, error }));
+  }
+  const server = createServer(createApp(config, logger, { version: readVersion(), accounts, media }));
 
   // Slow or stalled clients should not hold connections open forever.
-  server.requestTimeout = 30_000;
+  // Long enough for a large video upload on a slow connection. Small JSON
+  // requests have their own 30-second limit where they are read.
+  server.requestTimeout = 15 * 60_000;
   server.headersTimeout = 15_000;
   server.keepAliveTimeout = 5_000;
 

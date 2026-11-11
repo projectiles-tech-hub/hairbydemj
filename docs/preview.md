@@ -10,6 +10,7 @@ tablet or computer. Why it exists: [`decisions/0005-design-preview-before-backen
 | `/` and the other website addresses | The 37 website pages as real pages, with sample data |
 | `/designs/` | A list of every page in the preview |
 | `/designs/app/` | 52 phone app screens, as pictures from Figma |
+| `/admin/` and the addresses under it | The 23 staff admin pages as real pages, with sample data, 3 dialogs and 3 list states |
 | `/designs/admin/` | 29 staff admin pages, as pictures from Figma |
 
 A bar at the top of every page says it is a design preview. The pages tell
@@ -25,6 +26,9 @@ the backend.
 | --- | --- |
 | `server/site/` | The website pages: layout, components, icons, sample data, one file per group of pages |
 | `server/site/pages.ts` | The list of every website page and its address |
+| `server/admin/` | The admin pages: layout, components, one file per group of pages |
+| `server/admin/pages.ts` | The list of every admin page and its address |
+| `browser/admin.ts`, `public/css/admin.css` | The admin's script (menu, dialogs, messages) and styles |
 | `browser/site.ts` | The small script the pages use (menus, bag panel, endless scrolling, checkout steps) |
 | `public/css/`, `public/fonts/`, `public/brand/` | Styles, the two fonts (hosted by us), the logo |
 | `preview/build.ts` | Writes the preview into `preview-dist/` |
@@ -88,3 +92,10 @@ folder's `index.json`.
   because the frame overlaps the one below it in the Figma file.
 - Photos are placeholders until the owner supplies real ones.
 - Prices, product names and counts are samples.
+- The admin was designed for a computer screen. On phones and tablets the
+  sidebar folds into a menu and wide tables scroll sideways; that layout is
+  not in the Figma file.
+- The staff sign-in page is shown without the sidebar, unlike the Figma
+  frame, because staff see no menu before they sign in.
+- Admin buttons such as Save, Approve and Refund show a short message and
+  store nothing.

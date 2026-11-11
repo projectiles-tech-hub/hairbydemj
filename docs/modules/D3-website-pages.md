@@ -1,6 +1,6 @@
 # Module D3 — Website page designs
 
-**Status:** In review (built in Figma, awaiting owner approval) · **Depends on:** D1, D2
+**Status:** Complete (pull request #6 merged by the owner on 2026-11-11) · **Depends on:** D1, D2
 
 ## Goal
 

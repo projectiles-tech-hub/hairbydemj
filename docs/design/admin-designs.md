@@ -1,7 +1,7 @@
 # Admin designs (module D5)
 
-**Status:** In review. Built in Figma on 2026-11-11, awaiting the owner's
-approval. Figma page: [Admin](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-13678).
+**Status:** Approved. Built in Figma on 2026-11-11; pull request #8 merged by
+the owner on 2026-11-11. Figma page: [Admin](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-13678).
 
 ## What is there
 

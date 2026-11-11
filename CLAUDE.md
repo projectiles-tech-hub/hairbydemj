@@ -64,6 +64,8 @@ same content, split by topic, is in `docs/spec/`.
 | `docs/database.md` | The database: settings, set-up steps, commands, tables and rules |
 | `db/migrations/`, `db/seeds/` | Numbered SQL migrations; sample data for development |
 | `server/db/` | Database connection, migration runner and its command line |
+| `docs/accounts.md` | Accounts and sign-in: addresses, settings, rules, commands |
+| `server/accounts/` | Customer and staff accounts, sessions, two-step verification |
 | `docs/preview.md` | The online design preview: what it is, how to build and publish it |
 | `server/site/`, `browser/`, `public/` | Website page code, browser script, styles, fonts and logo |
 | `server/admin/` | Admin page code |

@@ -4,6 +4,15 @@ All notable changes to this repository, newest first.
 
 ## 2026-11-11
 
+- Module 3, Accounts and sign-in (`server/accounts/`): customer sign-up
+  with emailed 6-digit code, sign-in and sign-out, forgot and reset
+  password, Google and Apple sign-in linked to one customer; staff invites,
+  two-step verification, roles and permissions, an Owner super user;
+  protection against password guessing and cross-site request forgery.
+  Migration 0010. New settings `AUTH_SECRET`, `GOOGLE_CLIENT_IDS`,
+  `APPLE_CLIENT_IDS`, `TRUST_PROXY`. Commands `staff:invite-owner` and
+  `staff:reset-access`. Guide: `docs/accounts.md`. Decision 0006.
+- Noted for later in `docs/TASKS.md`: the "DemJ woman" customer gallery.
 - Module 2, Database: PostgreSQL schema in 9 numbered migrations (63
   tables) covering the whole data model; our own migration runner with
   checksums and a lock (`server/db/`); `npm run db:migrate`, `db:status`,

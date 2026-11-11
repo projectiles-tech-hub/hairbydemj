@@ -181,7 +181,7 @@ describe('production errors', () => {
     const site = new Router().get('/boom', () => {
       throw new Error('database password is wrong');
     });
-    const { server, port } = await startApp(loadConfig({ NODE_ENV: 'production', DATABASE_URL: 'postgres://u:p@127.0.0.1:5432/shop' }), { site });
+    const { server, port } = await startApp(loadConfig({ NODE_ENV: 'production', DATABASE_URL: 'postgres://u:p@127.0.0.1:5432/shop', AUTH_SECRET: 'x'.repeat(40) }), { site });
     try {
       const reply = await send(port, 'hairbydemj.com', '/boom');
       assert.equal(reply.status, 500);

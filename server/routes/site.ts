@@ -1,11 +1,13 @@
 // Routes for the customer website (hairbydemj.com).
 // Pages are added in module 13, from approved designs.
 
+import type { AccountDeps } from '../accounts/deps.js';
+import { customerAuthRoutes } from '../accounts/routes.js';
 import { Router } from '../router.js';
 import { sendHtml } from '../http.js';
 
-export function siteRoutes(): Router {
-  return new Router().get('/', ({ res }) => {
+export function siteRoutes(accounts?: AccountDeps): Router {
+  const router = new Router().get('/', ({ res }) => {
     sendHtml(
       res,
       200,
@@ -14,4 +16,6 @@ export function siteRoutes(): Router {
         '<title>hairbydemj</title></head><body><h1>hairbydemj</h1></body></html>',
     );
   });
+  if (accounts) customerAuthRoutes(router, accounts, '/api/auth', 'cookie');
+  return router;
 }

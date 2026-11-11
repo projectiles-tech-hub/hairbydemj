@@ -1,11 +1,16 @@
 // Routes for the API (api.hairbydemj.com), used by the website, admin and app.
 // Endpoints are added module by module, under the /v1 prefix.
 
+import type { AccountDeps } from '../accounts/deps.js';
+import { customerAuthRoutes } from '../accounts/routes.js';
 import { Router } from '../router.js';
 import { sendJson } from '../http.js';
 
-export function apiRoutes(): Router {
-  return new Router().get('/v1', ({ res }) => {
+export function apiRoutes(accounts?: AccountDeps): Router {
+  const router = new Router().get('/v1', ({ res }) => {
     sendJson(res, 200, { name: 'hairbydemj API', version: 1 });
   });
+  // Account addresses need the database, so they exist only when one is set up.
+  if (accounts) customerAuthRoutes(router, accounts, '/v1/auth', 'bearer');
+  return router;
 }

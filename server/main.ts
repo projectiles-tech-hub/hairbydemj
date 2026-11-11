@@ -6,6 +6,10 @@ import { readFileSync } from 'node:fs';
 import { ConfigError, loadConfig } from './config.js';
 import { createLogger } from './logger.js';
 import { createApp } from './app.js';
+import { accountDeps } from './accounts/deps.js';
+import { queueMailer } from './accounts/mailer.js';
+import { createIdentityVerifier, PROVIDER_DEFAULTS } from './accounts/oidc.js';
+import { createPool } from './db/pool.js';
 
 function readVersion(): string {
   try {
@@ -29,7 +33,22 @@ function main(): void {
   }
 
   const logger = createLogger(config.logLevel);
-  const server = createServer(createApp(config, logger, { version: readVersion() }));
+  // Accounts need the database. Without DATABASE_URL (development only) the
+  // server still runs, but the account addresses are not there.
+  const db = config.databaseUrl ? createPool(config.databaseUrl) : null;
+  const accounts = db
+    ? accountDeps({
+        db,
+        config,
+        mail: queueMailer(db, logger, config.env === 'development'),
+        identity: createIdentityVerifier({
+          google: { ...PROVIDER_DEFAULTS.google, clientIds: config.googleClientIds },
+          apple: { ...PROVIDER_DEFAULTS.apple, clientIds: config.appleClientIds },
+        }),
+      })
+    : undefined;
+  if (!db) logger.warn('DATABASE_URL is not set: running without accounts');
+  const server = createServer(createApp(config, logger, { version: readVersion(), accounts }));
 
   // Slow or stalled clients should not hold connections open forever.
   server.requestTimeout = 30_000;
@@ -50,8 +69,12 @@ function main(): void {
     stopping = true;
     logger.info('server stopping', { signal });
     server.close(() => {
-      logger.info('server stopped');
-      process.exit(0);
+      const done = (): void => {
+        logger.info('server stopped');
+        process.exit(0);
+      };
+      if (db) db.end().then(done, done);
+      else done();
     });
     server.closeIdleConnections();
     setTimeout(() => {

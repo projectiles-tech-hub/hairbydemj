@@ -26,19 +26,26 @@
 - Admin preview: 23 admin pages, 3 dialogs and 3 list states as coded pages
   under `/admin/` (pull request #10 merged).
 - Owner instructed on 2026-11-11 to start the backend.
+- Module 2 (Database) is built; pull request #11 is open.
+- Owner decided on 2026-11-11: customers stay on `hairbydemj.com`; one Owner
+  super user at `admin.hairbydemj.com`
+  (`decisions/0006-sign-in-addresses-and-owner.md`).
+- The Vercel preview was for viewing only. The real site runs from our own
+  server; the page code written for the preview is kept as the starting
+  point for modules 13 and 14.
 
 ## Current module
 
-[`modules/02-database.md`](modules/02-database.md): built and **in review**
-on branch `feature/database`. 9 migrations, 63 tables, migration runner,
-sample data, tests against PostgreSQL 16.
+[`modules/03-accounts.md`](modules/03-accounts.md): built and **in review**
+on branch `feature/accounts`, on top of Module 2. Customer and staff
+accounts, sessions, Google and Apple sign-in, two-step verification, roles.
+101 tests pass against PostgreSQL 16.
 
 ## Exact next step
 
-1. Owner reviews and merges the Module 2 pull request, and looks at the
-   "Choices made here, to confirm" table in [`database.md`](database.md).
-2. Then **Module 3** in [`modules/`](modules/), confirmed with the owner
-   before starting.
+1. Owner merges pull request #11 (Database), then the Module 3 pull request.
+2. Then **Module 4. Catalogue** ([`modules/04-catalog.md`](modules/04-catalog.md)),
+   confirmed with the owner before starting.
 
 ## Waiting on the owner
 

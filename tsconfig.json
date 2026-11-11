@@ -15,5 +15,5 @@
     "outDir": "dist",
     "rootDir": "."
   },
-  "include": ["server/**/*.ts", "worker/**/*.ts", "shared/**/*.ts"]
+  "include": ["server/**/*.ts", "worker/**/*.ts", "shared/**/*.ts", "preview/**/*.ts"]
 }

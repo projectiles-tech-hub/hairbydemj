@@ -1,0 +1,210 @@
+[
+  {
+    "file": "01-splash-and-onboarding.png",
+    "title": "Splash and onboarding"
+  },
+  {
+    "file": "02-region-and-currency.png",
+    "title": "Region and currency"
+  },
+  {
+    "file": "03-home.png",
+    "title": "Home"
+  },
+  {
+    "file": "04-categories.png",
+    "title": "Categories"
+  },
+  {
+    "file": "05-product-list.png",
+    "title": "Product list"
+  },
+  {
+    "file": "06-filters.png",
+    "title": "Filters"
+  },
+  {
+    "file": "07-search.png",
+    "title": "Search"
+  },
+  {
+    "file": "08-product.png",
+    "title": "Product"
+  },
+  {
+    "file": "09-ar-try-on.png",
+    "title": "AR try-on"
+  },
+  {
+    "file": "10-cart.png",
+    "title": "Cart"
+  },
+  {
+    "file": "11-checkout.png",
+    "title": "Checkout"
+  },
+  {
+    "file": "12-order-confirmation.png",
+    "title": "Order confirmation"
+  },
+  {
+    "file": "13-sign-in-and-sign-up.png",
+    "title": "Sign in and sign up"
+  },
+  {
+    "file": "14-account.png",
+    "title": "Account"
+  },
+  {
+    "file": "15-order-detail-and-tracking.png",
+    "title": "Order detail and tracking"
+  },
+  {
+    "file": "16-returns.png",
+    "title": "Returns"
+  },
+  {
+    "file": "17-wishlist.png",
+    "title": "Wishlist"
+  },
+  {
+    "file": "18-loyalty-and-referrals.png",
+    "title": "Loyalty and referrals"
+  },
+  {
+    "file": "19-notifications.png",
+    "title": "Notifications"
+  },
+  {
+    "file": "20-help-and-chat.png",
+    "title": "Help and chat"
+  },
+  {
+    "file": "21-settings-and-system-screens.png",
+    "title": "Settings and system screens"
+  },
+  {
+    "file": "22-product-list-loading-more.png",
+    "title": "Product list: loading more"
+  },
+  {
+    "file": "23-product-list-end-of-list.png",
+    "title": "Product list: end of list"
+  },
+  {
+    "file": "24-verify-account.png",
+    "title": "Verify account"
+  },
+  {
+    "file": "25-forgot-password.png",
+    "title": "Forgot password"
+  },
+  {
+    "file": "26-profile-and-security.png",
+    "title": "Profile and security"
+  },
+  {
+    "file": "27-edit-details.png",
+    "title": "Edit details"
+  },
+  {
+    "file": "28-change-email.png",
+    "title": "Change email"
+  },
+  {
+    "file": "29-change-password.png",
+    "title": "Change password"
+  },
+  {
+    "file": "30-delete-account.png",
+    "title": "Delete account"
+  },
+  {
+    "file": "31-addresses.png",
+    "title": "Addresses"
+  },
+  {
+    "file": "32-add-address.png",
+    "title": "Add address"
+  },
+  {
+    "file": "33-payment-methods.png",
+    "title": "Payment methods"
+  },
+  {
+    "file": "34-add-card.png",
+    "title": "Add card"
+  },
+  {
+    "file": "35-orders.png",
+    "title": "Orders"
+  },
+  {
+    "file": "36-write-a-review.png",
+    "title": "Write a review"
+  },
+  {
+    "file": "37-gift-cards.png",
+    "title": "Gift cards"
+  },
+  {
+    "file": "38-media-viewer.png",
+    "title": "Media viewer"
+  },
+  {
+    "file": "39-search-results.png",
+    "title": "Search results"
+  },
+  {
+    "file": "40-notification-settings.png",
+    "title": "Notification settings"
+  },
+  {
+    "file": "41-information-page.png",
+    "title": "Information page"
+  },
+  {
+    "file": "42-system-screens.png",
+    "title": "System screens"
+  },
+  {
+    "file": "43-sign-in-errors.png",
+    "title": "Sign in: errors"
+  },
+  {
+    "file": "44-splash.png",
+    "title": "Splash"
+  },
+  {
+    "file": "45-onboarding-1-of-3.png",
+    "title": "Onboarding 1 of 3"
+  },
+  {
+    "file": "46-onboarding-2-of-3.png",
+    "title": "Onboarding 2 of 3"
+  },
+  {
+    "file": "47-onboarding-3-of-3.png",
+    "title": "Onboarding 3 of 3"
+  },
+  {
+    "file": "48-notifications-ask.png",
+    "title": "Notifications: ask"
+  },
+  {
+    "file": "49-notifications-system-prompt.png",
+    "title": "Notifications: system prompt"
+  },
+  {
+    "file": "50-camera-ask.png",
+    "title": "Camera: ask"
+  },
+  {
+    "file": "51-camera-refused.png",
+    "title": "Camera: refused"
+  },
+  {
+    "file": "52-product-list-sort-sheet.png",
+    "title": "Product list: sort sheet"
+  }
+]

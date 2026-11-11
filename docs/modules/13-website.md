@@ -22,3 +22,11 @@ approved designs.
 
 Every website page matches its approved design and works on desktop and mobile
 browsers.
+
+## Design preview (added 2026-11-11)
+
+By the owner's decision ([`../decisions/0005-design-preview-before-backend.md`](../decisions/0005-design-preview-before-backend.md))
+the page code was started early so the designs can be approved online. In
+`server/site/`, with sample data only, not connected to the server's routes
+or to real data. The steps above stay unticked until the designs are
+approved and the pages run on the real backend. See [`../preview.md`](../preview.md).

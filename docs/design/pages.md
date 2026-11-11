@@ -35,6 +35,7 @@ About 45 website pages, 23 admin pages and 29 app screens.
 | Order detail and tracking | Items, payment, live tracking, invoice, start a return | | Not started |
 | Returns | Request a return, track refund status | | Not started |
 | Addresses | Saved shipping addresses | | Not started |
+| Payment methods | Saved cards: add, set default, remove. Card details are typed into Paystack's or Stripe's secure form; we keep only brand, last four digits and expiry | | Not started |
 | Profile and security | Name, email, password, linked accounts, delete account | | Not started |
 | Loyalty and referrals | Points balance and history, referral link, rewards | | Not started |
 | My reviews | Reviews the customer has written | | Not started |
@@ -109,6 +110,9 @@ About 45 website pages, 23 admin pages and 29 app screens.
 | Order detail and tracking | Status, live tracking, start a return | | Not started |
 | Returns | Request and track returns | | Not started |
 | Addresses | Saved addresses | | Not started |
+| Payment methods | Saved cards: add, set default, remove | | Not started |
+| Profile and security | Name, phone, email change, password change, sign-in methods, delete account | | Not started |
+| Verify account | 6-digit email code after sign-up or an email change | | Not started |
 | Loyalty and referrals | Points, history, referral link | | Not started |
 | Gift cards | Buy and check balance | | Not started |
 | Notifications | Inbox of order updates and offers | | Not started |

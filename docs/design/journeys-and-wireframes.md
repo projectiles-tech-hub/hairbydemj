@@ -16,6 +16,7 @@ noir = end.
 | --- | --- |
 | Customer | Browse to purchase (home, category or search, product, optional AR try-on, cart, checkout in five steps, order confirmation; branches: guest or sign in, payment failed with retry) · Order tracking (signed in or guest, order detail, live carrier tracking, shipped notification, delivered) · Returns (request, staff review, approved or rejected, instructions, customer ships, received and inspected, refund issued) |
 | Account | Sign-up (email with 6-digit verification, or Google and Apple) · Sign-in and password reset (emailed link valid 1 hour) · Wishlist (heart, sign-in prompt if signed out, synced web and app, back-in-stock alert) · Loyalty and referrals (points on delivery, redeem at checkout, referral link, both get points) |
+| Account: profile, security and payment (added 2026-11-11) | Verify account (6-digit code valid 10 minutes, wrong or expired code, resend after 60 seconds) · Update profile · Change email (code to the new address, notice to the old one) · Change password (other devices signed out) · Manage addresses · Add a card (Paystack or Stripe secure form, bank approval, declined) · Delete account · Write a review · Buy and redeem a gift card |
 | Staff | Add a product (sign-in with two-step verification, details and hair attributes, variants and prices per currency, stock, media, SEO and category, publish or save as draft) · Fulfil an order (orders to fulfil, payment check, pick and pack, buy shipping label, mark shipped, customer notified; on hold when unpaid) · Process a return (review, approve or reject, instructions, receive, inspect, refund, closed) · Manage discounts (code or automatic, rules, save and activate, applied at checkout, deactivate, usage in reports) |
 
 ## Wireframes (Figma page "Wireframes")
@@ -78,6 +79,65 @@ Frames: "Web / Endless scrolling states", "App / Product list: loading more",
 | App, phone 390, customer and account journeys | Splash and onboarding · Region and currency · Home · Categories · Product list · Filters · Search · Product · AR try-on · Cart · Checkout (shipping step shown) · Order confirmation · Sign in and sign up · Account · Order detail and tracking · Returns · Wishlist · Loyalty and referrals · Notifications · Help and chat · Settings and system screens · Product list: loading more · Product list: end of list |
 | Admin, desktop 1440, staff journeys | Staff sign-in · Dashboard · Products · Product editor · Orders · Order detail · Returns · Discounts · Inventory |
 
+### Added 2026-11-11: every page, and the website at three widths
+
+The Wireframes page now holds 178 frames built from 1,737 component
+instances.
+
+| Section | Frames |
+| --- | --- |
+| Website, desktop 1280, remaining pages (21) | Profile and security · Addresses · Payment methods · Orders · My reviews and write a review · Communication preferences · Search results · Shop the look · AR try-on · Gift cards · Guest order tracking · About · Contact · FAQ · Hair guides · Length and density guide · Shipping and delivery · Returns and refunds · Privacy, Terms, Cookies · System pages · Form error states |
+| Website, tablet 768, all pages (37) | Every website page |
+| Website, phone 390, all pages (37) | Every website page |
+| App, phone 390, remaining screens (20) | Verify account · Forgot password · Profile and security · Edit details · Change email · Change password · Delete account · Addresses · Add address · Payment methods · Add card · Orders · Write a review · Gift cards · Media viewer · Search results · Notification settings · Information page · System screens · Sign in: errors |
+| Admin, desktop 1440, remaining pages (14) | Categories and collections · Customers · Gift cards · Loyalty and referrals · Reviews · Live chat inbox · Homepage and banners · Content pages · Shipping settings · Payments and currencies · Reports · Staff and roles · Activity log · Store settings |
+
+New kit components: WF/Web header compact, WF/Web footer compact,
+WF/Field error.
+
+### Responsive rules (website)
+
+Breakpoints and grid come from the design system: phone up to 599 px
+(4 columns), tablet 600 to 1023 px (8 columns), desktop 1024 px and up
+(12 columns, content up to 1280 px).
+
+| Part | Phone | Tablet | Desktop |
+| --- | --- | --- | --- |
+| Header | Menu button, logo, search, bag; navigation in a full-height panel | Same as phone | Full navigation, search field, currency, account, wishlist, bag |
+| Product grids | 2 across | 3 across | 4 across |
+| Filters | Slide-up panel from a Filter button | Slide-up panel | Sidebar |
+| Two-column pages (product, cart, checkout, order) | One column; the side column moves below | Two columns, narrower side | Two columns |
+| Product page | Photos swipe; price and "Add to bag" fixed at the bottom | Photos left, details right | Thumbnails, photo, details |
+| Checkout | Order summary folds into one line at the top | Summary at the side | Summary at the side |
+| Account menu | One drop-down at the top | Side menu | Side menu |
+| Tables (shipping, order rows) | Stacked cards | Table | Table |
+| Footer | Link groups collapse; tap to open | Same as phone | Four columns and newsletter |
+| Buttons | Full width | Natural width | Natural width |
+
+The admin is designed for desktop only. The app covers phones natively.
+
+### Card and account rules shown in the wireframes
+
+- Card numbers are typed into Paystack's or Stripe's own secure form. We
+  never see or store them; we keep the brand, last four digits and expiry.
+- The bank may ask the customer to approve the card with a code or in the
+  banking app.
+- Changing the email needs a code sent to the new address; the old address
+  is told. Changing the password signs out other devices.
+- Deleting an account removes profile, addresses, saved cards, wishlist and
+  points. Order records are kept for the period the law requires.
+- Form errors show at the field, with an icon and a message that says how to
+  fix it; what the customer typed is kept.
+
+### Sample values to confirm
+
+These figures are placeholders drawn so the layouts read as real. They are
+not decisions: return window 14 days; store credit bonus 10%; verification
+code valid 10 minutes, resend after 60 seconds; reset link valid 1 hour;
+failed-payment stock hold 30 minutes; all loyalty point values and tiers;
+gift card amounts and 12-month expiry; delivery times per region; ship-from
+address Benin City; business hours; staff role names.
+
 ### Decisions shown in the wireframes
 
 - Checkout is one page in five steps: contact, address, shipping option,
@@ -117,10 +177,9 @@ and interface copy reviews.
 
 ### Open, for the owner to decide
 
-- There are no phone-width wireframes of the website. The website is
-  responsive, and many shoppers will use it on a phone browser.
-- Form error states are drawn only for a failed payment. Field-level errors
-  (wrong password, invalid email, missing address line) are not yet drawn.
+- Resolved 2026-11-11: the website is now drawn at phone, tablet and desktop
+  widths, and field-level error states are drawn for website and app.
+- The sample values listed above need the owner's figures.
 
 ### Carried into D3 to D5
 

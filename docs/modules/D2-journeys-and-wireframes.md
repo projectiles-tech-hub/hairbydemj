@@ -15,6 +15,10 @@ Simple layouts for every path a customer takes and every staff task.
 - [x] Componentised wireframe kit; frames use instances
 - [x] Endless scrolling designed (loading, end, error states)
 - [x] Design review: critique, accessibility, design system, copy
+- [x] Added journeys: verify account, update profile, change email and password, addresses, add a card, delete account, review, gift card
+- [x] Every page in the inventory wireframed (website, app, admin)
+- [x] Website drawn at three widths: phone 390, tablet 768, desktop 1280
+- [x] Field error states
 - [ ] Owner approval
 
 ## Done when

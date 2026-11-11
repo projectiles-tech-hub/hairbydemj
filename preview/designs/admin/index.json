@@ -1,0 +1,118 @@
+[
+  {
+    "file": "01-staff-sign-in.png",
+    "title": "Staff sign-in"
+  },
+  {
+    "file": "02-dashboard.png",
+    "title": "Dashboard"
+  },
+  {
+    "file": "03-products.png",
+    "title": "Products"
+  },
+  {
+    "file": "04-product-editor.png",
+    "title": "Product editor"
+  },
+  {
+    "file": "05-orders.png",
+    "title": "Orders"
+  },
+  {
+    "file": "06-order-detail.png",
+    "title": "Order detail"
+  },
+  {
+    "file": "07-returns.png",
+    "title": "Returns"
+  },
+  {
+    "file": "08-discounts.png",
+    "title": "Discounts"
+  },
+  {
+    "file": "09-inventory.png",
+    "title": "Inventory"
+  },
+  {
+    "file": "10-categories-and-collections.png",
+    "title": "Categories and collections"
+  },
+  {
+    "file": "11-customers.png",
+    "title": "Customers"
+  },
+  {
+    "file": "12-gift-cards.png",
+    "title": "Gift cards"
+  },
+  {
+    "file": "13-loyalty-and-referrals.png",
+    "title": "Loyalty and referrals"
+  },
+  {
+    "file": "14-reviews.png",
+    "title": "Reviews"
+  },
+  {
+    "file": "15-live-chat-inbox.png",
+    "title": "Live chat inbox"
+  },
+  {
+    "file": "16-homepage-and-banners.png",
+    "title": "Homepage and banners"
+  },
+  {
+    "file": "17-content-pages.png",
+    "title": "Content pages"
+  },
+  {
+    "file": "18-shipping-settings.png",
+    "title": "Shipping settings"
+  },
+  {
+    "file": "19-payments-and-currencies.png",
+    "title": "Payments and currencies"
+  },
+  {
+    "file": "20-reports.png",
+    "title": "Reports"
+  },
+  {
+    "file": "21-staff-and-roles.png",
+    "title": "Staff and roles"
+  },
+  {
+    "file": "22-activity-log.png",
+    "title": "Activity log"
+  },
+  {
+    "file": "23-store-settings.png",
+    "title": "Store settings"
+  },
+  {
+    "file": "24-order-detail-refund-dialog.png",
+    "title": "Order detail: refund dialog"
+  },
+  {
+    "file": "25-inventory-adjust-stock-dialog.png",
+    "title": "Inventory: adjust stock dialog"
+  },
+  {
+    "file": "26-staff-and-roles-invite-dialog.png",
+    "title": "Staff and roles: invite dialog"
+  },
+  {
+    "file": "27-orders-empty.png",
+    "title": "Orders: empty"
+  },
+  {
+    "file": "28-orders-loading.png",
+    "title": "Orders: loading"
+  },
+  {
+    "file": "29-orders-could-not-load.png",
+    "title": "Orders: could not load"
+  }
+]

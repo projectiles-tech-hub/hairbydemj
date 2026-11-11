@@ -61,29 +61,29 @@ About 45 website pages, 23 admin pages and 29 app screens.
 
 | Page | What it does | Figma | Status |
 | --- | --- | --- | --- |
-| Staff sign-in | Secure login with two-step verification | | Not started |
-| Dashboard | Today's sales, orders to fulfil, low stock, top products, visitors | | Not started |
-| Products | List with search, filters and bulk actions | | Not started |
-| Product editor | Details, hair attributes, variants, prices per currency, stock, media, SEO, publish | | Not started |
-| Categories and collections | Organise products and collection rules | | Not started |
-| Inventory | Stock per variant, adjustments, low-stock alerts | | Not started |
-| Orders | All orders with status filters | | Not started |
-| Order detail | Payment, items, customer, shipping label, mark shipped, refund, notes | | Not started |
-| Returns | Approve or reject, receive items, issue refunds | | Not started |
-| Customers | List and profiles with orders, points, notes | | Not started |
-| Discounts | Promo codes and automatic deals | | Not started |
-| Gift cards | Issue, view and deactivate | | Not started |
-| Loyalty and referrals | Point rules and reward settings | | Not started |
-| Reviews | Approve, hide or reply | | Not started |
-| Live chat inbox | Answer customer chats | | Not started |
-| Homepage and banners | Featured products, collections, banners | | Not started |
-| Content pages | Edit FAQ, guides, policies, information pages | | Not started |
-| Shipping settings | Carrier accounts, local rates, package sizes | | Not started |
-| Payments and currencies | Paystack and Stripe settings, currency rules | | Not started |
-| Reports | Sales, products, customers, currencies, with export | | Not started |
-| Staff and roles | Add staff, set role permissions | | Not started |
-| Activity log | Who changed what and when | | Not started |
-| Store settings | Store details, email templates, notifications | | Not started |
+| Staff sign-in | Secure login with two-step verification | [page](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=57-9833) | In review |
+| Dashboard | Today's sales, orders to fulfil, low stock, top products, visitors | [page](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=57-9852) | In review |
+| Products | List with search, filters and bulk actions | [page](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=57-9942) | In review |
+| Product editor | Details, hair attributes, variants, prices per currency, stock, media, SEO, publish | [page](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=57-10021) | In review |
+| Categories and collections | Organise products and collection rules | [page](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=57-10443) | In review |
+| Inventory | Stock per variant, adjustments, low-stock alerts | [page](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=57-10376) | In review |
+| Orders | All orders with status filters | [page](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=57-10118) | In review |
+| Order detail | Payment, items, customer, shipping label, mark shipped, refund, notes | [page](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=57-10213) | In review |
+| Returns | Approve or reject, receive items, issue refunds | [page](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=57-10277) | In review |
+| Customers | List and profiles with orders, points, notes | [page](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=57-10532) | In review |
+| Discounts | Promo codes and automatic deals | [page](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=57-10324) | In review |
+| Gift cards | Issue, view and deactivate | [page](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=57-10602) | In review |
+| Loyalty and referrals | Point rules and reward settings | [page](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=57-10658) | In review |
+| Reviews | Approve, hide or reply | [page](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=57-10722) | In review |
+| Live chat inbox | Answer customer chats | [page](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=57-10773) | In review |
+| Homepage and banners | Featured products, collections, banners | [page](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=57-10816) | In review |
+| Content pages | Edit FAQ, guides, policies, information pages | [page](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=57-10868) | In review |
+| Shipping settings | Carrier accounts, local rates, package sizes | [page](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=57-10934) | In review |
+| Payments and currencies | Paystack and Stripe settings, currency rules | [page](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=57-11024) | In review |
+| Reports | Sales, products, customers, currencies, with export | [page](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=57-11102) | In review |
+| Staff and roles | Add staff, set role permissions | [page](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=57-11188) | In review |
+| Activity log | Who changed what and when | [page](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=57-11280) | In review |
+| Store settings | Store details, email templates, notifications | [page](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=57-11331) | In review |
 
 ## App (iOS and Android)
 

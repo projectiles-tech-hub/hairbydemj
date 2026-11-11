@@ -4,7 +4,7 @@ Update this file at the end of every session.
 
 ## Open
 
-- [ ] Confirm whether to start Module 2 — Database
+- [ ] Confirm whether to start Module D2 (Journeys and wireframes)
 
 ## Blocked / waiting on owner
 
@@ -27,3 +27,9 @@ Update this file at the end of every session.
 - [x] 2026-10-29 — Decided: international duties and taxes are paid by the receiver on delivery
 - [x] 2026-10-29 — Module 1 built: plain Node.js server, router, configuration, logging, error handling, static files, health check, tests and GitHub Actions check
 - [x] 2026-10-29 — Owner approved pull request #1 (Module 1 — Server foundation); module 1 complete
+- [x] 2026-10-29 — Owner decided to complete design modules D1 to D5 before continuing with backend Module 2
+- [x] 2026-10-30 — Owner supplied the logo artwork
+- [x] 2026-11-02 — Owner adopted the colour palette sampled from the logo artwork
+- [x] 2026-11-02 — Fonts chosen: Source Sans 3 and Cormorant Garamond
+- [x] 2026-11-02 — Design system built in Figma: foundations, icons, components, logo vectors
+- [x] 2026-11-10 — Owner approved pull request #2 (Module D1, Brand and design system); module D1 complete

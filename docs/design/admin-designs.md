@@ -31,9 +31,20 @@ All 23 admin pages at 1440 px wide. Each page's link is in
 - Sample content: order numbers, names, amounts, role names and settings are
   samples, not decisions.
 
-## Not yet drawn
+## Added 2026-11-11
 
-- Charts are placeholders (sales by day on Dashboard and Reports).
-- Dialogs (confirm refund, adjust stock, invite staff), empty states and
-  loading states.
-- The admin is desktop only; no tablet or phone layouts.
+- Charts: the sales line charts on Dashboard and Reports are drawn (gold line
+  on faint grid lines, labelled axes). The sample figures add up: the last
+  point on the Dashboard chart is today's sales, and each product's revenue
+  is units sold times price.
+- Section "Admin: dialogs and states", 6 frames: refund dialog, adjust stock
+  dialog, invite staff dialog, and the Orders page when empty, loading and
+  when it could not load.
+
+The Admin page now holds 29 frames. Re-checked by script: contrast, 14 px
+minimum, tokens and text styles all pass.
+
+## By decision, not drawn
+
+The admin is desktop only; there are no tablet or phone layouts. The empty,
+loading and error states are drawn once on Orders and apply to every list.

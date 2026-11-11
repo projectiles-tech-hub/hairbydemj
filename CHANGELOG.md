@@ -4,6 +4,12 @@ All notable changes to this repository, newest first.
 
 ## 2026-11-11
 
+- Module 7, Payments (`server/payments/`): Paystack for naira and Stripe for
+  dollars, pounds and euros over their REST APIs; the order is marked paid
+  only by a signed webhook with the exact amount; repeats, late and
+  out-of-order webhooks handled; a payment after an expired checkout either
+  revives the order or is refunded automatically; partial and full refunds
+  through the original provider. Migration 0014. Guide: `docs/payments.md`.
 - Module 6, Cart and currencies (`server/cart/`): guest and customer carts
   shared across website and app, merged on sign-in, priced fresh on every
   read; currency from the visitor's country, switchable; exchange rates

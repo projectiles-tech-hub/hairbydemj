@@ -19,7 +19,9 @@ Update this file at the end of every session.
 
 ## Blocked / waiting on owner
 
-- [ ] Review and merge the Module 2 (Database) pull request (#11), then Module 3 (Accounts, #12), then Module 4 (Catalogue, #13), then Module 5 (Media, #14), then the Module 6 (Cart and currencies) pull request
+- [ ] Review and merge the Module 2 (Database) pull request (#11), then Module 3 (Accounts, #12), then Module 4 (Catalogue, #13), then Module 5 (Media, #14), then Module 6 (#15), then the Module 7 (Payments) pull request
+- [ ] Paystack: create the account, send the test keys (secret and public); set the webhook address in docs/payments.md
+- [ ] Stripe: create the account, send the test keys (secret and publishable) and the webhook secret after adding the webhook address
 - [ ] Google sign-in: create the client IDs in Google Cloud Console (free) for the website and the apps
 - [ ] Apple sign-in: Services ID and bundle ID (needs the Apple Developer account)
 - [ ] Confirm or change the choices listed at the end of docs/database.md
@@ -70,3 +72,4 @@ Update this file at the end of every session.
 - [x] 2026-11-11 — Owner decided the shop shows the exact number in stock
 - [x] 2026-11-11 — Module 5 (Media) built: photo and video uploads, sizes, compression, serving, tests
 - [x] 2026-11-11 — Module 6 (Cart and currencies) built: carts for guests and customers, currencies and daily rates, discounts, gift card redemption, stock holding
+- [x] 2026-11-11 — Module 7 (Payments) built: Paystack and Stripe, signed webhooks, repeats and late payments handled, refunds

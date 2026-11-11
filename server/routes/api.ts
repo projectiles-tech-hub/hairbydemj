@@ -5,10 +5,12 @@ import type { AccountDeps } from '../accounts/deps.js';
 import { customerAuthRoutes } from '../accounts/routes.js';
 import { shopCartRoutes } from '../cart/routes.js';
 import { shopCatalogRoutes } from '../catalog/routes.js';
+import type { PaymentDeps } from '../payments/payments.js';
+import { shopPaymentRoutes, webhookRoutes } from '../payments/routes.js';
 import { Router } from '../router.js';
 import { sendJson } from '../http.js';
 
-export function apiRoutes(accounts?: AccountDeps): Router {
+export function apiRoutes(accounts?: AccountDeps, payments?: PaymentDeps): Router {
   const router = new Router().get('/v1', ({ res }) => {
     sendJson(res, 200, { name: 'hairbydemj API', version: 1 });
   });
@@ -17,6 +19,10 @@ export function apiRoutes(accounts?: AccountDeps): Router {
     customerAuthRoutes(router, accounts, '/v1/auth', 'bearer');
     shopCatalogRoutes(router, accounts, '/v1/catalog');
     shopCartRoutes(router, accounts, '/v1', 'header');
+    if (payments) {
+      shopPaymentRoutes(router, accounts, payments, '/v1', 'bearer');
+      webhookRoutes(router, payments);
+    }
   }
   return router;
 }

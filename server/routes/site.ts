@@ -5,10 +5,12 @@ import type { AccountDeps } from '../accounts/deps.js';
 import { customerAuthRoutes } from '../accounts/routes.js';
 import { shopCartRoutes } from '../cart/routes.js';
 import { shopCatalogRoutes } from '../catalog/routes.js';
+import type { PaymentDeps } from '../payments/payments.js';
+import { shopPaymentRoutes } from '../payments/routes.js';
 import { Router } from '../router.js';
 import { sendHtml } from '../http.js';
 
-export function siteRoutes(accounts?: AccountDeps): Router {
+export function siteRoutes(accounts?: AccountDeps, payments?: PaymentDeps): Router {
   const router = new Router().get('/', ({ res }) => {
     sendHtml(
       res,
@@ -22,6 +24,7 @@ export function siteRoutes(accounts?: AccountDeps): Router {
     customerAuthRoutes(router, accounts, '/api/auth', 'cookie');
     shopCatalogRoutes(router, accounts, '/api/catalog');
     shopCartRoutes(router, accounts, '/api', 'cookie');
+    if (payments) shopPaymentRoutes(router, accounts, payments, '/api', 'cookie');
   }
   return router;
 }

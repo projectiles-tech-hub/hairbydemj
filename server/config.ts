@@ -28,6 +28,17 @@ export interface Config {
   trustProxy: boolean;
   /** Where daily exchange rates are fetched from (a free service, naira as the base). */
   ratesUrl: string;
+  /** Payment provider keys. Secret keys are only ever read from the environment. Empty means not set up. */
+  payments: {
+    paystackSecretKey: string;
+    paystackPublicKey: string;
+    stripeSecretKey: string;
+    stripePublishableKey: string;
+    stripeWebhookSecret: string;
+    /** Changed only by tests, to talk to stand-in providers. */
+    paystackApiUrl: string;
+    stripeApiUrl: string;
+  };
 }
 
 /** Used only in development, so sign-in works without any setup. Never valid in production. */
@@ -112,5 +123,14 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     appleClientIds: list('APPLE_CLIENT_IDS'),
     trustProxy: trustProxyText === 'true',
     ratesUrl: read(env, 'RATES_URL', 'https://open.er-api.com/v6/latest/NGN'),
+    payments: {
+      paystackSecretKey: read(env, 'PAYSTACK_SECRET_KEY', ''),
+      paystackPublicKey: read(env, 'PAYSTACK_PUBLIC_KEY', ''),
+      stripeSecretKey: read(env, 'STRIPE_SECRET_KEY', ''),
+      stripePublishableKey: read(env, 'STRIPE_PUBLISHABLE_KEY', ''),
+      stripeWebhookSecret: read(env, 'STRIPE_WEBHOOK_SECRET', ''),
+      paystackApiUrl: read(env, 'PAYSTACK_API_URL', 'https://api.paystack.co'),
+      stripeApiUrl: read(env, 'STRIPE_API_URL', 'https://api.stripe.com'),
+    },
   };
 }

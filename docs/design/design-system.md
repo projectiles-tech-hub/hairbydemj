@@ -42,6 +42,22 @@ logo artwork.
 | `blush` | Blush | `#DCB597` | "mj" in the wordmark | Soft accents, tags |
 | `error` | Coral red | `#E5735F` | Added 2026-11-02 | Error messages and invalid field borders |
 
+### Supporting colours (added 2026-11-11, module D3)
+
+Solid colours for surfaces, lines and secondary text. They replace
+see-through versions of ivory, blush and gold, which did not hold their
+transparency inside component copies in Figma and would also be harder to
+keep consistent in code.
+
+| Token | Hex | Use |
+| --- | --- | --- |
+| `line` | `#4A3D33` | Dividers and card outlines. Decorative only. |
+| `border-control` | `#80766A` | Borders of unselected chips, checkboxes and radios. 4.5:1 on noir, 3.4:1 on espresso. |
+| `text-muted` | `#A79A8A` | Secondary text. 7.5:1 on noir, 5.7:1 on espresso. |
+| `surface-photo` | `#221B19` | Behind photos while they load; loading placeholders. |
+| `surface-raised` | `#41332A` | Selected row or item on an espresso panel. |
+| `gold-soft` | `#312519` | Soft gold tint behind the active app tab icon. |
+
 ### Contrast (WCAG 2.1 AA)
 
 All text pairings pass 4.5:1 and all control borders pass 3:1. Key ratios:
@@ -130,10 +146,33 @@ delete, check, try on, camera, filter, warning.
 | Form field | Default, Focused, Error, Disabled | Label above, input at least 48 px high, help text. Error shows a coral border, a warning icon and a message saying how to fix it. |
 | Product card | One component | 4:5 photo, optional badge, 48 px wishlist button on an espresso circle, name, length and density, price in the customer's currency. |
 
+### Shared components for pages and screens (added 2026-11-11, module D3)
+
+On the Components page, section "Shared components for pages and screens".
+
+| Component | Variants | Notes |
+| --- | --- | --- |
+| Chip | Selected: No, Yes | Filters and option pickers (length, density, colour). 40 px high. |
+| Quantity stepper | One | Minus, number, plus. 48 px high. |
+| Checkbox, Radio | Off, On | 24 px mark with its label. |
+| Photo placeholder | One, resizable | Stands in for photos, video and charts until real ones are supplied. |
+| Product card compact | One | For two-across phone grids and tight rows. |
+| List loader | Loading, End, Error | Endless scrolling states. |
+| Header | Desktop, Compact | Wordmark, navigation, search, currency, account, wishlist, bag with count. |
+| Footer | Desktop, Compact | Monogram, link groups, newsletter sign-up. |
+| App status bar, App tab bar | Tab bar: one per active tab | Five tabs: Home, Shop, Try on, Bag, Account. |
+| Admin sidebar, Admin top bar | One each | The 23 admin pages in six groups; search, alerts, signed-in staff. |
+
+20 more icons were added to the Icons page for the app tab bar, the account
+area and the admin (home, shop, bell, card, location, package, gift,
+settings, share, WhatsApp, lock, edit, arrow up, sign out, help, reports,
+customers, discount, receipt, image). To be checked against the Phosphor
+Light originals before the frontend is built.
+
 ## Figma
 
 - Design file: [hairbydemj Design System](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N)
 - Pages: Foundations (colour, type, spacing, corners, layout, motion), Icons,
-  Components, Logo.
+  Components, Logo, Journeys, Wireframes, Website, App, Admin.
 - All values are Figma variables and text styles, so a change in one place
   updates every component.

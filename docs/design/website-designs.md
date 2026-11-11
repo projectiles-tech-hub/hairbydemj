@@ -39,9 +39,17 @@ plus the endless scrolling states board. Each page's three links are in
   wording are samples so the pages read as real. They are not decisions.
 - **Sample values** listed in journeys-and-wireframes.md still apply.
 
-## Not yet drawn
+## Panels, menus and notices (added 2026-11-11)
 
-The slide-out mini-cart, the live chat window, the cookie notice, the phone
-navigation menu and the filter panel are described in the wireframe notes but
-do not yet have their own design frames. Hover, focus and pressed states are
-defined on the components, not drawn page by page.
+Figma section "Website: panels, menus and notices", 10 frames: mini-cart
+(desktop and phone), phone menu, filter panel (phone slide-up and tablet side
+panel), sort sheet, cookie notice and cookie choices, live chat (desktop, with
+the floating chat, WhatsApp and back-to-top buttons, and phone).
+
+The Website page now holds 122 frames. Re-checked by script: contrast, 14 px
+minimum, tokens and text styles all pass.
+
+## Not drawn page by page
+
+Hover, focus and pressed states are defined on the components (Button, Form
+field, Chip), not repeated on every page.

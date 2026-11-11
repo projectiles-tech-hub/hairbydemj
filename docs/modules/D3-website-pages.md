@@ -12,7 +12,7 @@ Full designs for every website page, for desktop and mobile browsers.
 - [x] Account pages
 - [x] Information and system pages
 - [x] Shared header and footer
-- [ ] Mini-cart panel, chat window and cookie notice (not yet drawn as their own frames)
+- [x] Mini-cart panel, chat window, cookie notice, phone menu, filter panel and sort sheet
 - [x] Record each Figma link and status in docs/design/pages.md
 - [ ] Owner approval, page by page
 

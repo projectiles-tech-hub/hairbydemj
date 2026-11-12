@@ -8,7 +8,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json && tsc -p tsconfig.browser.json",
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig.browser.json && node scripts/copy-vendor.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.browser.json --noEmit",
     "test": "npm run build && node --test \"dist/**/*.test.js\"",
     "start": "node dist/server/main.js",
@@ -18,7 +18,8 @@
     "db:status": "npm run build && node --env-file-if-exists=.env dist/server/db/cli.js status",
     "db:seed": "npm run build && node --env-file-if-exists=.env dist/server/db/cli.js seed",
     "staff:invite-owner": "npm run build && node --env-file-if-exists=.env dist/server/accounts/cli.js invite-owner",
-    "staff:reset-access": "npm run build && node --env-file-if-exists=.env dist/server/accounts/cli.js reset-access"
+    "staff:reset-access": "npm run build && node --env-file-if-exists=.env dist/server/accounts/cli.js reset-access",
+    "tryon:model": "npm run build && node dist/server/tryon/model.js"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
@@ -26,6 +27,7 @@
     "typescript": "^5.6.0"
   },
   "dependencies": {
+    "@mediapipe/tasks-vision": "1.1.1",
     "pg": "^8.23.1"
   }
 }

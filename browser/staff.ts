@@ -321,8 +321,13 @@ for (const form of $$<HTMLFormElement>('[data-upload]')) {
     let done = 0;
     for (const file of Array.from(files)) {
       if (status) status.textContent = `Uploading ${done + 1} of ${files.length}…`;
-      const params = new URLSearchParams({ name: file.name, alt });
+      const params = new URLSearchParams({ name: file.name });
+      if (alt) params.set('alt', alt);
       if (colour) params.set('colour', colour);
+      // Other values the address takes, from fields marked data-upload-param="name".
+      for (const input of $$<HTMLInputElement>('[data-upload-param]', form)) {
+        if (input.value.trim()) params.set(input.dataset.uploadParam ?? '', input.value.trim());
+      }
       try {
         const res = await fetch(`${form.dataset.upload}?${params.toString()}`, { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': file.type || 'application/octet-stream' }, body: file });
         if (!res.ok) {

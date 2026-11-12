@@ -5,6 +5,7 @@ import type { AccountDeps } from '../accounts/deps.js';
 import { customerAuthRoutes } from '../accounts/routes.js';
 import { shopCartRoutes } from '../cart/routes.js';
 import { shopCatalogRoutes } from '../catalog/routes.js';
+import { shopTryOnRoutes } from '../tryon/routes.js';
 import type { PaymentDeps } from '../payments/payments.js';
 import { shopPaymentRoutes } from '../payments/routes.js';
 import type { OrderDeps } from '../orders/checkout.js';
@@ -34,6 +35,7 @@ export function siteRoutes(accounts?: AccountDeps, payments?: PaymentDeps, shipp
   if (accounts) {
     customerAuthRoutes(router, accounts, '/api/auth', 'cookie');
     shopCatalogRoutes(router, accounts, '/api/catalog');
+    shopTryOnRoutes(router, accounts, '/api/catalog');
     shopCartRoutes(router, accounts, '/api', 'cookie');
     if (payments) shopPaymentRoutes(router, accounts, payments, '/api', 'cookie');
     if (shipping) shopShippingRoutes(router, accounts, shipping, '/api', 'cookie');

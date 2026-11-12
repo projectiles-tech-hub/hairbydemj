@@ -123,6 +123,10 @@ export interface ShellOptions {
   /** Extra scripts this page needs from outside (only Stripe's payment form). */
   scripts?: string[];
   status?: number;
+  /** The camera try-on page (module 16): allows WebAssembly and camera pictures. */
+  tryOn?: boolean;
+  /** Our own module scripts this page needs besides store.js. */
+  modules?: string[];
 }
 
 function header(sc: SiteContext, nav?: string): string {
@@ -204,6 +208,13 @@ const CSP = [
   "object-src 'none'",
 ].join('; ');
 
+/**
+ * The try-on page runs MediaPipe's face tracking in the browser: its
+ * WebAssembly needs 'wasm-unsafe-eval', and the camera picture and saved
+ * photo are blob: addresses. Every file still comes from our own server.
+ */
+const TRY_ON_CSP = CSP.replace("script-src 'self'", "script-src 'self' 'wasm-unsafe-eval'").replace("img-src 'self' data:", "img-src 'self' data: blob:") + "; media-src 'self' blob:; worker-src 'self' blob:";
+
 export const PAGE_HEADERS: Record<string, string> = {
   'Content-Security-Policy': CSP,
   'X-Content-Type-Options': 'nosniff',
@@ -251,6 +262,7 @@ ${sc ? footer(sc) : ''}
 ${sc ? menuPanel(sc) + currencyPanel(sc) + miniCart(sc) : ''}
 ${cookieNotice()}
 ${(o.scripts ?? []).map((s) => `<script src="${esc(s)}"></script>`).join('\n')}
+${(o.modules ?? []).map((s) => `<script type="module" src="${esc(s)}"></script>`).join('\n')}
 <script type="module" src="/js/store.js"></script>
 </body>
 </html>
@@ -259,5 +271,5 @@ ${(o.scripts ?? []).map((s) => `<script src="${esc(s)}"></script>`).join('\n')}
 
 export function sendPage(sc: SiteContext | null, o: ShellOptions): void {
   if (!sc) throw new Error('sendPage needs a context');
-  sendHtml(sc.ctx.res, o.status ?? 200, storePage(sc, o), PAGE_HEADERS);
+  sendHtml(sc.ctx.res, o.status ?? 200, storePage(sc, o), o.tryOn ? { ...PAGE_HEADERS, 'Content-Security-Policy': TRY_ON_CSP } : PAGE_HEADERS);
 }

@@ -7,10 +7,12 @@ import { shopCartRoutes } from '../cart/routes.js';
 import { shopCatalogRoutes } from '../catalog/routes.js';
 import type { PaymentDeps } from '../payments/payments.js';
 import { shopPaymentRoutes } from '../payments/routes.js';
+import type { ShippingDeps } from '../shipping/shipping.js';
+import { shopShippingRoutes } from '../shipping/routes.js';
 import { Router } from '../router.js';
 import { sendHtml } from '../http.js';
 
-export function siteRoutes(accounts?: AccountDeps, payments?: PaymentDeps): Router {
+export function siteRoutes(accounts?: AccountDeps, payments?: PaymentDeps, shipping?: ShippingDeps): Router {
   const router = new Router().get('/', ({ res }) => {
     sendHtml(
       res,
@@ -25,6 +27,7 @@ export function siteRoutes(accounts?: AccountDeps, payments?: PaymentDeps): Rout
     shopCatalogRoutes(router, accounts, '/api/catalog');
     shopCartRoutes(router, accounts, '/api', 'cookie');
     if (payments) shopPaymentRoutes(router, accounts, payments, '/api', 'cookie');
+    if (shipping) shopShippingRoutes(router, accounts, shipping, '/api', 'cookie');
   }
   return router;
 }

@@ -42,6 +42,11 @@ export async function markOrderPaid(c: Q, orderId: number, now: Date): Promise<{
   // Each discount on the order has now been used once more.
   await c.query('update discounts d set times_used = times_used + 1 from order_discounts od where od.order_id = $1 and od.discount_id = d.id', [orderId]);
   await orderEvent(c, orderId, 'paid', 'Payment confirmed', { visible: true });
+  // A carrier order gets its label bought straight away by the worker (module 10).
+  await c.query(
+    "insert into jobs (kind, payload, unique_key) select 'buy_label', jsonb_build_object('orderId', id), 'buy_label:' || id from orders where id = $1 and shipping_carrier in ('dhl', 'ups', 'fedex') on conflict (unique_key) do nothing",
+    [orderId],
+  );
   return { refundNeeded: false };
 }
 

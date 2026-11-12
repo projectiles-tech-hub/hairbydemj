@@ -2,6 +2,19 @@
 
 All notable changes to this repository, newest first.
 
+## 2026-11-12
+
+- Module 8, Shipping (`server/shipping/`): the bag is packed into the
+  store's boxes; zones and prices inside Nigeria set by staff; live DHL
+  Express, UPS and FedEx prices for addresses abroad, converted to the
+  customer's currency with the carrier's markup; prices saved as a
+  30-minute quote that checkout must use; free-delivery discounts; the
+  duties-paid-by-receiver notice on every international quote; labels
+  bought after payment (queued) or by staff, kept in a private folder;
+  tracking read from all three carriers moves the order to shipped and
+  delivered; local courier dispatch and delivery. Migration 0015. Guide:
+  `docs/shipping.md`.
+
 ## 2026-11-11
 
 - Module 7, Payments (`server/payments/`): Paystack for naira and Stripe for

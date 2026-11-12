@@ -7,10 +7,12 @@ import { shopCartRoutes } from '../cart/routes.js';
 import { shopCatalogRoutes } from '../catalog/routes.js';
 import type { PaymentDeps } from '../payments/payments.js';
 import { shopPaymentRoutes, webhookRoutes } from '../payments/routes.js';
+import type { ShippingDeps } from '../shipping/shipping.js';
+import { shopShippingRoutes } from '../shipping/routes.js';
 import { Router } from '../router.js';
 import { sendJson } from '../http.js';
 
-export function apiRoutes(accounts?: AccountDeps, payments?: PaymentDeps): Router {
+export function apiRoutes(accounts?: AccountDeps, payments?: PaymentDeps, shipping?: ShippingDeps): Router {
   const router = new Router().get('/v1', ({ res }) => {
     sendJson(res, 200, { name: 'hairbydemj API', version: 1 });
   });
@@ -23,6 +25,7 @@ export function apiRoutes(accounts?: AccountDeps, payments?: PaymentDeps): Route
       shopPaymentRoutes(router, accounts, payments, '/v1', 'bearer');
       webhookRoutes(router, payments);
     }
+    if (shipping) shopShippingRoutes(router, accounts, shipping, '/v1', 'bearer');
   }
   return router;
 }

@@ -39,6 +39,16 @@ export interface Config {
     paystackApiUrl: string;
     stripeApiUrl: string;
   };
+  /**
+   * Carrier API logins. Only ever read from the environment. Empty means that
+   * carrier is not set up and is left out of checkout. The API addresses are
+   * the live ones unless changed (to a carrier's test address, or by tests).
+   */
+  carriers: {
+    dhl: { apiKey: string; apiSecret: string; accountNumber: string; apiUrl: string };
+    ups: { clientId: string; clientSecret: string; accountNumber: string; apiUrl: string };
+    fedex: { apiKey: string; secretKey: string; accountNumber: string; apiUrl: string };
+  };
 }
 
 /** Used only in development, so sign-in works without any setup. Never valid in production. */
@@ -131,6 +141,11 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
       stripeWebhookSecret: read(env, 'STRIPE_WEBHOOK_SECRET', ''),
       paystackApiUrl: read(env, 'PAYSTACK_API_URL', 'https://api.paystack.co'),
       stripeApiUrl: read(env, 'STRIPE_API_URL', 'https://api.stripe.com'),
+    },
+    carriers: {
+      dhl: { apiKey: read(env, 'DHL_API_KEY', ''), apiSecret: read(env, 'DHL_API_SECRET', ''), accountNumber: read(env, 'DHL_ACCOUNT_NUMBER', ''), apiUrl: read(env, 'DHL_API_URL', 'https://express.api.dhl.com/mydhlapi') },
+      ups: { clientId: read(env, 'UPS_CLIENT_ID', ''), clientSecret: read(env, 'UPS_CLIENT_SECRET', ''), accountNumber: read(env, 'UPS_ACCOUNT_NUMBER', ''), apiUrl: read(env, 'UPS_API_URL', 'https://onlinetools.ups.com') },
+      fedex: { apiKey: read(env, 'FEDEX_API_KEY', ''), secretKey: read(env, 'FEDEX_SECRET_KEY', ''), accountNumber: read(env, 'FEDEX_ACCOUNT_NUMBER', ''), apiUrl: read(env, 'FEDEX_API_URL', 'https://apis.fedex.com') },
     },
   };
 }

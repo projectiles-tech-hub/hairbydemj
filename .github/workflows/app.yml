@@ -1,0 +1,58 @@
+name: App
+
+# Checks and builds the phone app (mobile/) whenever it changes.
+on:
+  pull_request:
+    paths: ['mobile/**', '.github/workflows/app.yml']
+  push:
+    branches: [main, develop]
+    paths: ['mobile/**', '.github/workflows/app.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: mobile
+
+jobs:
+  check:
+    name: Analyse, test and build for Android
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter --version
+      # android/ and ios/ hold only our own files; Flutter makes the rest (docs/app.md).
+      - run: flutter create --platforms=android,ios --org com.hairbydemj --project-name hairbydemj .
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+      - run: flutter build apk --debug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hairbydemj-android-debug
+          path: mobile/build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 7
+
+  ios:
+    name: Build for iPhone (unsigned)
+    runs-on: macos-latest
+    needs: check
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter create --platforms=android,ios --org com.hairbydemj --project-name hairbydemj .
+      - run: flutter pub get
+      - run: flutter build ios --debug --no-codesign

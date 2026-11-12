@@ -2,7 +2,7 @@
 //
 //   Shop (hairbydemj.com /api/catalog/..., api.hairbydemj.com /v1/catalog/...)
 //     Open to everyone, read-only: categories, collections, product lists
-//     with filters, product pages, shop-the-look sets.
+//     with filters, product pages, shop-the-look sets, the homepage layout.
 //   Admin (admin.hairbydemj.com /api/...)
 //     Signed-in staff with the "products" permission: products, variants,
 //     prices, stock, categories and collections.
@@ -53,6 +53,9 @@ export function shopCatalogRoutes(router: Router, deps: shop.CatalogDeps, prefix
   return router
     .get(`${prefix}/categories`, async (ctx) => {
       sendJson(ctx.res, 200, { categories: await shop.listCategories(deps) });
+    })
+    .get(`${prefix}/home`, async (ctx) => {
+      sendJson(ctx.res, 200, await shop.homeLayout(deps.db), { 'Cache-Control': 'public, max-age=60' });
     })
     .get(`${prefix}/collections`, async (ctx) => {
       sendJson(ctx.res, 200, { collections: await shop.listCollections(deps, { looks: ctx.query.get('looks') === '1' }) });

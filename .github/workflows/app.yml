@@ -31,8 +31,6 @@ jobs:
           channel: stable
           cache: true
       - run: flutter --version
-      # android/ and ios/ hold only our own files; Flutter makes the rest (docs/app.md).
-      - run: flutter create --platforms=android,ios --org com.hairbydemj --project-name hairbydemj .
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
@@ -53,6 +51,5 @@ jobs:
         with:
           channel: stable
           cache: true
-      - run: flutter create --platforms=android,ios --org com.hairbydemj --project-name hairbydemj .
       - run: flutter pub get
       - run: flutter build ios --debug --no-codesign

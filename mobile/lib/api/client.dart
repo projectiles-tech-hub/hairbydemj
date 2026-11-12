@@ -103,7 +103,7 @@ class ApiClient {
     throw ApiError(res.statusCode, '${e['code'] ?? 'error'}', '${e['message'] ?? 'Something went wrong. Please try again.'}', fields);
   }
 
-  /// A photo's address: the server keeps sizes as /media/<path>/<width>.jpg.
+  /// A photo's address: the server keeps sizes as `/media/<path>/<width>.jpg`.
   String? imageUrl(Json? picture, {int want = 640}) {
     if (picture == null) return null;
     final path = picture['path'];

@@ -1,25 +1,11 @@
-# Made by Flutter when building; never committed.
+# Made by Flutter when building; never committed. android/ and ios/ have their own lists.
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
 build/
 *.iml
 .idea/
-# Platform files that `flutter create .` makes (see docs/app.md); our own
-# changes to android/ and ios/ are committed, the rest is generated.
-android/.gradle/
-android/local.properties
-android/gradlew
-android/gradlew.bat
-android/gradle/wrapper/gradle-wrapper.jar
-android/app/src/main/java/io/flutter/plugins/
-ios/Flutter/Generated.xcconfig
-ios/Flutter/flutter_export_environment.sh
-ios/Flutter/ephemeral/
-ios/Pods/
-ios/Runner/GeneratedPluginRegistrant.*
-ios/.symlinks/
-# Signing files and keys: never committed (decision: no secrets in the repo).
+# Keys and Firebase files: never committed (no secrets in the repository).
 *.jks
 *.keystore
 key.properties

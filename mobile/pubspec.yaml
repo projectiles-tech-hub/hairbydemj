@@ -11,6 +11,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # Flutter's Material widgets, now a package of their own (Flutter 3.47 and later).
+  material_ui: ^1.11.0
   # Talking to api.hairbydemj.com.
   http: ^1.2.2
   # The sign-in token and bag token, kept in the phone's secure storage.

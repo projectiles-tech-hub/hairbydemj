@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// The brand colours (docs/design/design-system.md), the same as the website.
 class Brand {

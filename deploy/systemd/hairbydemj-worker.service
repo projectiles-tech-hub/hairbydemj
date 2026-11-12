@@ -1,0 +1,35 @@
+# The background worker: labels, emails, reminders, alerts and scheduled tasks.
+# Install on the server (module 19 sets this up with the web server's unit):
+#   sudo cp deploy/systemd/hairbydemj-worker.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now hairbydemj-worker
+# Logs: journalctl -u hairbydemj-worker -f
+
+[Unit]
+Description=hairbydemj background worker
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=hairbydemj
+Group=hairbydemj
+WorkingDirectory=/srv/hairbydemj/current
+# The same settings file as the web server. Secrets live only in this file on the server.
+EnvironmentFile=/srv/hairbydemj/shared/.env
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/node dist/server/worker/main.js
+Restart=always
+RestartSec=5
+TimeoutStopSec=60
+KillSignal=SIGTERM
+
+# Keep the worker to what it needs.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/hairbydemj/shared/uploads
+
+[Install]
+WantedBy=multi-user.target

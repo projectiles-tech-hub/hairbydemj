@@ -4,6 +4,14 @@ All notable changes to this repository, newest first.
 
 ## 2026-11-12
 
+- Module 10, Background jobs (`server/worker/`): a separate worker process
+  run by systemd; jobs claimed safely one at a time, tried again with longer
+  waits, given up after the last try or at once when they can never work,
+  and put back if a worker dies; scheduled tasks for expiring unpaid
+  orders, tracking, daily exchange rates, back-in-stock and low-stock
+  alerts, bag reminders (only with marketing consent) and daily cleanup;
+  staff can see failed jobs and try them again. `npm run worker`.
+  Migration 0017. Guide: `docs/worker.md`.
 - Module 9, Orders and returns (`server/orders/`): checkout turns the bag
   into an order waiting for payment in one step (fresh prices, delivery
   only from a saved quote, stock held, gift cards spent, order token for

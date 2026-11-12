@@ -42,24 +42,26 @@
 - Module 9 (Orders and returns) is built; pull request #18 is open.
 - Module 10 (Background jobs) is built; pull request #19 is open.
 - Module 11 (Notifications) is built; pull request #20 is open.
-- Module 12 (Search) is built; its pull request is open.
+- Module 12 (Search) is built; pull request #21 is open.
+- Module 13 (Website) is built; its pull request is open.
 - The Vercel preview was for viewing only. The real site runs from our own
   server; the page code written for the preview is kept as the starting
   point for modules 13 and 14.
 
 ## Current module
 
-[`modules/12-search.md`](modules/12-search.md): built and **in review** on
-branch `feature/search`, on top of modules 2 to 11. 228 tests pass.
+[`modules/13-website.md`](modules/13-website.md): built and **in review** on
+branch `feature/website`, on top of modules 2 to 12. 241 tests pass, and the
+shop was walked through in a real browser at desktop and phone widths.
 
 ## Exact next step
 
-1. Owner merges, in order: #11 to #20, then Module 12's.
-2. Building continues with **Module 13. Website**.
+1. Owner merges, in order: #11 to #21, then Module 13's.
+2. Building continues with **Module 14. Admin dashboard**.
 
-## Modules left after Module 12
+## Modules left after Module 13
 
-13 Website · 14 Admin dashboard · 15 Phone app · 16 AR try-on ·
+14 Admin dashboard · 15 Phone app · 16 AR try-on ·
 17 Reviews, loyalty, gift cards · 18 Live chat · 19 Deployment, backups,
 monitoring · 20 Testing and security review · 21 Launch.
 

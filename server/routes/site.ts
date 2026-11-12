@@ -1,5 +1,5 @@
 // Routes for the customer website (hairbydemj.com).
-// Pages are added in module 13, from approved designs.
+// The pages are in server/site/store (module 13).
 
 import type { AccountDeps } from '../accounts/deps.js';
 import { customerAuthRoutes } from '../accounts/routes.js';
@@ -12,19 +12,25 @@ import { shopOrderRoutes } from '../orders/routes.js';
 import type { ShippingDeps } from '../shipping/shipping.js';
 import { shopShippingRoutes } from '../shipping/routes.js';
 import { shopNotificationRoutes, unsubscribeRoutes } from '../notifications/routes.js';
+import { customerAccountRoutes } from '../accounts/profile.js';
+import { storeRoutes } from '../site/store/routes.js';
 import { Router } from '../router.js';
 import { sendHtml } from '../http.js';
 
 export function siteRoutes(accounts?: AccountDeps, payments?: PaymentDeps, shipping?: ShippingDeps, orders?: OrderDeps): Router {
-  const router = new Router().get('/', ({ res }) => {
-    sendHtml(
-      res,
-      200,
-      '<!doctype html><html lang="en"><head><meta charset="utf-8">' +
-        '<meta name="viewport" content="width=device-width, initial-scale=1">' +
-        '<title>hairbydemj</title></head><body><h1>hairbydemj</h1></body></html>',
-    );
-  });
+  const router = new Router();
+  // Without a database (development only) there is just a placeholder page.
+  if (!accounts) {
+    return router.get('/', ({ res }) => {
+      sendHtml(
+        res,
+        200,
+        '<!doctype html><html lang="en"><head><meta charset="utf-8">' +
+          '<meta name="viewport" content="width=device-width, initial-scale=1">' +
+          '<title>hairbydemj</title></head><body><h1>hairbydemj</h1></body></html>',
+      );
+    });
+  }
   if (accounts) {
     customerAuthRoutes(router, accounts, '/api/auth', 'cookie');
     shopCatalogRoutes(router, accounts, '/api/catalog');
@@ -33,6 +39,9 @@ export function siteRoutes(accounts?: AccountDeps, payments?: PaymentDeps, shipp
     if (shipping) shopShippingRoutes(router, accounts, shipping, '/api', 'cookie');
     if (orders) shopOrderRoutes(router, accounts, orders, '/api', 'cookie');
     shopNotificationRoutes(router, accounts, '/api', 'cookie');
+    customerAccountRoutes(router, accounts, '/api', 'cookie');
+    // The pages themselves (module 13).
+    storeRoutes(router, accounts);
     unsubscribeRoutes(router, accounts);
   }
   return router;

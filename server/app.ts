@@ -7,6 +7,7 @@ import type { AccountDeps } from './accounts/deps.js';
 import type { MediaDeps } from './media/media.js';
 import { paymentDeps } from './payments/routes.js';
 import { shippingDeps } from './shipping/routes.js';
+import { orderDeps } from './orders/routes.js';
 import { join } from 'node:path';
 import type { Config } from './config.js';
 import type { Logger } from './logger.js';
@@ -42,10 +43,11 @@ export function createApp(config: Config, logger: Logger, options: AppOptions): 
   // Payment providers are set up once, from the keys in the environment.
   const payments = options.accounts ? paymentDeps(options.accounts, logger) : undefined;
   const shipping = options.accounts ? shippingDeps(options.accounts, logger) : undefined;
+  const orders = options.accounts ? orderDeps(options.accounts, logger) : undefined;
   const routers: Record<Area, Router> = {
-    site: options.routers?.site ?? siteRoutes(options.accounts, payments, shipping),
-    admin: options.routers?.admin ?? adminRoutes(options.accounts, options.media, payments, shipping),
-    api: options.routers?.api ?? apiRoutes(options.accounts, payments, shipping),
+    site: options.routers?.site ?? siteRoutes(options.accounts, payments, shipping, orders),
+    admin: options.routers?.admin ?? adminRoutes(options.accounts, options.media, payments, shipping, orders),
+    api: options.routers?.api ?? apiRoutes(options.accounts, payments, shipping, orders),
   };
   const areaByHost = new Map<string, Area>([
     [config.hosts.site, 'site'],

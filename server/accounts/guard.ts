@@ -5,7 +5,7 @@
 import type { Db } from '../db/pool.js';
 import { ApiError } from '../http.js';
 
-export type AttemptKind = 'customer' | 'staff' | 'staff_two_step' | 'code' | 'sign_up' | 'gift_card';
+export type AttemptKind = 'customer' | 'staff' | 'staff_two_step' | 'code' | 'sign_up' | 'gift_card' | 'order_lookup';
 
 export const GUARD = {
   windowMinutes: 15,

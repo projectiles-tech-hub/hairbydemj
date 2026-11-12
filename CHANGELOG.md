@@ -4,6 +4,16 @@ All notable changes to this repository, newest first.
 
 ## 2026-11-12
 
+- Module 9, Orders and returns (`server/orders/`): checkout turns the bag
+  into an order waiting for payment in one step (fresh prices, delivery
+  only from a saved quote, stock held, gift cards spent, order token for
+  guests, confirmation email); unpaid orders expire and let everything go,
+  and a late payment takes it back; customers see and cancel their orders,
+  guests look orders up by number and email with guessing limits;
+  invoices; staff list, notes, address corrections and cancellation with
+  refunds; stock leaves the shelf at dispatch; returns from request to
+  refund, with money back to the card and gift card, or store credit with
+  a bonus. Migration 0016. Guide: `docs/orders.md`.
 - Module 8, Shipping (`server/shipping/`): the bag is packed into the
   store's boxes; zones and prices inside Nigeria set by staff; live DHL
   Express, UPS and FedEx prices for addresses abroad, converted to the

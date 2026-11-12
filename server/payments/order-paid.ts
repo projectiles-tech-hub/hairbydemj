@@ -3,7 +3,8 @@
 
 import type { Db, DbClient } from '../db/pool.js';
 import { ApiError } from '../http.js';
-import { holdStock } from '../cart/stock.js';
+import { holdStock, shipStock } from '../cart/stock.js';
+import { GiftCardSpent, reRedeemGiftCards } from '../cart/gift-cards.js';
 
 type Q = { query: DbClient['query'] } | Db;
 
@@ -28,12 +29,15 @@ export async function markOrderPaid(c: Q, orderId: number, now: Date): Promise<{
     try {
       await c.query('savepoint late_payment');
       await holdStock(c, items.rows.map((r) => ({ variantId: Number(r.variant_id), quantity: Number(r.quantity) })));
+      // Gift card money given back when the checkout expired is taken again.
+      await reRedeemGiftCards(c, orderId, now);
       await c.query('release savepoint late_payment');
     } catch (error) {
       await c.query('rollback to savepoint late_payment');
-      if (!(error instanceof ApiError && error.code === 'out_of_stock')) throw error;
+      if (!(error instanceof ApiError && error.code === 'out_of_stock') && !(error instanceof GiftCardSpent)) throw error;
       await c.query("update orders set payment_status = 'paid', paid_at = $2 where id = $1", [orderId, now]);
-      await orderEvent(c, orderId, 'paid_after_cancel', 'Payment arrived after the order was cancelled, and an item has sold out since. The payment is being refunded in full.', { visible: true });
+      const why = error instanceof GiftCardSpent ? 'a gift card used on it has been spent since' : 'an item has sold out since';
+      await orderEvent(c, orderId, 'paid_after_cancel', `Payment arrived after the order was cancelled, and ${why}. The payment is being refunded in full.`, { visible: true });
       return { refundNeeded: true };
     }
     await orderEvent(c, orderId, 'reopened', 'Payment arrived after the checkout had expired. The items were still in stock, so the order goes ahead.');
@@ -54,10 +58,25 @@ export async function markOrderPaid(c: Q, orderId: number, now: Date): Promise<{
 export async function updateRefundStatus(c: Q, orderId: number): Promise<void> {
   const totals = await c.query(
     `select coalesce((select sum(amount_minor) from payments where order_id = $1 and status = 'succeeded'), 0) + (select gift_card_minor from orders where id = $1) as paid,
-            coalesce((select sum(amount_minor) from refunds where order_id = $1 and status = 'succeeded'), 0) as refunded`,
+            coalesce((select sum(amount_minor) from refunds where order_id = $1 and status = 'succeeded'), 0)
+            -- Money put back on gift cards counts too: what the cards gave, less what they still give.
+            + greatest((select gift_card_minor from orders where id = $1)
+                       + coalesce((select sum(amount_minor) from gift_card_transactions where order_id = $1 and kind in ('redeem', 'refund')), 0), 0) as refunded`,
     [orderId],
   );
   const { paid, refunded } = totals.rows[0] as { paid: number; refunded: number };
   if (Number(refunded) <= 0) return;
   await c.query("update orders set payment_status = $2 where id = $1 and payment_status in ('paid', 'partly_refunded', 'refunded')", [orderId, Number(refunded) >= Number(paid) ? 'refunded' : 'partly_refunded']);
+}
+
+/**
+ * The order's parcel has left: its items come off what is on hand (they were
+ * only held until now). Done once per order, however many parcels or
+ * tracking updates follow.
+ */
+export async function shipOrderStock(c: Q, orderId: number, now: Date): Promise<void> {
+  const claimed = await c.query('update orders set stock_shipped_at = $2 where id = $1 and stock_shipped_at is null returning id', [orderId, now]);
+  if (!claimed.rowCount) return;
+  const items = await c.query("select variant_id, quantity from order_items where order_id = $1 and kind = 'variant' and variant_id is not null", [orderId]);
+  await shipStock(c, items.rows.map((r) => ({ variantId: Number(r.variant_id), quantity: Number(r.quantity) })), orderId);
 }

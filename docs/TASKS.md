@@ -19,12 +19,13 @@ Update this file at the end of every session.
 
 ## Blocked / waiting on owner
 
-- [ ] Review and merge the Module 2 (Database) pull request (#11), then Module 3 (Accounts, #12), then Module 4 (Catalogue, #13), then Module 5 (Media, #14), then Module 6 (#15), then Module 7 (Payments, #16), then the Module 8 (Shipping) pull request
+- [ ] Review and merge the Module 2 (Database) pull request (#11), then Module 3 (Accounts, #12), then Module 4 (Catalogue, #13), then Module 5 (Media, #14), then Module 6 (#15), then Module 7 (Payments, #16), then Module 8 (Shipping, #17), then the Module 9 (Orders and returns) pull request
 - [ ] Paystack: create the account, send the test keys (secret and public); set the webhook address in docs/payments.md
 - [ ] Stripe: create the account, send the test keys (secret and publishable) and the webhook secret after adding the webhook address
 - [ ] DHL Express: ask the DHL account manager for MyDHL API access and send the API key, secret and account number (test keys first); see docs/shipping.md
 - [ ] UPS: create an app on developer.ups.com and send the client ID, client secret and shipper number
 - [ ] FedEx: create a project on developer.fedex.com and send the API key, secret key and account number; FedEx label certification follows
+- [ ] Confirm or change the return window (sample: 14 days) and the store credit bonus (sample: 10%)
 - [ ] Give the store address to print on labels as the sender, and where the hair is made (for customs forms)
 - [ ] List the boxes you pack in (inside size and empty weight) and the local delivery zones, couriers and prices inside Nigeria
 - [ ] Google sign-in: create the client IDs in Google Cloud Console (free) for the website and the apps
@@ -79,3 +80,4 @@ Update this file at the end of every session.
 - [x] 2026-11-11 — Module 6 (Cart and currencies) built: carts for guests and customers, currencies and daily rates, discounts, gift card redemption, stock holding
 - [x] 2026-11-11 — Module 7 (Payments) built: Paystack and Stripe, signed webhooks, repeats and late payments handled, refunds
 - [x] 2026-11-12 — Module 8 built: packing, local zones, DHL, UPS and FedEx prices, labels and tracking, duties notice, tests
+- [x] 2026-11-12 — Module 9 built: checkout, order statuses, guest look-up, invoices, staff notes and cancellation, returns with refunds and store credit, tests

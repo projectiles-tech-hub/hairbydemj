@@ -4,6 +4,15 @@ All notable changes to this repository, newest first.
 
 ## 2026-11-13
 
+- Module 15, Phone app (`mobile/`): the Flutter app for iPhone and Android
+  on the shop's API: onboarding, home (following the admin's homepage
+  settings), shop, product lists with filters, sorting and endless
+  scrolling, search with suggestions, product pages, bag, checkout with
+  Paystack and Stripe, the after-payment screen, sign-in (email, Google,
+  Apple), orders with tracking, cancelling and returns, addresses, wishlist,
+  notifications and push, profile, password, deleting the account,
+  currency and help. Brand fonts, colours and app icon. Checks and builds
+  in GitHub Actions. New address `GET /v1/catalog/home`. Guide: `docs/app.md`.
 - Module 14, Admin (`server/admin/live/`, `server/admin/api.ts`,
   `browser/staff.ts`): every staff page made on the server with real data at
   admin.hairbydemj.com: sign-in with the authenticator code, accepting an

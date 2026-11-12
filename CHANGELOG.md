@@ -2,6 +2,19 @@
 
 All notable changes to this repository, newest first.
 
+## 2026-11-13
+
+- Module 14, Admin (`server/admin/live/`, `server/admin/api.ts`,
+  `browser/staff.ts`): every staff page made on the server with real data at
+  admin.hairbydemj.com: sign-in with the authenticator code, accepting an
+  invitation, dashboard, orders and order actions, returns, customers,
+  products and the product editor with variants, prices and photos,
+  categories and collections, inventory adjustments, discounts, homepage,
+  content pages, emails, shipping, payments and currencies, reports with a
+  spreadsheet download, staff and roles, activity log, store settings and
+  system. Pages and buttons follow each role. The shop's home page now
+  follows the Homepage settings. Guide: `docs/admin.md`.
+
 ## 2026-11-12
 
 - Module 13, Website (`server/site/store/`, `browser/store.ts`): every

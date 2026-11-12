@@ -9,6 +9,8 @@ import { paymentDeps } from './payments/routes.js';
 import { shippingDeps } from './shipping/routes.js';
 import { orderDeps } from './orders/routes.js';
 import { notFoundHtml, PAGE_HEADERS } from './site/store/routes.js';
+import { adminNotFoundHtml } from './admin/live/routes.js';
+import { ADMIN_HEADERS } from './admin/live/view.js';
 import { join } from 'node:path';
 import type { Config } from './config.js';
 import type { Logger } from './logger.js';
@@ -71,6 +73,10 @@ export function createApp(config: Config, logger: Logger, options: AppOptions): 
     // An unknown website address gets the shop's own "not found" page.
     if (area === 'site' && status === 404 && options.accounts) {
       sendHtml(res, 404, notFoundHtml(), PAGE_HEADERS);
+      return;
+    }
+    if (area === 'admin' && status === 404 && options.accounts) {
+      sendHtml(res, 404, adminNotFoundHtml(), ADMIN_HEADERS);
       return;
     }
     const safe = escapeHtml(message);

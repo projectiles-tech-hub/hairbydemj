@@ -87,6 +87,8 @@ same content, split by topic, is in `docs/spec/`.
 | `server/search/` | Search: parsing, typo correction, ranking, suggestions, report |
 | `docs/website.md` | The live website: pages, paying, search engines, safety, customer account addresses |
 | `server/site/store/` | Live website pages (real data); `browser/store.ts` is their script |
+| `docs/admin.md` | The live admin: pages, who sees them, sign-in, addresses it adds |
+| `server/admin/live/`, `server/admin/api.ts` | Live admin pages (real data); `browser/staff.ts` is their script |
 | `docs/preview.md` | The online design preview: what it is, how to build and publish it |
 | `server/site/`, `browser/`, `public/` | Website page code, browser script, styles, fonts and logo |
 | `server/admin/` | Admin page code |

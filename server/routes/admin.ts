@@ -1,5 +1,5 @@
 // Routes for the staff admin dashboard (admin.hairbydemj.com).
-// Pages are added in module 14, from approved designs.
+// The pages (module 14) are in server/admin/live/; the /api addresses they use are here.
 
 import type { AccountDeps } from '../accounts/deps.js';
 import { staffRoutes } from '../accounts/routes.js';
@@ -15,30 +15,37 @@ import type { ShippingDeps } from '../shipping/shipping.js';
 import { adminShippingRoutes } from '../shipping/routes.js';
 import { adminWorkerRoutes } from '../worker/routes.js';
 import { adminMessageRoutes } from '../notifications/routes.js';
+import { adminApiRoutes } from '../admin/api.js';
+import { liveAdminRoutes } from '../admin/live/routes.js';
 import { Router } from '../router.js';
 import { sendHtml } from '../http.js';
 
 export function adminRoutes(accounts?: AccountDeps, media?: MediaDeps, payments?: PaymentDeps, shipping?: ShippingDeps, orders?: OrderDeps): Router {
-  const router = new Router().get('/', ({ res }) => {
-    sendHtml(
-      res,
-      200,
-      '<!doctype html><html lang="en"><head><meta charset="utf-8">' +
-        '<meta name="viewport" content="width=device-width, initial-scale=1">' +
-        '<meta name="robots" content="noindex">' +
-        '<title>hairbydemj admin</title></head><body><h1>hairbydemj admin</h1></body></html>',
-    );
-  });
-  if (accounts) {
-    staffRoutes(router, accounts);
-    adminCatalogRoutes(router, accounts, media);
-    adminCartRoutes(router, accounts, { ratesUrl: accounts.config.ratesUrl });
-    if (media) mediaRoutes(router, accounts, media);
-    if (payments) adminPaymentRoutes(router, accounts, payments);
-    if (shipping) adminShippingRoutes(router, accounts, shipping);
-    if (orders && payments) adminOrderRoutes(router, accounts, orders, payments);
-    adminWorkerRoutes(router, accounts);
-    adminMessageRoutes(router, accounts);
+  const router = new Router();
+  if (!accounts) {
+    // Without a database there is nothing to manage: a plain holding page.
+    return router.get('/', ({ res }) => {
+      sendHtml(
+        res,
+        200,
+        '<!doctype html><html lang="en"><head><meta charset="utf-8">' +
+          '<meta name="viewport" content="width=device-width, initial-scale=1">' +
+          '<meta name="robots" content="noindex">' +
+          '<title>hairbydemj admin</title></head><body><h1>hairbydemj admin</h1></body></html>',
+      );
+    });
   }
+  staffRoutes(router, accounts);
+  adminCatalogRoutes(router, accounts, media);
+  adminCartRoutes(router, accounts, { ratesUrl: accounts.config.ratesUrl });
+  if (media) mediaRoutes(router, accounts, media);
+  if (payments) adminPaymentRoutes(router, accounts, payments);
+  if (shipping) adminShippingRoutes(router, accounts, shipping);
+  if (orders && payments) adminOrderRoutes(router, accounts, orders, payments);
+  adminWorkerRoutes(router, accounts);
+  adminMessageRoutes(router, accounts);
+  adminApiRoutes(router, accounts);
+  // The pages staff use (module 14).
+  liveAdminRoutes(router, accounts, { shipping, payments });
   return router;
 }

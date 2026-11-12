@@ -91,6 +91,8 @@ same content, split by topic, is in `docs/spec/`.
 | `server/admin/live/`, `server/admin/api.ts` | Live admin pages (real data); `browser/staff.ts` is their script |
 | `docs/app.md` | The phone app: screens, paying, build settings, stores, push and sign-in set-up |
 | `mobile/` | The Flutter app for iPhone and Android |
+| `docs/try-on.md` | Camera try-on: how it works, preparing wig pictures, model set-up |
+| `server/tryon/` | Try-on pictures, the face model download; `browser/try-on.ts` is the website's try-on |
 | `docs/preview.md` | The online design preview: what it is, how to build and publish it |
 | `server/site/`, `browser/`, `public/` | Website page code, browser script, styles, fonts and logo |
 | `server/admin/` | Admin page code |

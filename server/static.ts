@@ -28,6 +28,9 @@ const CONTENT_TYPES: Record<string, string> = {
   '.mp4': 'video/mp4',
   '.webm': 'video/webm',
   '.webmanifest': 'application/manifest+json',
+  // The try-on's face tracking (module 16).
+  '.wasm': 'application/wasm',
+  '.task': 'application/octet-stream',
 };
 
 export interface StaticOptions {

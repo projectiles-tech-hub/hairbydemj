@@ -173,18 +173,18 @@ function start(root: HTMLElement): void {
     saveButton.disabled = false;
     const cameras = (await navigator.mediaDevices.enumerateDevices()).filter((d) => d.kind === 'videoinput');
     switchButton.hidden = cameras.length < 2;
+    smooth = null;
+    // The camera shows straight away; the wig appears once face tracking is ready.
+    requestAnimationFrame(frame);
     try {
       await loadLandmarker('VIDEO');
     } catch {
       say('The try-on could not start in this browser. Try the latest Chrome, Safari, Edge or Firefox.');
-      return;
     }
-    smooth = null;
-    requestAnimationFrame(frame);
   }
 
   function frame(): void {
-    if (mode !== 'camera' || !landmarker) return;
+    if (mode !== 'camera') return;
     const w = video.videoWidth;
     const h = video.videoHeight;
     if (w && h) {
@@ -200,7 +200,7 @@ function start(root: HTMLElement): void {
       }
       ctx.drawImage(video, 0, 0, w, h);
       ctx.restore();
-      if (video.currentTime !== lastVideoTime) {
+      if (landmarker && video.currentTime !== lastVideoTime) {
         lastVideoTime = video.currentTime;
         const found = landmarker.detectForVideo(video, performance.now()).faceLandmarks[0];
         const points = found ? templesFrom(found, w, h, mirrored) : null;

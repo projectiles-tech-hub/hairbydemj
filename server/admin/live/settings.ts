@@ -46,8 +46,8 @@ export function invitePage(token: string): string {
   return `<section class="asign stack stack--lg" aria-labelledby="invite-title">
 <h1 class="h2" id="invite-title">Set up your staff account</h1>
 <form class="stack" data-invite="${esc(token)}" novalidate>
-<p>Choose a password of at least 10 characters.</p>
-<div class="field"><label class="field__label" for="in-password">Password</label><input class="field__input" id="in-password" name="password" type="password" autocomplete="new-password" minlength="10" required></div>
+<p>Choose a password of at least 8 characters.</p>
+<div class="field"><label class="field__label" for="in-password">Password</label><input class="field__input" id="in-password" name="password" type="password" autocomplete="new-password" minlength="8" required></div>
 <button class="btn btn--primary" type="submit">Continue</button>
 <p class="small" role="alert" data-form-error></p>
 </form>

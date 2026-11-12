@@ -19,7 +19,7 @@ Update this file at the end of every session.
 
 ## Blocked / waiting on owner
 
-- [ ] Review and merge the Module 2 (Database) pull request (#11), then Module 3 (Accounts, #12), then Module 4 (Catalogue, #13), then Module 5 (Media, #14), then Module 6 (#15), then Module 7 (Payments, #16), then Module 8 (Shipping, #17), then Module 9 (Orders and returns, #18), then Module 10 (Background jobs, #19), then the Module 11 (Notifications) pull request
+- [ ] Review and merge the Module 2 (Database) pull request (#11), then Module 3 (Accounts, #12), then Module 4 (Catalogue, #13), then Module 5 (Media, #14), then Module 6 (#15), then Module 7 (Payments, #16), then Module 8 (Shipping, #17), then Module 9 (Orders and returns, #18), then Module 10 (Background jobs, #19), then Module 11 (Notifications, #20), then the Module 12 (Search) pull request
 - [ ] Paystack: create the account, send the test keys (secret and public); set the webhook address in docs/payments.md
 - [ ] Stripe: create the account, send the test keys (secret and publishable) and the webhook secret after adding the webhook address
 - [ ] DHL Express: ask the DHL account manager for MyDHL API access and send the API key, secret and account number (test keys first); see docs/shipping.md
@@ -85,3 +85,4 @@ Update this file at the end of every session.
 - [x] 2026-11-12 — Module 9 built: checkout, order statuses, guest look-up, invoices, staff notes and cancellation, returns with refunds and store credit, tests
 - [x] 2026-11-12 — Module 10 built: worker process, retries, scheduled tasks, alerts, reminders, cleanup, systemd service, tests
 - [x] 2026-11-12 — Module 11 built: own email sending with DKIM, templates, push to Apple and Google, in-app list, preferences, unsubscribe, tests
+- [x] 2026-11-12 — Module 12 built: search with typo correction, suggestions, shared filters, ranking, staff report, tests

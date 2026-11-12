@@ -6,6 +6,7 @@
 import type { Db } from '../db/pool.js';
 import { ApiError } from '../http.js';
 import { rulesToSql, SOLD_SQL, storedRules, VISIBLE_SQL } from './rules.js';
+import { MATCH_SQL, parseSearch, RANK_SQL, recordSearch } from '../search/search.js';
 
 /** A photo: its address folder, description and the widths that exist (add "/640.webp" or "/640.jpg" under /media/). */
 export interface Picture {
@@ -19,11 +20,13 @@ export interface CatalogDeps {
   now: () => Date;
 }
 
-export const SORTS = ['newest', 'best_selling', 'price_low', 'price_high', 'name'] as const;
+export const SORTS = ['newest', 'best_selling', 'price_low', 'price_high', 'name', 'relevance'] as const;
 export type Sort = (typeof SORTS)[number];
 
 export interface ProductQuery {
   currency: string;
+  /** Words to search for (module 12). With it, the list is sorted by how well products fit unless another sort is asked for. */
+  q?: string;
   category?: string;
   collection?: string;
   textures?: string[];
@@ -63,6 +66,8 @@ export interface ProductPage {
   nextCursor: string | null;
   /** How many products match in all. Sent with the first page only. */
   total?: number;
+  /** For a search: what was searched for, the corrected words if any, and whether "any word" was used because "all words" found nothing. */
+  search?: { query: string; corrected: string | null; broadened: boolean };
 }
 
 export const PAGE_SIZE = { default: 24, max: 48 };
@@ -99,6 +104,7 @@ const SORT_SQL: Record<Sort, { key: string; desc: boolean; cast: string }> = {
   price_low: { key: 'price_from', desc: false, cast: 'bigint' },
   price_high: { key: 'price_from', desc: true, cast: 'bigint' },
   name: { key: 'name_key', desc: false, cast: 'text' },
+  relevance: { key: 'rank', desc: true, cast: 'float8' },
 };
 
 /** A list of products for a category, a collection or the whole shop, one page at a time. */
@@ -141,6 +147,32 @@ export async function listProducts(deps: CatalogDeps, query: ProductQuery): Prom
   if (query.minPriceMinor !== undefined) variantWhere.push(`pr.amount_minor >= ${param(query.minPriceMinor)}`);
   if (query.maxPriceMinor !== undefined) variantWhere.push(`pr.amount_minor <= ${param(query.maxPriceMinor)}`);
   if (query.inStock) variantWhere.push('exists (select 1 from inventory i where i.variant_id = v.id and i.on_hand - i.reserved > 0)');
+  // A search: products whose words match, with typing mistakes corrected.
+  let rankSql = '0::float8';
+  let search: ProductPage['search'];
+  let parsedSearch: Awaited<ReturnType<typeof parseSearch>> | null = null;
+  if (query.q && query.q.trim()) {
+    const parsed = await parseSearch(deps.db, query.q);
+    parsedSearch = parsed;
+    if (parsed.lengths.length) variantWhere.push(`v.length_inches = any (${param(parsed.lengths)})`);
+    let broadened = false;
+    if (parsed.tsquery) {
+      let tsquery = parsed.tsquery;
+      if (parsed.tsqueryAny) {
+        // All the words first; if nothing has them all, any of them.
+        const all = await deps.db.query(`select 1 from products p where ${VISIBLE_SQL('p', '$1')} and ${MATCH_SQL('p', '$2', '$3')} limit 1`, [deps.now(), parsed.tsquery, parsed.normalised]);
+        if (!all.rowCount) {
+          tsquery = parsed.tsqueryAny;
+          broadened = true;
+        }
+      }
+      const tsParam = param(tsquery);
+      const typedParam = param(parsed.normalised);
+      where.push(MATCH_SQL('p', tsParam, typedParam));
+      rankSql = RANK_SQL('p', tsParam, typedParam);
+    }
+    search = { query: parsed.normalised, corrected: parsed.corrected, broadened };
+  }
   if (variantWhere.length) {
     where.push(`exists (select 1 from variants v join prices pr on pr.variant_id = v.id and pr.currency = ${cur} where v.product_id = p.id and v.is_active and ${variantWhere.join(' and ')})`);
   }
@@ -153,6 +185,7 @@ export async function listProducts(deps: CatalogDeps, query: ProductQuery): Prom
            x.price_from, x.price_to, x.compare_at, x.lengths,
            coalesce(x.available, 0) as available,
            ${SOLD_SQL('p')}::bigint as sold,
+           ${rankSql}::float8 as rank,
            (select jsonb_build_object('path', m.path, 'alt', m.alt, 'widths', m.widths) from product_media m where m.product_id = p.id and m.kind = 'image' and m.status = 'ready' order by m.position, m.id limit 1) as image
     from products p
     left join categories c on c.id = p.category_id
@@ -168,7 +201,7 @@ export async function listProducts(deps: CatalogDeps, query: ProductQuery): Prom
     ) x on x.price_from is not null
     where ${where.join(' and ')}`;
 
-  const sort = SORT_SQL[query.sort ?? 'newest'];
+  const sort = SORT_SQL[query.sort ?? (search ? 'relevance' : 'newest')];
   const limit = Math.min(Math.max(1, query.limit ?? PAGE_SIZE.default), PAGE_SIZE.max);
   let total: number | undefined;
   let page = '';
@@ -182,6 +215,8 @@ export async function listProducts(deps: CatalogDeps, query: ProductQuery): Prom
   const dir = sort.desc ? 'desc' : 'asc';
   const result = await deps.db.query(`select * from (${base}) b ${page} order by ${sort.key} ${dir}, id ${dir} limit ${param(limit + 1)}`, values);
   const rows = result.rows.slice(0, limit) as Array<Record<string, unknown>>;
+  // The first page of a search is noted for the admin's search report.
+  if (parsedSearch && total !== undefined) await recordSearch(deps.db, parsedSearch, total, deps.now());
   const last = rows[rows.length - 1];
   const newSince = deps.now().getTime() - 30 * 86_400_000;
   return {
@@ -201,8 +236,9 @@ export async function listProducts(deps: CatalogDeps, query: ProductQuery): Prom
       lengths: (r.lengths as number[] | null) ?? [],
       isNew: (r.created_at as Date).getTime() > newSince,
     })),
-    nextCursor: result.rows.length > limit && last ? encodeCursor([sort.cast === 'bigint' ? Number(last[sort.key]) : String(last[sort.key]), Number(last.id)]) : null,
+    nextCursor: result.rows.length > limit && last ? encodeCursor([sort.cast === 'text' ? String(last[sort.key]) : Number(last[sort.key]), Number(last.id)]) : null,
     ...(total === undefined ? {} : { total }),
+    ...(search ? { search } : {}),
   };
 }
 

@@ -8,8 +8,14 @@ import { GiftCardSpent, reRedeemGiftCards } from '../cart/gift-cards.js';
 
 type Q = { query: DbClient['query'] } | Db;
 
+/** Order events the customer is told about by email, push and the in-app list (module 11). */
+const TOLD = new Set(['paid', 'shipped', 'shipment_in_transit', 'shipment_out_for_delivery', 'shipment_exception', 'delivered', 'refunded']);
+
 export async function orderEvent(c: Q, orderId: number, kind: string, summary: string, options: { staffId?: number | null; visible?: boolean } = {}): Promise<void> {
-  await c.query('insert into order_events (order_id, kind, summary, staff_id, visible_to_customer) values ($1, $2, $3, $4, $5)', [orderId, kind, summary, options.staffId ?? null, options.visible ?? false]);
+  const made = await c.query('insert into order_events (order_id, kind, summary, staff_id, visible_to_customer) values ($1, $2, $3, $4, $5) returning id', [orderId, kind, summary, options.staffId ?? null, options.visible ?? false]);
+  if (options.visible && TOLD.has(kind)) {
+    await c.query("insert into jobs (kind, payload, unique_key) values ('order_update', $1, $2) on conflict (unique_key) do nothing", [JSON.stringify({ orderId, kind, summary }), `order_update:${String(made.rows[0]?.id)}`]);
+  }
 }
 
 /**

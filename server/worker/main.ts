@@ -9,6 +9,7 @@ import { createPool } from '../db/pool.js';
 import { createLogger } from '../logger.js';
 import { dhl, fedex, ups } from '../shipping/carriers.js';
 import { join } from 'node:path';
+import { apns, fcm } from '../notifications/push.js';
 import { createWorker } from './worker.js';
 
 function main(): void {
@@ -31,6 +32,11 @@ function main(): void {
   const now = (): Date => new Date();
   const mail = queueMailer(db, logger, config.env === 'development');
   const c = config.carriers;
+  const p = config.push;
+  const push = {
+    ios: apns({ keyId: p.apnsKeyId, teamId: p.apnsTeamId, privateKey: p.apnsPrivateKey, bundleId: p.apnsBundleId, url: p.apnsUrl }),
+    android: fcm({ projectId: p.fcmProjectId, clientEmail: p.fcmClientEmail, privateKey: p.fcmPrivateKey, apiUrl: p.fcmApiUrl, tokenUrl: p.fcmTokenUrl }),
+  };
   const worker = createWorker({
     db,
     now,
@@ -40,6 +46,7 @@ function main(): void {
     fetchRates,
     shipping: { db, now, logger, carriers: { dhl: dhl(c.dhl), ups: ups(c.ups), fedex: fedex(c.fedex) }, labelDir: join(config.mediaDir, 'private', 'labels') },
     orders: { db, now, logger, mail },
+    notify: { db, now, logger, config, push },
   });
 
   const stop = (signal: string): void => {

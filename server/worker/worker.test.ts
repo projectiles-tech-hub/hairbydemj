@@ -14,6 +14,7 @@ import { createTestDatabase, TEST_DATABASE_URL, type TestDatabase } from '../db/
 import { createLogger } from '../logger.js';
 import { orderDeps } from '../orders/routes.js';
 import { shippingDeps } from '../shipping/routes.js';
+import { apns, fcm } from '../notifications/push.js';
 import { claimJob, enqueue, recoverStuckJobs, retryDelaySeconds } from './queue.js';
 import { abandonedCartReminders, backInStockAlerts, dailyCleanup, HANDLERS, lowStockAlerts, PermanentFailure, SCHEDULE, type WorkerDeps } from './tasks.js';
 import { createWorker, runDueTasks, runOneJob } from './worker.js';
@@ -58,7 +59,8 @@ describe('the background worker', { skip }, () => {
     await migrate(db, 'db/migrations');
     const config = loadConfig({});
     deps = accountDeps({ db, config, mail, now: () => clock, passwordParams: { N: 1024, r: 8, p: 1 }, identity: createIdentityVerifier({ google: { ...PROVIDER_DEFAULTS.google, clientIds: [] }, apple: { ...PROVIDER_DEFAULTS.apple, clientIds: [] } }) });
-    worker = { db, now: () => clock, logger: quiet, config, mail, shipping: shippingDeps(deps, quiet), orders: orderDeps(deps, quiet), fetchRates: async () => ({ USD: 0.000625, GBP: 0.0005, EUR: 0.00058 }) };
+    worker = { db, now: () => clock, logger: quiet, config, mail, shipping: shippingDeps(deps, quiet), orders: orderDeps(deps, quiet), fetchRates: async () => ({ USD: 0.000625, GBP: 0.0005, EUR: 0.00058 }),
+      notify: { db, now: () => clock, logger: quiet, config, push: { ios: apns({ keyId: '', teamId: '', privateKey: '', bundleId: 'x', url: 'https://x' }), android: fcm({ projectId: '', clientEmail: '', privateKey: '', apiUrl: 'https://x', tokenUrl: 'https://x' }) } } };
     server = createServer(createApp(config, quiet, { version: 'test', accounts: deps }));
     await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
     port = (server.address() as AddressInfo).port;

@@ -40,6 +40,7 @@
 - Module 7 (Payments) is built; pull request #16 is open.
 - Module 8 (Shipping) is built; pull request #17 is open.
 - Module 9 (Orders and returns) is built; pull request #18 is open.
+- Module 10 (Background jobs) is built; pull request #19 is open.
 - The Vercel preview was for viewing only. The real site runs from our own
   server; the page code written for the preview is kept as the starting
   point for modules 13 and 14.

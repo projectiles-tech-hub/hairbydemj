@@ -1,0 +1,13 @@
+# Made by Flutter when building; never committed. android/ and ios/ have their own lists.
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+*.iml
+.idea/
+# Keys and Firebase files: never committed (no secrets in the repository).
+*.jks
+*.keystore
+key.properties
+ios/Runner/GoogleService-Info.plist
+android/app/google-services.json

@@ -1,0 +1,98 @@
+name: Checks
+
+on:
+  pull_request:
+  push:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+
+jobs:
+  server:
+    name: Type check and tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          # A throwaway database that exists only while the checks run.
+          POSTGRES_PASSWORD: checks-only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgres://postgres:checks-only@127.0.0.1:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      # The free command-line tools the media module uses, so its tests run here too.
+      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libvips-tools ffmpeg
+      - run: npm ci
+      # pg_dump of the same version as the database (a newer one is installed here),
+      # for the backup tests.
+      - run: |
+          sudo apt-get install -y --no-install-recommends postgresql-common
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install -y --no-install-recommends postgresql-client-16
+      - run: npm run typecheck
+      - run: npm test
+        env:
+          HBD_PG_BIN: /usr/lib/postgresql/16/bin
+
+  browser:
+    name: Browser journeys and speed
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: checks-only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgres://postgres:checks-only@127.0.0.1:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+
+  deploy-files:
+    name: Server files (scripts, services, Caddy)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check the shell scripts
+        run: shellcheck --external-sources --source-path=SCRIPTDIR --severity=warning deploy/setup-server.sh deploy/bin/*.sh
+      - name: Check the systemd files
+        run: |
+          out="$(systemd-analyze verify --man=no deploy/systemd/*.service deploy/systemd/*.timer 2>&1 || true)"
+          echo "$out"
+          ! echo "$out" | grep -Ei 'unknown|invalid|bad|syntax'
+      - name: Check the Caddy settings
+        run: |
+          sudo install -d -m 0755 /etc/apt/keyrings
+          curl -fsSL https://dl.cloudsmith.io/public/caddy/stable/gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+          curl -fsSL https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+          sudo apt-get update -q && sudo apt-get install -y -q caddy
+          # A throwaway certificate standing in for the Cloudflare origin certificate.
+          sudo install -d /etc/caddy/certs
+          sudo openssl req -x509 -newkey rsa:2048 -nodes -days 1 -subj /CN=hairbydemj.com -keyout /etc/caddy/certs/origin-key.pem -out /etc/caddy/certs/origin.pem
+          sudo caddy validate --config deploy/caddy/Caddyfile --adapter caddyfile

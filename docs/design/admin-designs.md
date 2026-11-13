@@ -1,0 +1,50 @@
+# Admin designs (module D5)
+
+**Status:** Approved. Built in Figma on 2026-11-11; pull request #8 merged by
+the owner on 2026-11-11. Figma page: [Admin](https://www.figma.com/design/MWNPPSFbXEmEqS9WtIx78N?node-id=55-13678).
+
+## What is there
+
+All 23 admin pages at 1440 px wide. Each page's link is in
+[pages.md](pages.md).
+
+## How they were made
+
+- Each page starts from the wireframe approved in D2.
+- Same design system as the website and app: 242 component instances, every
+  colour from the tokens, every text from a text style, no wireframe parts
+  left (checked by script).
+- Built to be worked in all day: flat panels with a thin outline, no shadows;
+  tables are rules and alignment with no striped rows or filled header bands;
+  figures are set as plain type, not decorated tiles; gold is kept for the
+  one main action on a page and for money.
+- Shell: sidebar with the 23 pages in six groups (current page on a raised
+  row), and a top bar with search, alerts and the signed-in staff member.
+
+## Checked
+
+- Contrast: every text pairing passes WCAG 2.1 AA (1,528 text layers).
+- Nothing is set below 14 px.
+
+## Needs the owner
+
+- Sample content: order numbers, names, amounts, role names and settings are
+  samples, not decisions.
+
+## Added 2026-11-11
+
+- Charts: the sales line charts on Dashboard and Reports are drawn (gold line
+  on faint grid lines, labelled axes). The sample figures add up: the last
+  point on the Dashboard chart is today's sales, and each product's revenue
+  is units sold times price.
+- Section "Admin: dialogs and states", 6 frames: refund dialog, adjust stock
+  dialog, invite staff dialog, and the Orders page when empty, loading and
+  when it could not load.
+
+The Admin page now holds 29 frames. Re-checked by script: contrast, 14 px
+minimum, tokens and text styles all pass.
+
+## By decision, not drawn
+
+The admin is desktop only; there are no tablet or phone layouts. The empty,
+loading and error states are drawn once on Orders and apply to every list.

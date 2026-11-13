@@ -1,13 +1,14 @@
 # Modules
 
-Built one at a time, in order. Design modules run alongside the backend work;
+Built one at a time, in order. Owner's decision (2026-10-29): design modules D1 to D5 are completed before
+backend module 2 onward;
 frontend modules are built only from approved designs. Each file lists its
 goal, steps, "done when" criteria and status.
 
 | # | Module | Track | Status |
 | --- | --- | --- | --- |
 | 0 | [Repo setup](00-repo-setup.md) | Backend | Complete |
-| 1 | [Server foundation](01-server-foundation.md) | Backend | In progress |
+| 1 | [Server foundation](01-server-foundation.md) | Backend | Complete |
 | 2 | [Database](02-database.md) | Backend | Not started |
 | 3 | [Accounts](03-accounts.md) | Backend | Not started |
 | 4 | [Catalog](04-catalog.md) | Backend | Not started |
@@ -19,8 +20,8 @@ goal, steps, "done when" criteria and status.
 | 10 | [Background jobs](10-background-jobs.md) | Backend | Not started |
 | 11 | [Notifications](11-notifications.md) | Backend | Not started |
 | 12 | [Search](12-search.md) | Backend | Not started |
-| D1 | [Brand and design system](D1-brand-and-design-system.md) | Design | Not started |
-| D2 | [Journeys and wireframes](D2-journeys-and-wireframes.md) | Design | Not started |
+| D1 | [Brand and design system](D1-brand-and-design-system.md) | Design | Complete |
+| D2 | [Journeys and wireframes](D2-journeys-and-wireframes.md) | Design | Complete |
 | D3 | [Website pages](D3-website-pages.md) | Design | Not started |
 | D4 | [App screens](D4-app-screens.md) | Design | Not started |
 | D5 | [Admin screens](D5-admin-screens.md) | Design | Not started |

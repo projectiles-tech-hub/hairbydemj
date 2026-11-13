@@ -1,0 +1,11 @@
+[Unit]
+Description=Run the hairbydemj backup every day
+
+[Timer]
+# 01:30 UTC is 02:30 in Lagos, when the shop is quietest.
+OnCalendar=*-*-* 01:30:00 UTC
+RandomizedDelaySec=10min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

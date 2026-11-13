@@ -1,0 +1,95 @@
+# Caddy: the web server in front of the shop. It answers on ports 80 and 443,
+# serves uploaded photos and videos straight from disk, and passes everything
+# else to the Node.js server (production on port 3000, staging on 3001).
+# Installed by deploy/setup-server.sh to /etc/caddy/Caddyfile.
+# Check after changing: caddy validate --config /etc/caddy/Caddyfile
+# Apply: sudo systemctl reload caddy
+#
+# Cloudflare sits in front (free plan, SSL mode "Full (strict)"). The
+# certificate below is Cloudflare's free Origin Certificate for
+# hairbydemj.com and *.hairbydemj.com, saved on the server by the owner
+# (docs/operations.md). It is a secret file and is never put in the repository.
+
+{
+	# Visitors' real addresses: only believed when the request comes from
+	# Cloudflare. The list is https://www.cloudflare.com/ips/ (check it
+	# yearly; it rarely changes).
+	servers {
+		trusted_proxies static 173.245.48.0/20 103.21.244.0/22 103.22.200.0/22 103.31.4.0/22 141.101.64.0/18 108.162.192.0/18 190.93.240.0/20 188.114.96.0/20 197.234.240.0/22 198.41.128.0/17 162.158.0.0/15 104.16.0.0/13 104.24.0.0/14 172.64.0.0/13 131.0.72.0/22 2400:cb00::/32 2606:4700::/32 2803:f800::/32 2405:b500::/32 2405:8100::/32 2a06:98c0::/29 2c0f:f248::/32
+		client_ip_headers CF-Connecting-IP
+	}
+}
+
+(origin_tls) {
+	tls /etc/caddy/certs/origin.pem /etc/caddy/certs/origin-key.pem
+}
+
+# One copy of the shop. {args[0]} is its port, {args[1]} its uploads folder.
+(shop) {
+	import origin_tls
+	encode zstd gzip
+	header {
+		-Server
+		# Browsers only ever use HTTPS for the shop once they have seen it.
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options nosniff
+	}
+
+	log {
+		output file /var/log/caddy/{args[0]}.log {
+			roll_size 50MiB
+			roll_keep 10
+		}
+		# Private links carry tokens and codes; keep them out of the log.
+		format filter {
+			fields {
+				request>uri query {
+					replace token [hidden]
+					replace code [hidden]
+					replace key [hidden]
+				}
+			}
+		}
+	}
+
+	# Uploaded photos and videos: the files never change (each has its own
+	# address), so browsers and Cloudflare may keep them for a year.
+	handle_path /media/* {
+		root * {args[1]}/public
+		header Cache-Control "public, max-age=31536000, immutable"
+		file_server
+	}
+
+	# Live chat streams: pass each event on at once, never hold it back.
+	@events path */chat/events
+	handle @events {
+		reverse_proxy 127.0.0.1:{args[0]} {
+			header_up X-Forwarded-For {client_ip}
+			flush_interval -1
+		}
+	}
+
+	handle {
+		reverse_proxy 127.0.0.1:{args[0]} {
+			# Only the visitor's real address, so the server's limits apply to the right person.
+			header_up X-Forwarded-For {client_ip}
+		}
+	}
+}
+
+# The live shop.
+hairbydemj.com, admin.hairbydemj.com, api.hairbydemj.com {
+	import shop 3000 /srv/hairbydemj/shared/uploads
+}
+
+www.hairbydemj.com {
+	import origin_tls
+	redir https://hairbydemj.com{uri} permanent
+}
+
+# Staging: the develop branch, for checking changes before they go live.
+# Kept out of search engines.
+staging.hairbydemj.com, staging-admin.hairbydemj.com, staging-api.hairbydemj.com {
+	import shop 3001 /srv/hairbydemj-staging/shared/uploads
+	header X-Robots-Tag "noindex, nofollow"
+}

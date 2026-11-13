@@ -1,6 +1,6 @@
 # Module D1 — Brand and design system
 
-**Status:** Not started · **Owner approval:** Claude may propose a design, but only when the project reaches the design phase (approved 2026-10-29)
+**Status:** Complete · **Owner approval:** pull request #2 merged by the owner on 2026-11-10
 
 ## Goal
 
@@ -9,15 +9,15 @@ like one brand.
 
 ## Steps
 
-- [ ] Collect brand assets from the owner (or propose a direction for approval)
-- [ ] Logo usage rules
-- [ ] Colour palette
-- [ ] Typography (fonts, sizes, weights)
-- [ ] Spacing and layout grid
-- [ ] Components: buttons, cards, form fields, icons, product-image style
-- [ ] Build the design system in Figma
-- [ ] Write the exact values into docs/design/design-system.md
-- [ ] Owner approval
+- [x] Collect brand assets from the owner (or propose a direction for approval): logo artwork received 2026-10-30
+- [x] Logo usage rules
+- [x] Colour palette
+- [x] Typography (fonts, sizes, weights)
+- [x] Spacing and layout grid
+- [x] Components: buttons, cards, form fields, icons, product-image style
+- [x] Build the design system in Figma
+- [x] Write the exact values into docs/design/design-system.md
+- [x] Owner approval
 
 ## Done when
 

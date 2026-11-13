@@ -1,0 +1,17 @@
+# Hourly check of the server itself (deploy/bin/check-server.sh).
+
+[Unit]
+Description=hairbydemj server check
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=hairbydemj
+Group=hairbydemj
+Environment=HBD_SYSTEMCTL=/usr/bin/systemctl
+ExecStart=/srv/hairbydemj/current/deploy/bin/check-server.sh production
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/hairbydemj/shared/backups

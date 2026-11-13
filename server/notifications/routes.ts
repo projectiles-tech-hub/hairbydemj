@@ -124,26 +124,33 @@ export function adminMessageRoutes(router: Router, accounts: AccountDeps): Route
     if (!templateFor(key)) throw new ApiError(404, 'not_found', 'There is no email with that name.');
     return key;
   };
-  const list = async (): Promise<Array<Record<string, unknown>>> => {
-    const rows = await accounts.db.query('select key, subject, body, email_enabled, updated_at from message_templates');
-    const byKey = new Map(rows.rows.map((r) => [String(r.key), r]));
-    return TEMPLATES.map((t) => {
-      const r = byKey.get(t.key);
-      return {
-        key: t.key,
-        name: t.name,
-        category: t.category,
-        subject: (r?.subject as string) || t.subject,
-        intro: (r?.body as string) || t.intro,
-        changed: Boolean(r?.subject || r?.body),
-        emailEnabled: r ? r.email_enabled !== false : true,
-        // Sign-in and staff emails cannot be switched off.
-        canSwitchOff: t.category !== 'account' && t.category !== 'staff',
-        defaultSubject: t.subject,
-        defaultIntro: t.intro,
-      };
-    });
-  };
+  const list = (): Promise<Array<Record<string, unknown>>> => listMessages(accounts.db);
+  return routes(router, accounts, known, list);
+}
+
+/** Every email the shop sends, with the wording staff have changed. */
+export async function listMessages(db: AccountDeps['db']): Promise<Array<Record<string, unknown>>> {
+  const rows = await db.query('select key, subject, body, email_enabled, updated_at from message_templates');
+  const byKey = new Map(rows.rows.map((r) => [String(r.key), r]));
+  return TEMPLATES.map((t) => {
+    const r = byKey.get(t.key);
+    return {
+      key: t.key,
+      name: t.name,
+      category: t.category,
+      subject: (r?.subject as string) || t.subject,
+      intro: (r?.body as string) || t.intro,
+      changed: Boolean(r?.subject || r?.body),
+      emailEnabled: r ? r.email_enabled !== false : true,
+      // Sign-in and staff emails cannot be switched off.
+      canSwitchOff: t.category !== 'account' && t.category !== 'staff',
+      defaultSubject: t.subject,
+      defaultIntro: t.intro,
+    };
+  });
+}
+
+function routes(router: Router, accounts: AccountDeps, known: (ctx: RequestContext) => string, list: () => Promise<Array<Record<string, unknown>>>): Router {
   return router
     .get('/api/messages', async (ctx) => {
       const { staff } = await requireStaff(accounts, ctx);

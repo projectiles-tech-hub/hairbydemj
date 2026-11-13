@@ -1,6 +1,6 @@
 # Status
 
-**Last updated:** 2026-11-12
+**Last updated:** 2026-11-13
 
 ## Where we are
 
@@ -43,27 +43,29 @@
 - Module 10 (Background jobs) is built; pull request #19 is open.
 - Module 11 (Notifications) is built; pull request #20 is open.
 - Module 12 (Search) is built; pull request #21 is open.
-- Module 13 (Website) is built; its pull request is open.
+- Module 13 (Website) is built; pull request #22 is open.
+- Module 14 (Admin) is built; its pull request is open.
 - The Vercel preview was for viewing only. The real site runs from our own
   server; the page code written for the preview is kept as the starting
   point for modules 13 and 14.
 
 ## Current module
 
-[`modules/13-website.md`](modules/13-website.md): built and **in review** on
-branch `feature/website`, on top of modules 2 to 12. 241 tests pass, and the
-shop was walked through in a real browser at desktop and phone widths.
+[`modules/14-admin-dashboard.md`](modules/14-admin-dashboard.md): built and
+**in review** on branch `feature/admin`, on top of modules 2 to 13. 255 tests
+pass, and the admin was walked through in a real browser at desktop and
+phone widths.
 
 ## Exact next step
 
-1. Owner merges, in order: #11 to #21, then Module 13's.
-2. Building continues with **Module 14. Admin dashboard**.
+1. Owner merges, in order: #11 to #22, then Module 14's.
+2. Building continues with **Module 15. Phone app**.
 
-## Modules left after Module 13
+## Modules left after Module 14
 
-14 Admin dashboard · 15 Phone app · 16 AR try-on ·
-17 Reviews, loyalty, gift cards · 18 Live chat · 19 Deployment, backups,
-monitoring · 20 Testing and security review · 21 Launch.
+15 Phone app · 16 AR try-on · 17 Reviews, loyalty, gift cards ·
+18 Live chat · 19 Deployment, backups, monitoring · 20 Testing and security
+review · 21 Launch.
 
 ## Waiting on the owner
 

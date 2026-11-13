@@ -83,17 +83,30 @@ export async function homePage(sc: SiteContext): Promise<{ title: string; body: 
   const base = { currency: sc.currency.code, limit: 4 };
   const [best, fresh, looks] = await Promise.all([listProducts(sc.deps, { ...base, sort: 'best_selling' }), listProducts(sc.deps, { ...base, sort: 'newest' }), listCollections(sc.deps, { looks: true })]);
   const first = sc.categories[0];
-  const body = `
-<section class="hero" aria-labelledby="hero-h">
+  // Staff choose the order, which sections show and the banner's words in the admin (Homepage).
+  const rows = await sc.deps.db.query('select kind, position, is_shown, settings from homepage_sections order by position, id');
+  const layout = new Map(rows.rows.map((r) => [String(r.kind), { shown: r.is_shown === true, position: Number(r.position), settings: (r.settings ?? {}) as Record<string, unknown> }]));
+  const DEFAULT_ORDER = ['hero', 'collections', 'best_sellers', 'new_arrivals', 'shop_the_look'];
+  const word = (kind: string, key: string, fallback: string): string => {
+    const v = layout.get(kind)?.settings[key];
+    return typeof v === 'string' && v.trim() ? v.trim() : fallback;
+  };
+  const parts: Record<string, () => string> = {
+    hero: () => `<section class="hero" aria-labelledby="hero-h">
 <div class="photo" role="img" aria-label="hairbydemj"></div>
-<div class="hero__copy"><h1 class="display" id="hero-h">Hair that moves the way you do</h1>
-<p class="body-large">Human hair wigs, bundles and closures. Sent from Benin City to your door, anywhere in the world.</p>
-<div class="row">${button('Shop new arrivals', { href: first ? `/c/${first.slug}/?sort=newest` : '/search/?q=', fullPhone: true })}</div></div>
-</section>
-${sc.categories.length ? `<section class="stack" aria-label="Shop by category">${sectionHead('Shop by category')}<div class="grid" style="--cols:4;--cols-tablet:4;--cols-phone:2">${each(sc.categories.slice(0, 8), (c) => `<a class="card stack stack--sm" href="/c/${esc(c.slug)}/" style="text-decoration:none"><span class="strong">${esc(c.name)}</span><span class="small muted">${c.productCount} ${c.productCount === 1 ? 'product' : 'products'}</span></a>`)}</div></section>` : ''}
-${best.products.length ? `<section class="stack" aria-label="Best-sellers">${sectionHead('Best-sellers')}${productGrid(sc, best.products)}</section>` : ''}
-${fresh.products.length ? `<section class="stack" aria-label="New arrivals">${sectionHead('New arrivals')}${productGrid(sc, fresh.products)}</section>` : ''}
-${looks.length ? `<section class="stack" aria-label="Shop the look">${sectionHead('Shop the look', ['See all looks', '/looks/'])}<div class="grid" style="--cols:3;--cols-tablet:2;--cols-phone:1">${each(looks.slice(0, 3), (l) => card(`<h3 class="h3"><a href="/looks/${esc(l.slug)}/">${esc(l.name)}</a></h3><p class="muted">${esc(l.description)}</p>`))}</div></section>` : ''}
+<div class="hero__copy"><h1 class="display" id="hero-h">${esc(word('hero', 'headline', 'Hair that moves the way you do'))}</h1>
+<p class="body-large">${esc(word('hero', 'sentence', 'Human hair wigs, bundles and closures. Sent from Benin City to your door, anywhere in the world.'))}</p>
+<div class="row">${button(word('hero', 'buttonLabel', 'Shop new arrivals'), { href: word('hero', 'buttonLink', first ? `/c/${first.slug}/?sort=newest` : '/search/?q='), fullPhone: true })}</div></div>
+</section>`,
+    collections: () => (sc.categories.length ? `<section class="stack" aria-label="${esc(word('collections', 'title', 'Shop by category'))}">${sectionHead(word('collections', 'title', 'Shop by category'))}<div class="grid" style="--cols:4;--cols-tablet:4;--cols-phone:2">${each(sc.categories.slice(0, 8), (c) => `<a class="card stack stack--sm" href="/c/${esc(c.slug)}/" style="text-decoration:none"><span class="strong">${esc(c.name)}</span><span class="small muted">${c.productCount} ${c.productCount === 1 ? 'product' : 'products'}</span></a>`)}</div></section>` : ''),
+    best_sellers: () => (best.products.length ? `<section class="stack" aria-label="${esc(word('best_sellers', 'title', 'Best-sellers'))}">${sectionHead(word('best_sellers', 'title', 'Best-sellers'))}${productGrid(sc, best.products)}</section>` : ''),
+    new_arrivals: () => (fresh.products.length ? `<section class="stack" aria-label="${esc(word('new_arrivals', 'title', 'New arrivals'))}">${sectionHead(word('new_arrivals', 'title', 'New arrivals'))}${productGrid(sc, fresh.products)}</section>` : ''),
+    shop_the_look: () => (looks.length ? `<section class="stack" aria-label="${esc(word('shop_the_look', 'title', 'Shop the look'))}">${sectionHead(word('shop_the_look', 'title', 'Shop the look'), ['See all looks', '/looks/'])}<div class="grid" style="--cols:3;--cols-tablet:2;--cols-phone:1">${each(looks.slice(0, 3), (l) => card(`<h3 class="h3"><a href="/looks/${esc(l.slug)}/">${esc(l.name)}</a></h3><p class="muted">${esc(l.description)}</p>`))}</div></section>` : ''),
+    // Reviews arrive with module 17.
+  };
+  const order = DEFAULT_ORDER.map((kind, i) => ({ kind, shown: layout.get(kind)?.shown ?? true, position: layout.get(kind)?.position ?? i, i })).filter((x) => x.shown).sort((x, y) => x.position - y.position || x.i - y.i);
+  const body = `${order.some((x) => x.kind === 'hero') ? '' : '<h1 class="visually-hidden">hairbydemj</h1>'}
+${order.map((x) => parts[x.kind]?.() ?? '').join('\n')}
 ${!best.products.length && !fresh.products.length ? card('<p class="muted">New hair is on its way. Please check back soon.</p>', { title: 'Coming soon' }) : ''}`;
   return {
     title: 'hairbydemj',

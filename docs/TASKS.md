@@ -18,9 +18,10 @@ Update this file at the end of every session.
 
 ## Blocked / waiting on owner
 
+- [ ] Confirm the loyalty figures (points per ₦1,000, worth of a point, minimum, share of an order, review, birthday and referral points) and the tiers; see docs/loyalty.md
 - [ ] Try-on: see-through wig pictures drawn to the template in docs/try-on.md, one per colour; then tuning on real phones and browsers
 - [ ] Phone app: test on real iPhones and Android phones with the owner (module 15's last step); Apple Developer and Google Play accounts; a free Firebase project for push; Google and Apple sign-in set-up (see docs/app.md)
-- [ ] Review and merge the Module 2 (Database) pull request (#11), then Module 3 (Accounts, #12), then Module 4 (Catalogue, #13), then Module 5 (Media, #14), then Module 6 (#15), then Module 7 (Payments, #16), then Module 8 (Shipping, #17), then Module 9 (Orders and returns, #18), then Module 10 (Background jobs, #19), then Module 11 (Notifications, #20), then Module 12 (Search, #21), then Module 13 (Website, #22), then Module 14 (Admin, #23), then Module 15 (Phone app, #24), then the Module 16 (Try-on) pull request
+- [ ] Review and merge the Module 2 (Database) pull request (#11), then Module 3 (Accounts, #12), then Module 4 (Catalogue, #13), then Module 5 (Media, #14), then Module 6 (#15), then Module 7 (Payments, #16), then Module 8 (Shipping, #17), then Module 9 (Orders and returns, #18), then Module 10 (Background jobs, #19), then Module 11 (Notifications, #20), then Module 12 (Search, #21), then Module 13 (Website, #22), then Module 14 (Admin, #23), then Module 15 (Phone app, #24), then Module 16 (Try-on, #25), then the Module 17 (Reviews, loyalty, gift cards) pull request
 - [ ] Paystack: create the account, send the test keys (secret and public); set the webhook address in docs/payments.md
 - [ ] Stripe: create the account, send the test keys (secret and publishable) and the webhook secret after adding the webhook address
 - [ ] DHL Express: ask the DHL account manager for MyDHL API access and send the API key, secret and account number (test keys first); see docs/shipping.md
@@ -47,6 +48,7 @@ Update this file at the end of every session.
 
 ## Completed
 
+- [x] Module 17 (Reviews, loyalty, gift cards): built with tests; pull request open (2026-11-13)
 - [x] Module 16 (Try-on): built; server tests, website walkthrough and app builds; pull request open (2026-11-13)
 - [x] Module 15 (Phone app): built, checks pass in GitHub Actions; pull request #24 open (2026-11-13)
 - [x] Module 14 (Admin): built, tests and walkthrough done; pull request open (2026-11-13)

@@ -1,10 +1,12 @@
 import 'package:material_ui/material_ui.dart';
 
+import 'api/client.dart';
 import 'api/models.dart';
 import 'screens/account.dart';
 import 'screens/auth.dart';
 import 'screens/checkout.dart';
 import 'screens/info.dart';
+import 'screens/loyalty.dart';
 import 'screens/orders.dart';
 import 'screens/product.dart';
 import 'screens/product_list.dart';
@@ -36,6 +38,10 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     '/notification-settings' => const NotificationSettingsScreen(),
     '/settings' => const SettingsScreen(),
     '/help' => const HelpScreen(),
+    '/loyalty' => const LoyaltyScreen(),
+    '/gift-cards' => const GiftCardsScreen(),
+    '/reviews' => const MyReviewsScreen(),
+    '/write-review' => WriteReviewScreen(item: args as Json),
     _ => null,
   };
   if (screen == null) return null;

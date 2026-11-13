@@ -12,6 +12,7 @@ import * as account from './account.js';
 import { cartPage, checkoutPage, completePage, miniCartHtml } from './checkout.js';
 import { infoPage, notFoundBody, robotsTxt, sitemapXml } from './info.js';
 import { tryOnPage } from './tryon.js';
+import { giftCardsPage, loyaltyPage, reviewsPage, writeReviewPage } from './loyalty.js';
 import { categoryPage, homePage, lookPage, looksPage, moreCards, productPage, searchPage } from './shop.js';
 import { PAGE_HEADERS, sendPage, siteContext, siteOrigin, storePage, type SiteContext } from './view.js';
 
@@ -61,7 +62,7 @@ export function storeRoutes(router: Router, deps: AccountDeps): Router {
     .get('/checkout/', page(async (sc) => sendPage(sc, { ...(await checkoutPage(sc)), noindex: true })))
     .get('/checkout/complete/', page(async (sc) => sendPage(sc, { ...completePage(sc), noindex: true })))
     .get('/sign-in/', page(async (sc) => sendPage(sc, { ...account.signInPage(sc), noindex: true })))
-    .get('/create-account/', page(async (sc) => sendPage(sc, { ...account.createAccountPage(), noindex: true })))
+    .get('/create-account/', page(async (sc, ctx) => sendPage(sc, { ...account.createAccountPage(ctx.query.get('ref') ?? ''), noindex: true })))
     .get('/verify-email/', page(async (sc) => sendPage(sc, { ...account.verifyEmailPage(sc), noindex: true })))
     .get('/forgot-password/', page(async (sc) => sendPage(sc, { ...account.forgotPasswordPage(), noindex: true })))
     .get('/reset-password/', page(async (sc) => sendPage(sc, { ...account.resetPasswordPage(sc), noindex: true })))
@@ -75,6 +76,14 @@ export function storeRoutes(router: Router, deps: AccountDeps): Router {
     .get('/account/addresses/', signedIn(async (sc) => sendPage(sc, { ...(await account.addressesPage(sc)), noindex: true })))
     .get('/account/profile/', signedIn(async (sc) => sendPage(sc, { ...(await account.profilePage(sc)), noindex: true })))
     .get('/account/preferences/', signedIn(async (sc) => sendPage(sc, { ...(await account.preferencesPage(sc)), noindex: true })))
+    .get('/account/loyalty/', signedIn(async (sc) => sendPage(sc, { ...(await loyaltyPage(sc)), noindex: true })))
+    .get('/account/reviews/', signedIn(async (sc) => sendPage(sc, { ...(await reviewsPage(sc)), noindex: true })))
+    .get('/account/reviews/new/', signedIn(async (sc) => {
+      const p = await writeReviewPage(sc);
+      if (!p) return false;
+      sendPage(sc, { ...p, noindex: true });
+    }))
+    .get('/gift-cards/', page(async (sc) => sendPage(sc, { ...(await giftCardsPage(sc)), canonical: '/gift-cards/' })))
     .get('/account/wishlist/', signedIn(async (sc) => sendPage(sc, { ...(await account.wishlistPage(sc)), noindex: true })))
     .get('/track-order/', page(async (sc, ctx) => {
       // With the private link from the order email, the order shows straight away.

@@ -69,6 +69,15 @@ class ApiClient {
     return _send(() async => _http.post(uri(path), headers: await _headers(json: true), body: jsonEncode(body ?? const {})));
   }
 
+  /// Sends a file as the body (photos on reviews).
+  Future<Json> upload(String path, List<int> bytes, String contentType) async {
+    return _send(() async {
+      final headers = await _headers();
+      headers['Content-Type'] = contentType;
+      return _http.post(uri(path), headers: headers, body: bytes);
+    });
+  }
+
   Future<Json> _send(Future<http.Response> Function() request) async {
     http.Response res;
     try {

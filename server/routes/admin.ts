@@ -17,6 +17,7 @@ import { adminShippingRoutes } from '../shipping/routes.js';
 import { adminWorkerRoutes } from '../worker/routes.js';
 import { adminMessageRoutes } from '../notifications/routes.js';
 import { adminApiRoutes } from '../admin/api.js';
+import { adminLoyaltyRoutes } from '../loyalty/routes.js';
 import { liveAdminRoutes } from '../admin/live/routes.js';
 import { Router } from '../router.js';
 import { sendHtml } from '../http.js';
@@ -47,6 +48,7 @@ export function adminRoutes(accounts?: AccountDeps, media?: MediaDeps, payments?
   adminWorkerRoutes(router, accounts);
   adminMessageRoutes(router, accounts);
   adminApiRoutes(router, accounts);
+  adminLoyaltyRoutes(router, accounts);
   // The pages staff use (module 14).
   liveAdminRoutes(router, accounts, { shipping, payments });
   return router;

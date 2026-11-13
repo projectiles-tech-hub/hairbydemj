@@ -93,6 +93,8 @@ same content, split by topic, is in `docs/spec/`.
 | `mobile/` | The Flutter app for iPhone and Android |
 | `docs/try-on.md` | Camera try-on: how it works, preparing wig pictures, model set-up |
 | `server/tryon/` | Try-on pictures, the face model download; `browser/try-on.ts` is the website's try-on |
+| `docs/loyalty.md` | Loyalty points, referrals, reviews and gift cards: rules, set-up, addresses |
+| `server/loyalty/`, `server/reviews/`, `server/giftcards/` | Points and referrals, reviews, gift cards bought and issued; their addresses are in `server/loyalty/routes.ts` |
 | `docs/preview.md` | The online design preview: what it is, how to build and publish it |
 | `server/site/`, `browser/`, `public/` | Website page code, browser script, styles, fonts and logo |
 | `server/admin/` | Admin page code |

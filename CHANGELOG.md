@@ -4,6 +4,14 @@ All notable changes to this repository, newest first.
 
 ## 2026-11-13
 
+- Module 17, Reviews, loyalty and gift cards (`server/loyalty/`,
+  `server/reviews/`, `server/giftcards/`): loyalty points for delivered
+  orders, reviews, birthdays and referrals, spent at checkout; tiers;
+  referral codes and links; reviews with photos from verified buyers,
+  published, hidden and answered by staff, shown on product pages; buying
+  gift cards (sent on a chosen day) and checking balances; admin pages for
+  gift cards, loyalty rules and tiers, and reviews; the same in the app.
+  Guide: `docs/loyalty.md`.
 - Module 16, Try-on (`server/tryon/`, `browser/try-on.ts`, the app's Try on
   tab): customers see a wig on themselves with the camera, on the website
   (MediaPipe, served from our server) and in the app (ARKit on iPhone, ARCore

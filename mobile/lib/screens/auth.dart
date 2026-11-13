@@ -141,6 +141,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _last = TextEditingController();
   final _email = TextEditingController();
   final _password = TextEditingController();
+  final _referral = TextEditingController();
   bool _offers = false;
   bool _busy = false;
   String? _error;
@@ -148,7 +149,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   void dispose() {
-    for (final c in [_first, _last, _email, _password]) {
+    for (final c in [_first, _last, _email, _password, _referral]) {
       c.dispose();
     }
     super.dispose();
@@ -167,6 +168,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         'email': _email.text.trim(),
         'password': _password.text,
         'marketingConsent': _offers,
+        if (_referral.text.trim().isNotEmpty) 'referralCode': _referral.text.trim(),
       });
       if (mounted) Navigator.of(context).pushReplacementNamed('/verify', arguments: _email.text.trim());
     } on ApiError catch (e) {
@@ -189,6 +191,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           LabelledField(label: 'Last name', controller: _last, error: _fields['lastName'], autofill: const [AutofillHints.familyName], textCapitalization: TextCapitalization.words),
           LabelledField(label: 'Email', controller: _email, error: _fields['email'], keyboardType: TextInputType.emailAddress, autofill: const [AutofillHints.email]),
           LabelledField(label: 'Password', controller: _password, error: _fields['password'], obscure: true, help: 'At least 8 characters.', autofill: const [AutofillHints.newPassword], textInputAction: TextInputAction.done),
+          LabelledField(label: "A friend's referral code (optional)", controller: _referral, error: _fields['referralCode'], textCapitalization: TextCapitalization.characters),
           CheckboxListTile(contentPadding: EdgeInsets.zero, controlAffinity: ListTileControlAffinity.leading, value: _offers, onChanged: (v) => setState(() => _offers = v ?? false), title: const Text('Email me offers and new arrivals', style: Type.body)),
           if (_error != null) Padding(padding: const EdgeInsets.only(bottom: 12), child: Text(_error!, style: Type.body.copyWith(color: Brand.error))),
           BusyButton(label: 'Create account', busy: _busy, onPressed: _submit),

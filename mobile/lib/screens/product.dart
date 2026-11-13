@@ -9,6 +9,7 @@ import '../theme.dart';
 import '../util/money.dart';
 import '../widgets/common.dart';
 import 'shell.dart';
+import 'loyalty.dart';
 import 'try_on.dart';
 
 /// A product: photos, choosing length, density, lace and colour, the price and
@@ -175,6 +176,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   Padding(padding: const EdgeInsets.only(bottom: 6), child: Row(children: [SizedBox(width: 120, child: Text(label, style: Type.small)), Expanded(child: Text(value, style: Type.body))])),
             ],
             if (p.careGuide.isNotEmpty) ...[const SectionHead('Care'), Text(p.careGuide, style: Type.body)],
+            ProductReviews(slug: p.slug),
             const SectionHead('Delivery and duties'),
             const Text('Delivery options and prices are shown at checkout. For orders outside Nigeria, import duties and taxes are paid by you to the carrier on delivery.', style: Type.body),
           ]),

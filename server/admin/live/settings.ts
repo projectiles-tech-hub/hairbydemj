@@ -218,6 +218,8 @@ const TASK_NAMES: Record<string, string> = {
   low_stock_alerts: 'Low-stock emails to staff',
   abandoned_cart_reminders: 'Bag reminders',
   daily_cleanup: 'Daily clean-up',
+  loyalty_points: 'Loyalty points for delivered orders and referrals',
+  birthday_points: 'Birthday points',
 };
 
 export async function systemPage(ac: AdminContext): Promise<string> {

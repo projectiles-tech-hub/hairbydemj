@@ -140,6 +140,22 @@ export const TEMPLATES: TemplateDef[] = [
     build: (d, l, f) => ({ subject: f.subject, heading: 'Your store credit', paragraphs: [f.intro, 'Keep this email: the code is like money.'], block: d.code ?? '', button: { label: 'Start shopping', url: `${l.site}/` } }),
   },
   {
+    key: 'gift_card',
+    name: 'Gift card (to the person receiving it)',
+    category: 'order',
+    subject: 'A hairbydemj gift card for you',
+    intro: '{{from}} sent you a hairbydemj gift card of {{amount}}. Use this code at checkout, on the website or in the app:',
+    build: (d, l, f) => ({ subject: f.subject, heading: 'A gift card for you', paragraphs: [f.intro, ...(d.message ? [`Their message: "${d.message}"`] : []), 'Keep this email: the code is like money. You can check the balance on our gift cards page.'], block: d.code ?? '', button: { label: 'Start shopping', url: `${l.site}/` } }),
+  },
+  {
+    key: 'review_reply',
+    name: 'Reply to a review',
+    category: 'order',
+    subject: 'We replied to your review',
+    intro: 'Thank you for reviewing {{productName}}. We have replied:',
+    build: (d, l, f) => ({ subject: f.subject, heading: 'Our reply to your review', paragraphs: [f.intro, `"${d.reply ?? ''}"`], button: { label: 'See your reviews', url: `${l.site}/account/reviews/` } }),
+  },
+  {
     key: 'back_in_stock',
     name: 'Back in stock',
     category: 'stock',

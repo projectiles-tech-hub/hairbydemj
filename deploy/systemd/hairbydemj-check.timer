@@ -1,0 +1,10 @@
+[Unit]
+Description=Check the hairbydemj server every hour
+
+[Timer]
+OnCalendar=hourly
+RandomizedDelaySec=5min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

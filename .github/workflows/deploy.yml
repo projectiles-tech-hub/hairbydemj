@@ -1,0 +1,103 @@
+name: Deploy
+
+# Puts the shop live after the checks pass:
+#   develop -> staging (staging.hairbydemj.com)
+#   main    -> production (hairbydemj.com)
+# Can also be started by hand from the Actions tab ("Run workflow").
+# Needs, in Settings > Environments > staging and production, the secrets
+# DEPLOY_HOST, DEPLOY_SSH_KEY and DEPLOY_KNOWN_HOSTS (docs/operations.md).
+# Until they are set, this workflow does nothing.
+
+on:
+  workflow_run:
+    workflows: [Checks]
+    types: [completed]
+    branches: [main, develop]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Where to deploy
+        type: choice
+        options: [staging, production]
+        default: staging
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy to ${{ github.event_name == 'workflow_dispatch' && inputs.target || (github.event.workflow_run.head_branch == 'main' && 'production' || 'staging') }}
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: ${{ github.event_name == 'workflow_dispatch' && inputs.target || (github.event.workflow_run.head_branch == 'main' && 'production' || 'staging') }}
+    concurrency:
+      group: deploy-${{ github.event_name == 'workflow_dispatch' && inputs.target || (github.event.workflow_run.head_branch == 'main' && 'production' || 'staging') }}
+      cancel-in-progress: false
+    env:
+      TARGET: ${{ github.event_name == 'workflow_dispatch' && inputs.target || (github.event.workflow_run.head_branch == 'main' && 'production' || 'staging') }}
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      DEPLOY_USER: ${{ vars.DEPLOY_USER || 'hairbydemj' }}
+      DEPLOY_PORT: ${{ vars.DEPLOY_PORT || '22' }}
+    steps:
+      - name: Check the server is set up
+        id: ready
+        run: |
+          if [ -z "$DEPLOY_HOST" ]; then
+            echo "::notice::The $TARGET server is not set up yet (no DEPLOY_HOST secret), so nothing was deployed."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+          # Production only ever comes from main.
+          if [ "$TARGET" = production ] && [ "${{ github.event_name }}" = workflow_dispatch ] && [ "$GITHUB_REF_NAME" != main ]; then
+            echo "::error::Production can only be deployed from main."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.ready.outputs.ready == 'true'
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
+
+      - uses: actions/setup-node@v4
+        if: steps.ready.outputs.ready == 'true'
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Build
+        if: steps.ready.outputs.ready == 'true'
+        run: |
+          npm ci
+          npm run build
+          # The camera try-on's face model (checked against its known checksum).
+          node dist/server/tryon/model.js
+          npm prune --omit=dev
+          tar -czf "$RUNNER_TEMP/release.tgz" dist public node_modules package.json package-lock.json db deploy
+          ls -lh "$RUNNER_TEMP/release.tgz"
+
+      - name: Copy to the server and put it live
+        if: steps.ready.outputs.ready == 'true'
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -d -m 0700 ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy
+          chmod 0600 ~/.ssh/deploy
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          COMMIT="$(git rev-parse HEAD)"
+          case "$TARGET" in production) BASE=/srv/hairbydemj ;; *) BASE=/srv/hairbydemj-staging ;; esac
+          SSH="ssh -i $HOME/.ssh/deploy -p $DEPLOY_PORT -o StrictHostKeyChecking=yes -o BatchMode=yes"
+          # The release steps come from this commit, so changes to them apply at once.
+          { cat deploy/bin/lib.sh; sed '/^source /d' deploy/bin/release.sh; } > "$RUNNER_TEMP/release.sh"
+          scp -i ~/.ssh/deploy -P "$DEPLOY_PORT" -o StrictHostKeyChecking=yes -o BatchMode=yes "$RUNNER_TEMP/release.tgz" "$DEPLOY_USER@$DEPLOY_HOST:$BASE/incoming/$COMMIT.tgz"
+          scp -i ~/.ssh/deploy -P "$DEPLOY_PORT" -o StrictHostKeyChecking=yes -o BatchMode=yes "$RUNNER_TEMP/release.sh" "$DEPLOY_USER@$DEPLOY_HOST:$BASE/incoming/release-$COMMIT.sh"
+          $SSH "$DEPLOY_USER@$DEPLOY_HOST" "bash $BASE/incoming/release-$COMMIT.sh $TARGET $COMMIT; status=\$?; rm -f $BASE/incoming/release-$COMMIT.sh; exit \$status"
+
+      - name: Remove the key
+        if: always()
+        run: rm -f ~/.ssh/deploy

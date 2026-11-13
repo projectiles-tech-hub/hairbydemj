@@ -1,0 +1,13 @@
+# Lets the hairbydemj user (which GitHub Actions signs in as to deploy)
+# restart, stop and start the shop's own services, and nothing else.
+# Installed by deploy/setup-server.sh to /etc/sudoers.d/hairbydemj (mode 0440).
+
+Cmnd_Alias HBD_SERVICES = \
+  /usr/bin/systemctl restart hairbydemj-web, /usr/bin/systemctl restart hairbydemj-worker, \
+  /usr/bin/systemctl stop hairbydemj-web, /usr/bin/systemctl stop hairbydemj-worker, \
+  /usr/bin/systemctl start hairbydemj-web, /usr/bin/systemctl start hairbydemj-worker, \
+  /usr/bin/systemctl restart hairbydemj-staging-web, /usr/bin/systemctl restart hairbydemj-staging-worker, \
+  /usr/bin/systemctl stop hairbydemj-staging-web, /usr/bin/systemctl stop hairbydemj-staging-worker, \
+  /usr/bin/systemctl start hairbydemj-staging-web, /usr/bin/systemctl start hairbydemj-staging-worker
+
+hairbydemj ALL=(root) NOPASSWD: HBD_SERVICES

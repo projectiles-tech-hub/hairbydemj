@@ -1,0 +1,23 @@
+# Monthly restore test of the backups (deploy/bin/restore-test.sh).
+# Logs: journalctl -u hairbydemj-restore-test
+
+[Unit]
+Description=hairbydemj monthly restore test
+After=network-online.target postgresql.service
+Wants=network-online.target
+OnFailure=hairbydemj-alert@%n.service
+
+[Service]
+Type=oneshot
+User=hairbydemj
+Group=hairbydemj
+ExecStart=/srv/hairbydemj/current/deploy/bin/restore-test.sh production
+Nice=10
+IOSchedulingClass=idle
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/hairbydemj/shared/backups
+# rclone keeps its Google sign-in fresh in this file.
+ReadWritePaths=/srv/hairbydemj/shared/rclone.conf

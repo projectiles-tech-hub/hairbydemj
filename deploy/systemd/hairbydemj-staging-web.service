@@ -1,0 +1,34 @@
+# The staging shop: website, admin and API in one Node.js process, behind Caddy.
+# Installed by deploy/setup-server.sh. Logs: journalctl -u hairbydemj-staging-web -f
+
+[Unit]
+Description=hairbydemj staging web server
+After=network-online.target postgresql.service
+Wants=network-online.target
+OnFailure=hairbydemj-alert@%n.service
+# Stop restarting (and alert) only if it fails 10 times in 5 minutes.
+StartLimitIntervalSec=300
+StartLimitBurst=10
+
+[Service]
+Type=simple
+User=hairbydemj
+Group=hairbydemj
+WorkingDirectory=/srv/hairbydemj-staging/current
+# Secrets live only in this file on the server.
+EnvironmentFile=/srv/hairbydemj-staging/shared/.env
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/node dist/server/main.js
+Restart=always
+RestartSec=3
+TimeoutStopSec=30
+KillSignal=SIGTERM
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/hairbydemj-staging/shared/uploads
+
+[Install]
+WantedBy=multi-user.target

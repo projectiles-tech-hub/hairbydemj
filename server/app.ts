@@ -111,6 +111,20 @@ export function createApp(config: Config, logger: Logger, options: AppOptions): 
         sendError(res, 'api', 405, 'Method not allowed', { Allow: 'GET, HEAD' });
         return;
       }
+      // `/health?db=1` also checks the database answers (used by the
+      // uptime checks and after each deployment).
+      if (url.searchParams.has('db') && options.accounts) {
+        const db = options.accounts.db;
+        const ok = await Promise.race([
+          db.query('select 1').then(() => true, () => false),
+          new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 3000).unref()),
+        ]);
+        if (!ok) {
+          logger.error('health check: the database did not answer');
+          sendJson(res, 503, { status: 'error', database: 'unreachable', version: options.version });
+          return;
+        }
+      }
       sendJson(res, 200, {
         status: 'ok',
         version: options.version,

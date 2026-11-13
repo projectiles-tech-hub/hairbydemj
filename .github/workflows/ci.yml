@@ -38,3 +38,26 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
+
+  deploy-files:
+    name: Server files (scripts, services, Caddy)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check the shell scripts
+        run: shellcheck -x deploy/setup-server.sh deploy/bin/*.sh
+      - name: Check the systemd files
+        run: |
+          out="$(systemd-analyze verify --man=no deploy/systemd/*.service deploy/systemd/*.timer 2>&1 || true)"
+          echo "$out"
+          ! echo "$out" | grep -Ei 'unknown|invalid|bad|syntax'
+      - name: Check the Caddy settings
+        run: |
+          sudo install -d -m 0755 /etc/apt/keyrings
+          curl -fsSL https://dl.cloudsmith.io/public/caddy/stable/gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+          curl -fsSL https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+          sudo apt-get update -q && sudo apt-get install -y -q caddy
+          # A throwaway certificate standing in for the Cloudflare origin certificate.
+          sudo install -d /etc/caddy/certs
+          sudo openssl req -x509 -newkey rsa:2048 -nodes -days 1 -subj /CN=hairbydemj.com -keyout /etc/caddy/certs/origin-key.pem -out /etc/caddy/certs/origin.pem
+          sudo caddy validate --config deploy/caddy/Caddyfile --adapter caddyfile

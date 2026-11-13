@@ -4,6 +4,14 @@ All notable changes to this repository, newest first.
 
 ## 2026-11-13
 
+- Module 19, Deployment, backups and monitoring: `deploy/setup-server.sh`
+  sets up the VPS (updates, firewall, PostgreSQL, Node.js 24, Caddy,
+  Postfix, rclone, live and staging shops); GitHub Actions deploys
+  `develop` to staging and `main` to live, with migrations, a health check
+  and automatic going back; daily encrypted backups to Google Drive with a
+  monthly restore test; hourly server checks and an outside uptime check
+  with email alerts; `/health?db=1` also checks the database. Guide:
+  `docs/operations.md`.
 - Module 18, Live chat (`server/chat/`): customers chat from every website
   page and the app's Help screen; staff answer from the admin's live chat
   inbox with saved replies; messages arrive at once through Server-Sent

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io' show Platform;
 import 'dart:math' as math;
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/rendering.dart';
@@ -298,11 +297,11 @@ class _TryOnCameraScreenState extends State<TryOnCameraScreen> with WidgetsBindi
       return (await image?.toByteData(format: ui.ImageByteFormat.png))?.buffer.asUint8List();
     }
     final face = _face;
+    final viewSize = MediaQuery.sizeOf(context);
     final background = await TryOnChannel.snapshot();
     if (background == null) return null;
     final bg = await _decode(background);
     final wig = await _decode(Uint8List.view((await NetworkAssetBundle(Uri.parse(api.base)).load(picture.url(api.base))).buffer));
-    final viewSize = MediaQuery.sizeOf(context);
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
     canvas.drawImage(bg, Offset.zero, Paint());

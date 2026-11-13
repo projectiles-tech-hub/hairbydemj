@@ -70,6 +70,8 @@ same content, split by topic, is in `docs/spec/`.
 | `server/catalog/` | Catalogue code: what the shop reads and what staff manage |
 | `docs/media.md` | Product photos and videos: tools needed, sizes, addresses, rules |
 | `server/media/` | Uploads, resizing with libvips, video compression with ffmpeg |
+| `docs/cart.md` | Cart, currencies and rates, discounts, gift cards, holding stock |
+| `server/cart/` | Cart, currency, discount, gift card and stock-holding code |
 | `docs/preview.md` | The online design preview: what it is, how to build and publish it |
 | `server/site/`, `browser/`, `public/` | Website page code, browser script, styles, fonts and logo |
 | `server/admin/` | Admin page code |

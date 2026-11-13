@@ -7,6 +7,8 @@ Update this file at the end of every session.
 - [ ] Make the changes the owner and reviewer ask for after seeing the preview
 - [ ] Check the 20 icons added in Figma during D3 against the Phosphor originals
 - [ ] Customer account: change of email address (password change, profile and closing the account were added in module 13)
+- [ ] iPhone app: add the entitlements file (push notifications and Sign in with Apple) before the first App Store build
+- [ ] Server: change the default `APNS_BUNDLE_ID` to the app's real identifier, `com.hairbydemj.hairbydemj`
 
 ## Noted for later (not to be built until the owner says)
 
@@ -15,11 +17,6 @@ Update this file at the end of every session.
   from us; we place it in a picture frame stamped "DemJ woman" with our
   logo; and we post it on our gallery and on the reviews page, with her
   name. Fits with module 17 (reviews) and module 5 (media).
-
-## Open
-
-- [ ] iPhone app: add the entitlements file (push notifications and Sign in with Apple) before the first App Store build
-- [ ] Server: change the default `APNS_BUNDLE_ID` to the app's real identifier, `com.hairbydemj.hairbydemj`
 
 ## Blocked / waiting on owner
 

@@ -5,7 +5,7 @@ import '../config.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
 
-/// Help: WhatsApp and email, and the website's help pages. Live chat comes with module 18.
+/// Help: live chat, WhatsApp, and the website's help pages.
 class HelpScreen extends StatelessWidget {
   const HelpScreen({super.key});
 
@@ -17,7 +17,10 @@ class HelpScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Help and contact')),
       body: ListView(padding: const EdgeInsets.symmetric(horizontal: Brand.gutter), children: [
         const Padding(padding: EdgeInsets.only(bottom: 16), child: Text('We answer every day, usually within a few hours.', style: Type.body)),
-        if (whatsapp.isNotEmpty) LinkRow('Message us on WhatsApp', onTap: () => launchUrl(Uri.parse('https://wa.me/$whatsapp'), mode: LaunchMode.externalApplication)),
+        BusyButton(label: 'Chat with us', onPressed: () => Navigator.of(context).pushNamed('/chat')),
+        const SizedBox(height: 12),
+        if (whatsapp.isNotEmpty) BusyButton(label: 'Message us on WhatsApp', outlined: true, onPressed: () => launchUrl(Uri.parse('https://wa.me/$whatsapp'), mode: LaunchMode.externalApplication)),
+        const SizedBox(height: 16),
         LinkRow('Contact us', onTap: () => page('/contact/')),
         LinkRow('Questions and answers', onTap: () => page('/faq/')),
         LinkRow('Length and density guide', onTap: () => page('/guides/length-and-density/')),

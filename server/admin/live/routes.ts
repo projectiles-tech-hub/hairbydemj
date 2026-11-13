@@ -7,6 +7,7 @@ import { can, type Area } from '../../accounts/staff.js';
 import { ApiError, type RequestContext } from '../../http.js';
 import type { Router } from '../../router.js';
 import { categories, discountEditor, discounts, inventory, productEditor, products } from './catalog.js';
+import { chatInbox } from './chat.js';
 import { giftCards, loyaltyPage as loyaltyAdmin, reviewsPage as reviewsAdmin } from './loyalty.js';
 import { customerPage, customers, dashboard, orderDetail, orders, reports, returnDetail, returns } from './sales.js';
 import { activityPage, contentEditor, contentList, emails, homepage, invitePage, paymentsPage, shippingPage, signInPage, staffPage, storeSettings, systemPage, type LiveExtras } from './settings.js';
@@ -91,6 +92,7 @@ export function liveAdminRoutes(router: Router, deps: AccountDeps, extras: LiveE
     .get('/discounts/', page('Discounts', 'discounts', (ac) => discounts(ac)))
     .get('/discounts/new/', page('Add a discount', 'discounts', (ac) => discountEditor(ac, null), '/discounts/'))
     .get('/discounts/:id/', page('Discount', 'discounts', (ac, ctx) => (idOf(ctx) ? discountEditor(ac, idOf(ctx)!) : Promise.resolve(null)), '/discounts/'))
+    .get('/chat/', page('Live chat inbox', 'customers', (ac) => chatInbox(ac)))
     .get('/gift-cards/', page('Gift cards', 'discounts', (ac) => giftCards(ac)))
     .get('/loyalty/', page('Loyalty and referrals', 'discounts', (ac) => loyaltyAdmin(ac)))
     .get('/reviews/', page('Reviews', 'products', (ac) => reviewsAdmin(ac)))

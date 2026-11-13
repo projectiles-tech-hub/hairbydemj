@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 abstract class TokenStore {
   static const session = 'session';
   static const cart = 'cart';
+  static const chat = 'chat';
   static const currency = 'currency';
   static const onboarded = 'onboarded';
   static const pushAsked = 'push_asked';

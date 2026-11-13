@@ -111,6 +111,7 @@ const NAV: ReadonlyArray<ReadonlyArray<[label: string, href: string, area: Area 
   [['Orders', '/orders/', 'orders'], ['Returns', '/returns/', 'returns'], ['Customers', '/customers/', 'customers']],
   [['Products', '/products/', 'products'], ['Categories and collections', '/categories/', 'products'], ['Inventory', '/inventory/', 'products']],
   [['Discounts', '/discounts/', 'discounts'], ['Gift cards', '/gift-cards/', 'discounts'], ['Loyalty and referrals', '/loyalty/', 'discounts'], ['Reviews', '/reviews/', 'products']],
+  [['Live chat inbox', '/chat/', 'customers']],
   [['Homepage', '/homepage/', 'settings'], ['Content pages', '/content/', 'settings'], ['Emails', '/emails/', 'settings']],
   [['Shipping settings', '/shipping/', 'settings'], ['Payments and currencies', '/payments/', 'settings'], ['Reports', '/reports/', 'reports'], ['Staff and roles', '/staff/', null], ['Activity log', '/activity/', 'settings'], ['Store settings', '/settings/', 'settings'], ['System', '/system/', 'settings']],
 ];

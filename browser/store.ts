@@ -894,3 +894,103 @@ $$<HTMLFormElement>('[data-gift-balance]').forEach((form) =>
     }
   }),
 );
+
+// ----- live chat (module 18) -----
+
+const chatPanel = $('[data-chat-panel]');
+const chatOpen = $<HTMLButtonElement>('[data-chat-open]');
+if (chatPanel && chatOpen) {
+  interface ChatMessage { id: number; sender: string; staffName: string | null; body: string; at: string }
+  const box = $('[data-chat-messages]', chatPanel)!;
+  const form = $<HTMLFormElement>('[data-chat-form]', chatPanel)!;
+  const errorBox = $('[data-chat-error]', chatPanel);
+  let started = false;
+  let stream: EventSource | null = null;
+  let loaded = false;
+  const shown = new Set<number>();
+  const text = (s: string): string => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c] ?? c);
+  const add = (m: ChatMessage): void => {
+    if (shown.has(m.id)) return;
+    shown.add(m.id);
+    const at = new Date(m.at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    const who = m.sender === 'staff' ? `${text(m.staffName ?? 'hairbydemj')}, ` : m.sender === 'customer' ? 'You, ' : '';
+    box.insertAdjacentHTML('beforeend', `<div class="chat-msg chat-msg--${text(m.sender)}"><p>${text(m.body)}</p><span class="small muted">${who}${at}</span></div>`);
+    box.scrollTop = box.scrollHeight;
+  };
+  const listen = (): void => {
+    if (stream) return;
+    stream = new EventSource('/api/chat/events');
+    stream.addEventListener('message', (e) => {
+      const data = JSON.parse((e as MessageEvent<string>).data) as { message?: ChatMessage };
+      if (data.message) {
+        add(data.message);
+        if (data.message.sender === 'staff' && !chatPanel.hidden) void api('POST', '/api/chat/read', {}).catch(() => undefined);
+        if (data.message.sender === 'staff' && chatPanel.hidden) chatOpen.classList.add('has-news');
+      }
+    });
+  };
+  const load = async (): Promise<void> => {
+    if (loaded) return;
+    loaded = true;
+    try {
+      const r = await api('GET', '/api/chat');
+      const wa = $<HTMLAnchorElement>('[data-chat-whatsapp]', chatPanel);
+      if (r.whatsapp && wa) {
+        wa.href = `https://wa.me/${String(r.whatsapp).replace(/[^0-9]/g, '')}`;
+        wa.hidden = false;
+      }
+      say($('[data-chat-status]', chatPanel), r.staffOnline ? 'We are online now.' : 'Leave a message; we usually reply within a few hours.');
+      if (r.conversation) {
+        started = true;
+        $('[data-chat-intro]', chatPanel)?.setAttribute('hidden', '');
+        for (const m of r.conversation.messages as ChatMessage[]) add(m);
+        listen();
+        void api('POST', '/api/chat/read', {}).catch(() => undefined);
+      }
+    } catch {
+      say(errorBox, 'The chat is not available just now. Try again shortly.');
+    }
+  };
+  const open = (show: boolean): void => {
+    chatPanel.hidden = !show;
+    chatOpen.setAttribute('aria-expanded', String(show));
+    if (show) {
+      chatOpen.classList.remove('has-news');
+      void load();
+      $<HTMLTextAreaElement>('#chat-text', chatPanel)?.focus();
+    } else chatOpen.focus();
+  };
+  chatOpen.addEventListener('click', () => open(chatPanel.hidden));
+  $('[data-chat-close]', chatPanel)?.addEventListener('click', () => open(false));
+  chatPanel.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') open(false);
+  });
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const values = formValues(form);
+    if (!String(values.body ?? '').trim()) return;
+    say(errorBox, '');
+    const button = $<HTMLButtonElement>('button[type="submit"]', form);
+    if (button) button.disabled = true;
+    try {
+      const r = await api('POST', '/api/chat/messages', started ? { body: values.body } : values);
+      started = true;
+      $('[data-chat-intro]', chatPanel)?.setAttribute('hidden', '');
+      for (const m of r.conversation.messages as ChatMessage[]) add(m);
+      ($<HTMLTextAreaElement>('#chat-text', chatPanel) as HTMLTextAreaElement).value = '';
+      listen();
+    } catch (error) {
+      say(errorBox, error instanceof ApiFailure ? (Object.values(error.fields)[0] ?? error.message) : 'That did not send. Try again.');
+    } finally {
+      if (button) button.disabled = false;
+    }
+  });
+  $<HTMLTextAreaElement>('#chat-text', chatPanel)?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      form.requestSubmit();
+    }
+  });
+  // From the "Open the chat" link in a reply email.
+  if (new URLSearchParams(location.search).get('chat') === '1') open(true);
+}

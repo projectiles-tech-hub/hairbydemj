@@ -259,7 +259,7 @@ ${o.body}
 ${o.after ?? ''}
 ${sc ? footer(sc) : ''}
 <div class="scrim" data-scrim></div>
-${sc ? menuPanel(sc) + currencyPanel(sc) + miniCart(sc) : ''}
+${sc ? menuPanel(sc) + currencyPanel(sc) + miniCart(sc) + chatWidget(sc) : ''}
 ${cookieNotice()}
 ${(o.scripts ?? []).map((s) => `<script src="${esc(s)}"></script>`).join('\n')}
 ${(o.modules ?? []).map((s) => `<script type="module" src="${esc(s)}"></script>`).join('\n')}
@@ -267,6 +267,26 @@ ${(o.modules ?? []).map((s) => `<script type="module" src="${esc(s)}"></script>`
 </body>
 </html>
 `;
+}
+
+/** Live chat on every page (module 18): a button, and a panel the script fills. */
+function chatWidget(sc: SiteContext): string {
+  return `<button class="chat-fab" type="button" data-chat-open aria-controls="chat-panel" aria-expanded="false">${icon('chat', 22)}<span>Chat with us</span></button>
+<section class="chat-panel" id="chat-panel" role="dialog" aria-modal="false" aria-labelledby="chat-title" hidden data-chat-panel>
+<header class="chat-panel__head"><h2 class="h3" id="chat-title">Chat with us</h2><button class="icon-btn" type="button" data-chat-close aria-label="Close the chat">${icon('close')}</button></header>
+<p class="small muted" data-chat-status>We usually reply within a few minutes during the day.</p>
+<a class="btn btn--secondary btn--full chat-panel__wa" href="#" target="_blank" rel="noopener" data-chat-whatsapp hidden>Message us on WhatsApp</a>
+<div class="chat-panel__messages" data-chat-messages aria-live="polite"></div>
+<form class="stack stack--sm" data-chat-form novalidate>
+<div class="stack stack--sm" data-chat-intro${sc.customer ? ' hidden' : ''}>
+<div class="field"><label class="field__label" for="chat-name">Your name (optional)</label><input class="field__input" id="chat-name" name="name" autocomplete="name"></div>
+<div class="field"><label class="field__label" for="chat-email">Email, so we can reply if you leave (optional)</label><input class="field__input" id="chat-email" name="email" type="email" autocomplete="email"></div>
+</div>
+<div class="field"><label class="field__label" for="chat-text">Message</label><textarea class="field__input" id="chat-text" name="body" rows="2" maxlength="2000"></textarea></div>
+<button class="btn btn--primary btn--full" type="submit">Send</button>
+<p class="small" role="alert" data-chat-error></p>
+</form>
+</section>`;
 }
 
 export function sendPage(sc: SiteContext | null, o: ShellOptions): void {

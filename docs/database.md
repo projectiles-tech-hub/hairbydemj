@@ -82,6 +82,7 @@ not need `createdb`.
 | `0008_content_settings_and_chat` | `store_settings`, `carriers`, `local_shipping_rates`, `message_templates`, `content_pages`, `homepage_sections`, `chat_conversations`, `chat_messages`, `saved_replies` |
 | `0009_jobs` | `jobs` (work waiting for the background worker) |
 | `0011_shop_the_look` | No new table: adds the look marker to `collections` and the chosen variant to `collection_products` |
+| `0012_media_processing` | No new table: adds status, sizes and the original's location to `product_media` |
 | `0010_sign_in_protection` | `sign_in_attempts` (used to slow down password guessing) |
 
 64 tables in all, counting `schema_migrations`.

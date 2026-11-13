@@ -19,7 +19,7 @@ Update this file at the end of every session.
 
 ## Blocked / waiting on owner
 
-- [ ] Review and merge the Module 2 (Database) pull request (#11), then Module 3 (Accounts, #12), then the Module 4 (Catalogue) pull request
+- [ ] Review and merge the Module 2 (Database) pull request (#11), then Module 3 (Accounts, #12), then Module 4 (Catalogue, #13), then the Module 5 (Media) pull request
 - [ ] Google sign-in: create the client IDs in Google Cloud Console (free) for the website and the apps
 - [ ] Apple sign-in: Services ID and bundle ID (needs the Apple Developer account)
 - [ ] Confirm or change the choices listed at the end of docs/database.md
@@ -67,3 +67,5 @@ Update this file at the end of every session.
 - [x] 2026-11-11 — Owner decided the sign-in addresses and the Owner super user (decision 0006)
 - [x] 2026-11-11 — Module 3 (Accounts and sign-in) built: customers, staff, Google and Apple, two-step verification, roles, tests
 - [x] 2026-11-11 — Module 4 (Catalogue) built: products, variants, prices, stock, categories, collections, looks, shop lists with filters
+- [x] 2026-11-11 — Owner decided the shop shows the exact number in stock
+- [x] 2026-11-11 — Module 5 (Media) built: photo and video uploads, sizes, compression, serving, tests

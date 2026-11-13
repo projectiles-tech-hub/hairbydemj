@@ -68,6 +68,8 @@ same content, split by topic, is in `docs/spec/`.
 | `server/accounts/` | Customer and staff accounts, sessions, two-step verification |
 | `docs/catalogue.md` | Catalogue: products, variants, prices, stock, collections; addresses and rules |
 | `server/catalog/` | Catalogue code: what the shop reads and what staff manage |
+| `docs/media.md` | Product photos and videos: tools needed, sizes, addresses, rules |
+| `server/media/` | Uploads, resizing with libvips, video compression with ffmpeg |
 | `docs/preview.md` | The online design preview: what it is, how to build and publish it |
 | `server/site/`, `browser/`, `public/` | Website page code, browser script, styles, fonts and logo |
 | `server/admin/` | Admin page code |

@@ -173,7 +173,7 @@ describe('the store schema', { skip }, () => {
       'stock_movements.order_id', 'order_events.staff_id', 'gift_card_transactions.staff_id', 'returns.decided_by', 'refunds.staff_id', 'refunds.return_id',
       'reviews.replied_by', 'loyalty_transactions.review_id', 'loyalty_transactions.staff_id', 'referrals.first_order_id', 'store_settings.updated_by',
       'content_pages.updated_by', 'chat_conversations.assigned_staff_id', 'chat_conversations.order_id', 'chat_messages.staff_id', 'order_items.gift_card_id',
-      'newsletter_subscribers.customer_id', 'back_in_stock_requests.customer_id', 'refund_items.order_item_id', 'return_items.order_item_id',
+      'newsletter_subscribers.customer_id', 'product_media.created_by', 'back_in_stock_requests.customer_id', 'refund_items.order_item_id', 'return_items.order_item_id',
     ]);
     const missing = result.rows.map((r) => `${r.tbl}.${r.col}`).filter((x) => !allowed.has(x));
     assert.deepEqual(missing, []);

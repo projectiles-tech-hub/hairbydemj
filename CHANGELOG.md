@@ -4,6 +4,13 @@ All notable changes to this repository, newest first.
 
 ## 2026-11-11
 
+- Module 5, Media (`server/media/`): staff upload product photos and
+  videos; photos are resized into five widths as WebP and JPEG with libvips;
+  videos are compressed to MP4 with a poster picture by ffmpeg; hidden
+  details such as GPS location are removed; files are served under `/media/`
+  with a year-long cache and partial requests; photos link to variants by
+  colour. New setting `MEDIA_DIR`. Migration 0012. Guide: `docs/media.md`.
+- Catalogue: the shop now shows the exact number in stock (owner's decision).
 - Module 4, Catalogue (`server/catalog/`): products with hair attributes,
   variants with generated SKUs, a price per currency with conversion from
   naira, stock with reasons and a low-stock level, a category tree,

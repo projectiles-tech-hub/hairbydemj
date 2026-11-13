@@ -12,6 +12,7 @@ import { requireStaff } from '../accounts/routes.js';
 import { requireSameOrigin } from '../accounts/web.js';
 import { ApiError, clientIp, readJson, sendJson, type RequestContext } from '../http.js';
 import type { Router } from '../router.js';
+import { removeProductFiles, type MediaDeps } from '../media/media.js';
 import * as manage from './manage.js';
 import * as shop from './public.js';
 
@@ -95,7 +96,7 @@ function id(ctx: RequestContext): number {
 }
 
 /** Catalogue management for signed-in staff, on the admin address. */
-export function adminCatalogRoutes(router: Router, deps: AccountDeps): Router {
+export function adminCatalogRoutes(router: Router, deps: AccountDeps, media?: MediaDeps): Router {
   const meta = (ctx: RequestContext): { ip: string | null } => ({ ip: clientIp(ctx.req, deps.config.trustProxy) });
   /** A request that only reads. */
   const read = <T>(work: (actor: manage.Actor, ctx: RequestContext) => Promise<T>, key?: string) => async (ctx: RequestContext): Promise<void> => {
@@ -121,7 +122,12 @@ export function adminCatalogRoutes(router: Router, deps: AccountDeps): Router {
     .post('/api/products', change(201, (actor, ctx, input) => manage.createProduct(deps, actor, input, meta(ctx)), 'product'))
     .get('/api/products/:id', read((actor, ctx) => manage.readProduct(deps, actor, id(ctx)), 'product'))
     .post('/api/products/:id', change(200, (actor, ctx, input) => manage.updateProduct(deps, actor, id(ctx), input, meta(ctx)), 'product'))
-    .post('/api/products/:id/delete', change(200, (actor, ctx) => manage.deleteProduct(deps, actor, id(ctx), meta(ctx))))
+    .post('/api/products/:id/delete', change(200, async (actor, ctx) => {
+      const result = await manage.deleteProduct(deps, actor, id(ctx), meta(ctx));
+      // A deleted product's photos and videos go with it.
+      if (result.deleted && media) await removeProductFiles(media, id(ctx));
+      return result;
+    }))
     // variants and prices
     .post('/api/products/:id/variants', change(201, (actor, ctx, input) => manage.createVariant(deps, actor, id(ctx), input, meta(ctx)), 'product'))
     .post('/api/products/:id/variants/generate', change(201, (actor, ctx, input) => manage.generateVariants(deps, actor, id(ctx), input, meta(ctx))))

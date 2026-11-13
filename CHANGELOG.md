@@ -4,6 +4,7 @@ All notable changes to this repository, newest first.
 
 ## 2026-11-13
 
+- `docs/step-by-step.md`: the whole deployment as one ordered checklist, from opening accounts to launch day.
 - Homepage pictures (after module 21): staff upload the top banner's
   desktop and phone pictures, add up to 10 promotional banners (each with
   pictures, words, a button, dates and countries), a picture for each

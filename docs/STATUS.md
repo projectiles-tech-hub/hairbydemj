@@ -67,8 +67,7 @@ the store reviews, and the launch itself, all written up in `launch.md`.
 ## Exact next step
 
 1. Owner merges the homepage pictures pull request.
-2. The owner follows `operations.md` ("First-time set-up") and then
-   `launch.md` from the timeline's first row.
+2. The owner follows `step-by-step.md` from Part 1.
 
 ## Modules left
 

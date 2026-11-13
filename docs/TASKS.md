@@ -16,6 +16,11 @@ Update this file at the end of every session.
   logo; and we post it on our gallery and on the reviews page, with her
   name. Fits with module 17 (reviews) and module 5 (media).
 
+## Open
+
+- [ ] iPhone app: add the entitlements file (push notifications and Sign in with Apple) before the first App Store build
+- [ ] Server: change the default `APNS_BUNDLE_ID` to the app's real identifier, `com.hairbydemj.hairbydemj`
+
 ## Blocked / waiting on owner
 
 - [ ] Launch (docs/launch.md): Apple Developer and Google Play accounts and signing secrets; Paystack and Stripe business verification and live keys; carrier live accounts; store listings and screenshots; send the apps for review; final content check; launch day

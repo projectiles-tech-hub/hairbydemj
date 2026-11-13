@@ -97,6 +97,7 @@ same content, split by topic, is in `docs/spec/`.
 | `server/loyalty/`, `server/reviews/`, `server/giftcards/` | Points and referrals, reviews, gift cards bought and issued; their addresses are in `server/loyalty/routes.ts` |
 | `docs/chat.md` | Live chat: how it works, staff inbox, WhatsApp, addresses |
 | `server/chat/` | Chat messages, the live event streams and their addresses |
+| `docs/step-by-step.md` | Every step to deploy fully, in order, as a checklist for the owner |
 | `docs/operations.md` | Running the live server: set-up, deployments, backups, monitoring, what to do when alerts arrive |
 | `server/ops/` | The alert email the server scripts send; the test-mode check of payment and carrier accounts; the launch check |
 | `docs/testing.md` | Tests: running them, browser journeys, speed budget, checking real accounts in test mode, beta testers |

@@ -1,0 +1,191 @@
+name: App release
+
+# Builds the signed apps for the stores (module 21). Started by hand from the
+# Actions tab ("Run workflow"):
+#   - Android: a signed App Bundle, uploaded to Google Play (internal testing
+#     track, or production as a draft the owner releases on launch day);
+#   - iPhone: a signed build, uploaded to App Store Connect, where it appears
+#     in TestFlight and can be sent for review.
+# Each part only runs once its secrets are added (docs/launch.md); until then
+# it says so and stops. The build number is this workflow's run number, so it
+# always goes up.
+
+on:
+  workflow_dispatch:
+    inputs:
+      track:
+        description: Google Play track
+        type: choice
+        options: [internal, production]
+        default: internal
+
+permissions:
+  contents: read
+
+env:
+  # The app's settings (not secret). Set them as repository variables;
+  # docs/app.md lists them.
+  DART_DEFINES: >-
+    --dart-define=API_BASE=${{ vars.APP_API_BASE || 'https://api.hairbydemj.com' }}
+    --dart-define=SITE_BASE=${{ vars.APP_SITE_BASE || 'https://hairbydemj.com' }}
+    --dart-define=WHATSAPP=${{ vars.APP_WHATSAPP }}
+    --dart-define=GOOGLE_SERVER_CLIENT_ID=${{ vars.APP_GOOGLE_SERVER_CLIENT_ID }}
+    --dart-define=GOOGLE_IOS_CLIENT_ID=${{ vars.APP_GOOGLE_IOS_CLIENT_ID }}
+    --dart-define=APPLE_SIGN_IN=${{ vars.APP_APPLE_SIGN_IN || 'false' }}
+    --dart-define=FIREBASE_API_KEY=${{ vars.APP_FIREBASE_API_KEY }}
+    --dart-define=FIREBASE_PROJECT_ID=${{ vars.APP_FIREBASE_PROJECT_ID }}
+    --dart-define=FIREBASE_SENDER_ID=${{ vars.APP_FIREBASE_SENDER_ID }}
+    --dart-define=FIREBASE_ANDROID_APP_ID=${{ vars.APP_FIREBASE_ANDROID_APP_ID }}
+    --dart-define=FIREBASE_IOS_APP_ID=${{ vars.APP_FIREBASE_IOS_APP_ID }}
+
+jobs:
+  android:
+    name: Android for Google Play
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    env:
+      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+      PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+    steps:
+      - name: Check the signing key is set up
+        id: ready
+        working-directory: .
+        run: |
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then
+            echo "::notice::No Android upload key yet (ANDROID_KEYSTORE_BASE64), so nothing was built."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.ready.outputs.ready == 'true'
+      - uses: actions/setup-java@v4
+        if: steps.ready.outputs.ready == 'true'
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: subosito/flutter-action@v2
+        if: steps.ready.outputs.ready == 'true'
+        with:
+          channel: stable
+          cache: true
+      - name: Put the upload key in place (removed at the end)
+        if: steps.ready.outputs.ready == 'true'
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/upload.jks
+          {
+            echo "storeFile=upload.jks"
+            echo "storePassword=$ANDROID_KEYSTORE_PASSWORD"
+            echo "keyAlias=$ANDROID_KEY_ALIAS"
+            echo "keyPassword=$ANDROID_KEY_PASSWORD"
+          } > android/key.properties
+      - name: Build the signed App Bundle
+        if: steps.ready.outputs.ready == 'true'
+        run: |
+          flutter pub get
+          flutter build appbundle --release --build-number=${{ github.run_number }} $DART_DEFINES
+      - name: Upload to Google Play
+        if: steps.ready.outputs.ready == 'true' && env.PLAY_SERVICE_ACCOUNT_JSON != ''
+        working-directory: .
+        run: node scripts/play-upload.mjs mobile/build/app/outputs/bundle/release/app-release.aab "${{ inputs.track }}" "${{ inputs.track == 'production' && 'draft' || 'completed' }}"
+      - name: Keep the bundle for a hand upload
+        if: steps.ready.outputs.ready == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: hairbydemj-android-${{ github.run_number }}
+          path: mobile/build/app/outputs/bundle/release/app-release.aab
+          retention-days: 14
+      - name: Remove the key
+        if: always()
+        run: rm -f android/app/upload.jks android/key.properties
+
+  ios:
+    name: iPhone for App Store Connect
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: mobile
+    env:
+      IOS_CERTIFICATE_P12_BASE64: ${{ secrets.IOS_CERTIFICATE_P12_BASE64 }}
+      IOS_CERTIFICATE_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
+      IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+      APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID }}
+      APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+      APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+      APP_STORE_CONNECT_KEY_P8: ${{ secrets.APP_STORE_CONNECT_KEY_P8 }}
+    steps:
+      - name: Check the signing files are set up
+        id: ready
+        working-directory: .
+        run: |
+          if [ -z "$IOS_CERTIFICATE_P12_BASE64" ] || [ -z "$IOS_PROVISIONING_PROFILE_BASE64" ] || [ -z "$APPLE_TEAM_ID" ]; then
+            echo "::notice::No Apple signing files yet (docs/launch.md), so nothing was built."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.ready.outputs.ready == 'true'
+      - uses: subosito/flutter-action@v2
+        if: steps.ready.outputs.ready == 'true'
+        with:
+          channel: stable
+          cache: true
+      - name: Put the certificate and profile in a temporary keychain
+        if: steps.ready.outputs.ready == 'true'
+        run: |
+          KEYCHAIN="$RUNNER_TEMP/build.keychain-db"
+          KEYCHAIN_PASSWORD="$(openssl rand -hex 16)"
+          echo "$IOS_CERTIFICATE_P12_BASE64" | base64 --decode > "$RUNNER_TEMP/cert.p12"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security set-keychain-settings -lut 3600 "$KEYCHAIN"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security import "$RUNNER_TEMP/cert.p12" -P "$IOS_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN"
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN" >/dev/null
+          security list-keychains -d user -s "$KEYCHAIN" $(security list-keychains -d user | tr -d '"')
+          rm -f "$RUNNER_TEMP/cert.p12"
+          echo "$IOS_PROVISIONING_PROFILE_BASE64" | base64 --decode > "$RUNNER_TEMP/profile.mobileprovision"
+          UUID="$(security cms -D -i "$RUNNER_TEMP/profile.mobileprovision" | plutil -extract UUID raw -)"
+          NAME="$(security cms -D -i "$RUNNER_TEMP/profile.mobileprovision" | plutil -extract Name raw -)"
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp "$RUNNER_TEMP/profile.mobileprovision" ~/Library/MobileDevice/Provisioning\ Profiles/"$UUID".mobileprovision
+          echo "PROFILE_NAME=$NAME" >> "$GITHUB_ENV"
+      - name: Build and sign
+        if: steps.ready.outputs.ready == 'true'
+        run: |
+          flutter pub get
+          flutter build ios --release --no-codesign --build-number=${{ github.run_number }} $DART_DEFINES
+          xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release \
+            -archivePath "$RUNNER_TEMP/Runner.xcarchive" archive \
+            CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
+            CODE_SIGN_IDENTITY="Apple Distribution" PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME"
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>teamID</key><string>$APPLE_TEAM_ID</string>
+            <key>signingStyle</key><string>manual</string>
+            <key>provisioningProfiles</key><dict><key>com.hairbydemj.hairbydemj</key><string>$PROFILE_NAME</string></dict>
+            <key>uploadSymbols</key><true/>
+          </dict></plist>
+          PLIST
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/Runner.xcarchive" -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" -exportPath "$RUNNER_TEMP/ipa"
+          ls -l "$RUNNER_TEMP/ipa"
+      - name: Upload to App Store Connect (TestFlight)
+        if: steps.ready.outputs.ready == 'true' && env.APP_STORE_CONNECT_KEY_P8 != ''
+        run: |
+          mkdir -p ~/.appstoreconnect/private_keys
+          printf '%s\n' "$APP_STORE_CONNECT_KEY_P8" > ~/.appstoreconnect/private_keys/AuthKey_"$APP_STORE_CONNECT_KEY_ID".p8
+          xcrun altool --upload-app --type ios --file "$(ls "$RUNNER_TEMP"/ipa/*.ipa | head -n 1)" \
+            --apiKey "$APP_STORE_CONNECT_KEY_ID" --apiIssuer "$APP_STORE_CONNECT_ISSUER_ID"
+      - name: Remove the signing files
+        if: always()
+        run: |
+          rm -rf ~/.appstoreconnect/private_keys "$RUNNER_TEMP"/*.mobileprovision
+          security delete-keychain "$RUNNER_TEMP/build.keychain-db" 2>/dev/null || true

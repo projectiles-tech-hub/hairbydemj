@@ -98,10 +98,12 @@ same content, split by topic, is in `docs/spec/`.
 | `docs/chat.md` | Live chat: how it works, staff inbox, WhatsApp, addresses |
 | `server/chat/` | Chat messages, the live event streams and their addresses |
 | `docs/operations.md` | Running the live server: set-up, deployments, backups, monitoring, what to do when alerts arrive |
-| `server/ops/` | The alert email the server scripts send; the test-mode check of payment and carrier accounts |
+| `server/ops/` | The alert email the server scripts send; the test-mode check of payment and carrier accounts; the launch check |
 | `docs/testing.md` | Tests: running them, browser journeys, speed budget, checking real accounts in test mode, beta testers |
 | `docs/security-review.md` | The security review: what was checked, findings and fixes, notes for an independent reviewer |
 | `server/e2e/` | Browser journeys and speed checks (`npm run test:e2e`) |
+| `docs/launch.md` | Launch: accounts, store listings, privacy answers, signing the apps, live keys, launch check, launch day, first days |
+| `scripts/play-upload.mjs` | Uploads the Android App Bundle to Google Play (used by `app-release.yml`) |
 | `docs/preview.md` | The online design preview: what it is, how to build and publish it |
 | `server/site/`, `browser/`, `public/` | Website page code, browser script, styles, fonts and logo |
 | `server/admin/` | Admin page code |

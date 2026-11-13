@@ -4,6 +4,13 @@ All notable changes to this repository, newest first.
 
 ## 2026-11-13
 
+- Module 21, Launch: a release workflow that builds the signed Android App
+  Bundle and iPhone app and uploads them to Google Play (`scripts/play-upload.mjs`)
+  and App Store Connect; Apple's privacy manifest for the app; a launch check
+  command (`dist/server/ops/launch-check.js`) for live keys, email, carriers,
+  sample data, products, pages, rates and the worker; and the launch guide
+  (`docs/launch.md`) with store listings, privacy answers, review notes,
+  live-key steps, launch day and the first days.
 - Module 20, Testing and security review: browser journeys in Chromium
   (guest checkout paying in naira, account creation, owner invitation and
   two-step sign-in, sending an order, adding a product, live chat); a speed

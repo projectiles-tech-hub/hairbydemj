@@ -77,6 +77,10 @@ Needs the owner's accounts, which are the unavoidable costs in decision 0004:
   file and its passwords are kept off the repository (they are listed in
   `mobile/.gitignore`) and given to the build as secrets.
 
+Signing, the store listings, privacy answers and sending the apps for
+review are in `launch.md`; `.github/workflows/app-release.yml` builds and
+uploads the signed apps.
+
 ## Push notifications: what the owner sets up
 
 1. Create a free Firebase project and add an Android app

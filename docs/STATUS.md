@@ -50,27 +50,28 @@
 - Module 17 (Reviews, loyalty, gift cards) is built; pull request #26 is open.
 - Module 18 (Live chat) is built; pull request #27 is open.
 - Module 19 (Deployment, backups, monitoring) is built; pull request #28 is open.
-- Module 20 (Testing and security review) is built; its pull request is open.
+- Module 20 (Testing and security review) is built; pull request #29 is open.
+- Module 21 (Launch) is prepared; its pull request is open. All 21 modules are built.
 - The Vercel preview was for viewing only. The real site runs from our own
   server; the page code written for the preview is kept as the starting
   point for modules 13 and 14.
 
 ## Current module
 
-[`modules/20-testing-and-security-review.md`](modules/20-testing-and-security-review.md):
-built and **in review** on branch `feature/security-review`, on top of
-modules 2 to 19. The automatic parts are done and pass; the steps that need
-the owner's test accounts, beta testers and an independent reviewer are
-written up in `testing.md` and `security-review.md`.
+[`modules/21-launch.md`](modules/21-launch.md): prepared and **in review**
+on branch `feature/launch`, on top of modules 2 to 20. Every module is now
+built. What is left is the owner's: the accounts, keys and signing files,
+the store reviews, and the launch itself, all written up in `launch.md`.
 
 ## Exact next step
 
-1. Owner merges, in order: #11 to #28, then Module 20's.
-2. Building continues with **Module 21. Launch**.
+1. Owner merges, in order: #11 to #29, then Module 21's.
+2. The owner follows `operations.md` ("First-time set-up") and then
+   `launch.md` from the timeline's first row.
 
-## Modules left after Module 20
+## Modules left
 
-21 Launch.
+None. The launch steps in `launch.md` remain.
 
 ## Waiting on the owner
 

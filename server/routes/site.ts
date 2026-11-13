@@ -6,6 +6,8 @@ import { customerAuthRoutes } from '../accounts/routes.js';
 import { shopCartRoutes } from '../cart/routes.js';
 import { shopCatalogRoutes } from '../catalog/routes.js';
 import { shopTryOnRoutes } from '../tryon/routes.js';
+import { shopLoyaltyRoutes } from '../loyalty/routes.js';
+import type { MediaDeps } from '../media/media.js';
 import type { PaymentDeps } from '../payments/payments.js';
 import { shopPaymentRoutes } from '../payments/routes.js';
 import type { OrderDeps } from '../orders/checkout.js';
@@ -18,7 +20,7 @@ import { storeRoutes } from '../site/store/routes.js';
 import { Router } from '../router.js';
 import { sendHtml } from '../http.js';
 
-export function siteRoutes(accounts?: AccountDeps, payments?: PaymentDeps, shipping?: ShippingDeps, orders?: OrderDeps): Router {
+export function siteRoutes(accounts?: AccountDeps, payments?: PaymentDeps, shipping?: ShippingDeps, orders?: OrderDeps, media?: MediaDeps): Router {
   const router = new Router();
   // Without a database (development only) there is just a placeholder page.
   if (!accounts) {
@@ -42,6 +44,7 @@ export function siteRoutes(accounts?: AccountDeps, payments?: PaymentDeps, shipp
     if (orders) shopOrderRoutes(router, accounts, orders, '/api', 'cookie');
     shopNotificationRoutes(router, accounts, '/api', 'cookie');
     customerAccountRoutes(router, accounts, '/api', 'cookie');
+    shopLoyaltyRoutes(router, accounts, media, '/api', '/api/catalog', 'cookie');
     // The pages themselves (module 13).
     storeRoutes(router, accounts);
     unsubscribeRoutes(router, accounts);

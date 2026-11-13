@@ -13,6 +13,7 @@ import { expireUnpaidOrders, type OrderDeps } from '../orders/checkout.js';
 import { buyLabel, pruneQuotes, refreshAllTracking, type ShippingDeps } from '../shipping/shipping.js';
 import { deliverEmail, deliverOrderUpdate, Undeliverable, type NotifyDeps } from '../notifications/notify.js';
 import { enqueue, QUEUE, type Job } from './queue.js';
+import { birthdayPoints, settleOrderPoints, settleReferrals } from '../loyalty/loyalty.js';
 
 export interface WorkerDeps {
   db: Db;
@@ -85,6 +86,16 @@ export const SCHEDULE: ScheduledTask[] = [
     name: 'expire_unpaid_orders',
     everyMinutes: 5,
     run: async (deps) => ({ cancelled: await expireUnpaidOrders(deps.orders) }),
+  },
+  {
+    name: 'loyalty_points',
+    everyMinutes: 30,
+    run: async (deps) => ({ orders: await settleOrderPoints(deps.db, deps.now()), referrals: await settleReferrals(deps.db, deps.now()) }),
+  },
+  {
+    name: 'birthday_points',
+    everyMinutes: 24 * 60,
+    run: async (deps) => ({ customers: await birthdayPoints(deps.db, deps.now()) }),
   },
   {
     name: 'refresh_tracking',

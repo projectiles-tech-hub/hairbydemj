@@ -5,6 +5,7 @@ import { getLook, getProduct, listCollections, listFilters, listProducts, SORTS,
 import { ApiError } from '../../http.js';
 import { accordion, button, card, icon, sectionHead } from '../components.js';
 import { each, esc } from '../html.js';
+import { productReviewsSection } from './loyalty.js';
 import { crumbs, money, picture, priceRange, productGrid, type SiteContext } from './view.js';
 
 const SORT_LABELS: Record<Sort, string> = { newest: 'Newest', best_selling: 'Best-selling', price_low: 'Price: low to high', price_high: 'Price: high to low', name: 'Name', relevance: 'Best match' };
@@ -181,6 +182,7 @@ export async function productPage(sc: SiteContext, slug: string): Promise<{ titl
     throw error;
   }
   const images = p.media.filter((m) => m.kind === 'image');
+  const reviews = await productReviewsSection(sc, p.slug);
   const first = images[0];
   const dims: Array<[label: string, key: 'lengthInches' | 'densityPercent' | 'laceType' | 'colour', unit: (v: string | number) => string]> = [
     ['Length', 'lengthInches', (v) => `${v}"`],
@@ -208,6 +210,7 @@ export async function productPage(sc: SiteContext, slug: string): Promise<{ titl
 ${images.length > 1 ? `<div class="thumbs">${each(images.slice(0, 8), (m, i) => `<button type="button" class="thumb" data-thumb="${i}" aria-label="Show photo ${i + 1} of ${images.length}">${picture({ path: m.path, alt: '', widths: m.widths }, { sizes: '72px' })}</button>`)}</div>` : ''}</div>
 <form class="stack" data-product-form data-product-id="${p.id}">
 <h1 class="h1">${esc(p.name)}</h1>
+${reviews.rating ? `<a class="small link" href="#reviews">${'★'.repeat(Math.round(reviews.rating.average))} ${reviews.rating.average} out of 5 (${reviews.rating.count} ${reviews.rating.count === 1 ? 'review' : 'reviews'})</a>` : ''}
 <p class="price" style="font-size:24px;line-height:32px"><span data-price>${esc(lo === hi ? money(sc, lo) : priceRange(sc, lo, hi))}</span>${v0.compareAtMinor ? ` <s class="muted small" data-was>${esc(money(sc, v0.compareAtMinor))}</s>` : ' <s class="muted small" data-was hidden></s>'}</p>
 ${choices}
 <noscript><div class="field"><label class="field__label" for="variant-select">Choose</label><select class="field__input" id="variant-select" name="variantId">${each(p.variants, (v) => `<option value="${v.id}"${v.available === 0 ? ' disabled' : ''}>${esc([v.lengthInches ? `${v.lengthInches}"` : '', v.densityPercent ? `${v.densityPercent}%` : '', v.laceType ?? '', v.colour ?? ''].filter(Boolean).join(', '))}: ${esc(money(sc, v.priceMinor))}</option>`)}</select></div></noscript>
@@ -220,7 +223,8 @@ ${button('Save to wishlist', { kind: 'secondary', icon: 'heart', full: true, att
 ${p.isFinalSale ? '<p class="small">This item is a final sale: it can only be returned if it arrives wrong or damaged.</p>' : ''}
 <div>${p.description ? accordion('Description', `<p>${esc(p.description)}</p>`, true) : ''}${details.length ? accordion('Hair details', `<dl class="stack stack--xs">${each(details, ([k, v]) => `<div class="kv"><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`)}</dl>`) : ''}${p.careGuide ? accordion('Care guide', `<p>${esc(p.careGuide)}</p>`) : ''}${accordion('Delivery and returns', '<p>Sent with DHL, UPS or FedEx abroad, or a local courier inside Nigeria; the price and time show at checkout for your address. Import duties and taxes, if your country charges them, are paid by you on delivery. Unworn items can be returned after delivery; see <a class="link" href="/returns/">returns</a>.</p>')}</div>
 </form></div>
-<script type="application/json" id="variants">${JSON.stringify(variants).replace(/</g, '\\u003c')}</script>`;
+<script type="application/json" id="variants">${JSON.stringify(variants).replace(/</g, '\\u003c')}</script>
+${reviews.html}`;
   const availability = p.variants.some((v) => v.available > 0) ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock';
   return {
     title: p.seoTitle || p.name,
@@ -238,6 +242,7 @@ ${p.isFinalSale ? '<p class="small">This item is a final sale: it can only be re
         sku: v0.sku,
         image: first ? first.widths.map((w) => `${sc.origin}/media/${first.path}/${w}.jpg`).slice(-1) : undefined,
         brand: { '@type': 'Brand', name: 'hairbydemj' },
+        aggregateRating: reviews.rating ? { '@type': 'AggregateRating', ratingValue: reviews.rating.average, reviewCount: reviews.rating.count } : undefined,
         offers: { '@type': 'AggregateOffer', priceCurrency: sc.currency.code, lowPrice: (lo / 10 ** sc.currency.minorUnits).toFixed(sc.currency.minorUnits), highPrice: (hi / 10 ** sc.currency.minorUnits).toFixed(sc.currency.minorUnits), offerCount: p.variants.length, availability },
       },
       breadcrumbLd(sc, [['Home', '/'], ...(p.category ? [[p.category.name, `/c/${p.category.slug}/`] as [string, string]] : []), [p.name, `/products/${p.slug}/`]]),

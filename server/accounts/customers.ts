@@ -7,6 +7,7 @@ import { hashCode, hashPassword, hashToken, passwordNeedsRehash, randomCode, ran
 import { emailOf, passwordOf, text, type AccountDeps } from './deps.js';
 import { checkAttempts, recordAttempt } from './guard.js';
 import { IdentityError, type Identity, type Provider } from './oidc.js';
+import { recordReferral } from '../loyalty/loyalty.js';
 
 export const CUSTOMER = {
   /** The 6-digit code lasts this long (from the approved journeys). */
@@ -148,6 +149,8 @@ export async function signUp(deps: AccountDeps, input: Record<string, unknown>, 
     throw error;
   }
   await deps.db.query('insert into notification_preferences (customer_id, offers_email) values ($1, $2)', [id, consent]);
+  // A friend's referral code typed at sign-up (module 17).
+  await recordReferral(deps.db, id, input.referralCode);
   await sendCode(deps, { id, email }, { force: true });
   return { email };
 }

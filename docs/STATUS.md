@@ -46,27 +46,27 @@
 - Module 13 (Website) is built; pull request #22 is open.
 - Module 14 (Admin) is built; pull request #23 is open.
 - Module 15 (Phone app) is built; pull request #24 is open.
-- Module 16 (Try-on) is built; its pull request is open.
+- Module 16 (Try-on) is built; pull request #25 is open.
+- Module 17 (Reviews, loyalty, gift cards) is built; its pull request is open.
 - The Vercel preview was for viewing only. The real site runs from our own
   server; the page code written for the preview is kept as the starting
   point for modules 13 and 14.
 
 ## Current module
 
-[`modules/16-ar-try-on.md`](modules/16-ar-try-on.md): built and **in review**
-on branch `feature/try-on`, on top of modules 2 to 15. Server tests pass, the
-website try-on was walked through in Chromium, and the app builds in GitHub
-Actions. Tuning on real devices waits for the owner's wig pictures and phones.
+[`modules/17-reviews-loyalty-gift-cards.md`](modules/17-reviews-loyalty-gift-cards.md):
+built and **in review** on branch `feature/loyalty`, on top of modules 2 to
+16. Server tests pass; the app's checks run in GitHub Actions.
 
 ## Exact next step
 
-1. Owner merges, in order: #11 to #24, then Module 16's.
-2. Building continues with **Module 17. Reviews, loyalty, gift cards**.
+1. Owner merges, in order: #11 to #25, then Module 17's.
+2. Building continues with **Module 18. Live chat**.
 
-## Modules left after Module 16
+## Modules left after Module 17
 
-17 Reviews, loyalty, gift cards · 18 Live chat · 19 Deployment, backups,
-monitoring · 20 Testing and security review · 21 Launch.
+18 Live chat · 19 Deployment, backups, monitoring · 20 Testing and security
+review · 21 Launch.
 
 ## Waiting on the owner
 
@@ -78,6 +78,7 @@ monitoring · 20 Testing and security review · 21 Launch.
   the boxes used and the local delivery zones (see `shipping.md`).
 - Apple push key and Firebase service account (for app push); the From address for emails.
 - The return window and store credit bonus (sample figures in use: 14 days, 10%).
+- Loyalty: confirm the sample figures (`loyalty.md`).
 - Try-on: wig pictures drawn to the template (`try-on.md`).
 - For the app: Apple Developer and Google Play accounts, a Firebase project, Google and Apple sign-in set-up, and real phones to test on (`app.md`).
 - See also the "Blocked / waiting on owner" section of [`TASKS.md`](TASKS.md).

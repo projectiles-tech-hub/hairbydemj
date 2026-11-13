@@ -48,11 +48,14 @@ class AccountScreen extends StatelessWidget {
         if (c != null) ...[
           LinkRow('Orders', onTap: () => nav.pushNamed('/orders')),
           LinkRow('Wishlist', onTap: () => nav.pushNamed('/wishlist')),
+          LinkRow('Points and referrals', onTap: () => nav.pushNamed('/loyalty')),
+          LinkRow('Reviews', onTap: () => nav.pushNamed('/reviews')),
           LinkRow('Addresses', onTap: () => nav.pushNamed('/addresses')),
           LinkRow('Notifications', trailing: state.unread > 0 ? Badge(label: Text('${state.unread}'), backgroundColor: Brand.gold, textColor: Brand.noir) : null, onTap: () => nav.pushNamed('/notifications')),
           LinkRow('Profile and security', onTap: () => nav.pushNamed('/profile')),
         ] else
           LinkRow('Track an order', onTap: () => launchUrl(Uri.parse('${AppConfig.siteBase}/track-order/'), mode: LaunchMode.externalApplication)),
+        LinkRow('Gift cards', onTap: () => nav.pushNamed('/gift-cards')),
         LinkRow('Settings', onTap: () => nav.pushNamed('/settings')),
         LinkRow('Help and contact', onTap: () => nav.pushNamed('/help')),
         if (c != null)

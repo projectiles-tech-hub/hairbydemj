@@ -740,6 +740,7 @@ if (checkout) {
         quoteId,
         shippingOption: chosenOption()?.id,
         note: value('note'),
+        usePoints: Number(value('usePoints').replace(/[^0-9]/g, '')) || undefined,
         saveAddress: $<HTMLInputElement>('[name="saveAddress"]', checkout)?.checked === true,
       });
       const number = String(placed.order.number);
@@ -808,3 +809,88 @@ if (complete) {
     }
   });
 }
+
+// ----- loyalty, reviews and gift cards (module 17) -----
+
+$$<HTMLButtonElement>('[data-copy]').forEach((b) =>
+  b.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(b.dataset.copy ?? '');
+      b.textContent = 'Copied';
+    } catch {
+      ($('#ref-link') as HTMLInputElement | null)?.select();
+    }
+  }),
+);
+
+$$<HTMLFormElement>('[data-review-form]').forEach((form) =>
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const button = $<HTMLButtonElement>('button[type="submit"]', form);
+    if (button) button.disabled = true;
+    const out = $('[data-form-error]', form);
+    say(out, '');
+    try {
+      const rating = Number(($<HTMLInputElement>('input[name="rating"]:checked', form))?.value ?? 0);
+      const made = await api('POST', '/api/reviews', { orderItemId: Number(form.dataset.reviewForm), rating, body: ($<HTMLTextAreaElement>('[name="body"]', form))?.value ?? '' });
+      const files = Array.from($<HTMLInputElement>('[data-review-photos]', form)?.files ?? []).slice(0, 4);
+      for (const [i, file] of files.entries()) {
+        say($('[data-form-ok]', form), `Sending photo ${i + 1} of ${files.length}…`);
+        const res = await fetch(`/api/reviews/${made.review.id}/photos`, { method: 'POST', headers: { 'Content-Type': file.type || 'application/octet-stream' }, body: file });
+        if (!res.ok) throw new ApiFailure(((await res.json().catch(() => ({}))) as { error?: { message?: string } }).error?.message ?? 'A photo could not be sent.', res.status, 'upload_failed', {});
+      }
+      location.href = '/account/reviews/';
+    } catch (error) {
+      if (error instanceof ApiFailure) showErrors(form, error);
+      else say(out, 'That did not work. Try again.');
+    } finally {
+      if (button) button.disabled = false;
+    }
+  }),
+);
+
+$$<HTMLFormElement>('[data-gift-buy]').forEach((form) =>
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const values = formValues(form);
+    const typed = String(values.amount ?? '').replace(/[^0-9.]/g, '');
+    const chosen = typed || String(values.preset ?? '');
+    const button = $<HTMLButtonElement>('button[type="submit"]', form);
+    if (button) button.disabled = true;
+    say($('[data-form-error]', form), '');
+    try {
+      const placed = await api('POST', '/api/gift-cards/buy', {
+        amountMinor: Math.round(Number(chosen) * 100),
+        currency: values.currency,
+        recipientName: values.recipientName,
+        recipientEmail: values.recipientEmail,
+        fromName: values.fromName,
+        message: values.message,
+        deliverOn: values.deliverOn || undefined,
+        email: values.email || undefined,
+      });
+      // The order page has the "Pay now" button for both ways of paying.
+      location.href = `/track-order/?order=${encodeURIComponent(String(placed.number))}&token=${encodeURIComponent(String(placed.orderToken))}`;
+    } catch (error) {
+      if (error instanceof ApiFailure) showErrors(form, new ApiFailure(error.message, error.status, error.code, Object.fromEntries(Object.entries(error.fields).map(([k, v]) => [k === 'amountMinor' ? 'amount' : k, v]))));
+    } finally {
+      if (button) button.disabled = false;
+    }
+  }),
+);
+
+$$<HTMLFormElement>('[data-gift-balance]').forEach((form) =>
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const out = $('[data-gift-result]');
+    say($('[data-form-error]', form), '');
+    try {
+      const r = await api('POST', '/api/gift-cards/balance', { code: formValues(form).code });
+      const c = r.card as { last4: string; currency: string; balanceMinor: number; status: string; expiresAt: string | null };
+      const amount = new Intl.NumberFormat('en-NG', { style: 'currency', currency: c.currency, maximumFractionDigits: c.balanceMinor % 100 === 0 ? 0 : 2 }).format(c.balanceMinor / 100);
+      say(out, c.status === 'active' ? `Card ending ${c.last4}: ${amount} left${c.expiresAt ? `, until ${new Date(c.expiresAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}` : ''}.` : `Card ending ${c.last4}: ${c.status === 'expired' ? 'expired' : c.status === 'used_up' ? 'used up' : 'switched off'}.`);
+    } catch (error) {
+      if (error instanceof ApiFailure) showErrors(form, error);
+    }
+  }),
+);

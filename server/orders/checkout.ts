@@ -14,6 +14,7 @@ import { cartById, clearCart, priceCart, resolveCart, type CartOwner } from '../
 import { redeemGiftCards, restoreGiftCards } from '../cart/gift-cards.js';
 import { holdStock, releaseStock } from '../cart/stock.js';
 import { withTransaction, type Db, type DbClient } from '../db/pool.js';
+import { movePoints, pricePoints } from '../loyalty/loyalty.js';
 import { ApiError } from '../http.js';
 import type { Logger } from '../logger.js';
 import { markOrderPaid, orderEvent, updateRefundStatus } from '../payments/order-paid.js';
@@ -79,25 +80,31 @@ export async function placeOrder(deps: OrderDeps, owner: CartOwner, input: Recor
 
     await holdStock(c, cart.lines.map((l) => ({ variantId: l.variantId, quantity: l.quantity })));
     const shipping = chosen.option.priceMinor;
-    const total = cart.subtotalMinor - cart.discountMinor + shipping;
+    // Loyalty points (module 17) pay for part of the items, for signed-in customers.
+    const points = owner.customerId !== null && input.usePoints !== undefined && input.usePoints !== null && input.usePoints !== 0
+      ? await pricePoints(c, owner.customerId, Number(input.usePoints), cart.currency, cart.subtotalMinor - cart.discountMinor)
+      : { points: 0, minor: 0 };
+    const total = cart.subtotalMinor - cart.discountMinor - points.minor + shipping;
     const weight = chosen.parcels.reduce((s, p) => s + p.weightGrams, 0);
 
     const made = await c.query(
-      `insert into orders (customer_id, email, phone, source, currency, status, payment_status, subtotal_minor, discount_minor, shipping_minor, total_minor, gift_card_minor,
+      `insert into orders (customer_id, email, phone, source, currency, status, payment_status, subtotal_minor, discount_minor, points_redeemed, points_minor, shipping_minor, total_minor, gift_card_minor,
          ship_full_name, ship_phone, ship_line1, ship_line2, ship_city, ship_region, ship_postal_code, ship_country,
          shipping_carrier, shipping_service_code, shipping_service_name, delivery_estimate, total_weight_grams, package_size_id, duties_notice_shown,
          customer_note, stock_held_until, access_token_hash, placed_at)
-       values ($1, $2, $3, $4, $5, 'on_hold', 'awaiting', $6, $7, $8, $9, 0, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28)
+       values ($1, $2, $3, $4, $5, 'on_hold', 'awaiting', $6, $7, $29, $30, $8, $9, 0, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28)
        returning id, number`,
       [
         owner.customerId, email, address.phone, source, cart.currency, cart.subtotalMinor, cart.discountMinor, shipping, total,
         address.name, address.phone, address.line1, address.line2, address.city, address.region, address.postalCode, address.country,
         chosen.option.carrier, chosen.option.serviceCode, `${chosen.option.carrierName}: ${chosen.option.serviceName}`, chosen.option.estimate, weight, chosen.parcels[0]?.packageSizeId ?? null, chosen.dutiesNotice,
         note, new Date(now.getTime() + ORDERS.holdMinutes * 60_000), hashToken(token), now,
+        points.points, points.minor,
       ],
     );
     const orderId = Number(made.rows[0]?.id);
     const number = String(made.rows[0]?.number);
+    if (points.points > 0 && owner.customerId !== null) await movePoints(c, owner.customerId, -points.points, 'redeem', now, { orderId, note: 'points spent' });
 
     for (const l of cart.lines) {
       const extra = await c.query('select p.is_final_sale from products p where p.id = $1', [l.productId]);
@@ -150,6 +157,10 @@ export async function cancelBeforeDispatch(c: Q, orderId: number, reason: string
   const items = await c.query("select variant_id, quantity from order_items where order_id = $1 and kind = 'variant' and variant_id is not null", [orderId]);
   await releaseStock(c, items.rows.map((r) => ({ variantId: Number(r.variant_id), quantity: Number(r.quantity) })));
   await restoreGiftCards(c, orderId, options.staffId);
+  // Points spent on the order go back, and a gift card bought on it never starts (module 17).
+  const spent = (await c.query('select customer_id, points_redeemed from orders where id = $1', [orderId])).rows[0];
+  if (spent?.customer_id && Number(spent.points_redeemed) > 0) await movePoints(c, Number(spent.customer_id), Number(spent.points_redeemed), 'refund', options.now, { orderId, note: 'points given back' });
+  await c.query("update gift_cards g set status = 'disabled' from order_items oi where oi.order_id = $1 and oi.gift_card_id = g.id and g.status = 'pending'", [orderId]);
   await c.query("update orders set status = 'cancelled', cancelled_at = $2, stock_held_until = null where id = $1", [orderId, options.now]);
   await orderEvent(c, orderId, 'cancelled', reason, { staffId: options.staffId, visible: options.visible });
   await updateRefundStatus(c, orderId);

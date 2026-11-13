@@ -48,9 +48,9 @@ export function createApp(config: Config, logger: Logger, options: AppOptions): 
   const shipping = options.accounts ? shippingDeps(options.accounts, logger) : undefined;
   const orders = options.accounts ? orderDeps(options.accounts, logger) : undefined;
   const routers: Record<Area, Router> = {
-    site: options.routers?.site ?? siteRoutes(options.accounts, payments, shipping, orders),
+    site: options.routers?.site ?? siteRoutes(options.accounts, payments, shipping, orders, options.media),
     admin: options.routers?.admin ?? adminRoutes(options.accounts, options.media, payments, shipping, orders),
-    api: options.routers?.api ?? apiRoutes(options.accounts, payments, shipping, orders),
+    api: options.routers?.api ?? apiRoutes(options.accounts, payments, shipping, orders, options.media),
   };
   const areaByHost = new Map<string, Area>([
     [config.hosts.site, 'site'],

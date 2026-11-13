@@ -5,6 +5,8 @@ import type { Db, DbClient } from '../db/pool.js';
 import { ApiError } from '../http.js';
 import { holdStock, shipStock } from '../cart/stock.js';
 import { GiftCardSpent, reRedeemGiftCards } from '../cart/gift-cards.js';
+import { activateBoughtGiftCards } from '../giftcards/giftcards.js';
+import { movePoints } from '../loyalty/loyalty.js';
 
 type Q = { query: DbClient['query'] } | Db;
 
@@ -37,12 +39,18 @@ export async function markOrderPaid(c: Q, orderId: number, now: Date): Promise<{
       await holdStock(c, items.rows.map((r) => ({ variantId: Number(r.variant_id), quantity: Number(r.quantity) })));
       // Gift card money given back when the checkout expired is taken again.
       await reRedeemGiftCards(c, orderId, now);
+      // Loyalty points given back when it was cancelled are spent again (module 17).
+      const spent = (await c.query('select customer_id, points_redeemed from orders where id = $1', [orderId])).rows[0];
+      if (spent?.customer_id && Number(spent.points_redeemed) > 0) {
+        const moved = await movePoints(c, Number(spent.customer_id), -Number(spent.points_redeemed), 'redeem', now, { orderId, note: 'points spent' });
+        if (-moved !== Number(spent.points_redeemed)) throw new GiftCardSpent('The points have been used since');
+      }
       await c.query('release savepoint late_payment');
     } catch (error) {
       await c.query('rollback to savepoint late_payment');
       if (!(error instanceof ApiError && error.code === 'out_of_stock') && !(error instanceof GiftCardSpent)) throw error;
       await c.query("update orders set payment_status = 'paid', paid_at = $2 where id = $1", [orderId, now]);
-      const why = error instanceof GiftCardSpent ? 'a gift card used on it has been spent since' : 'an item has sold out since';
+      const why = error instanceof GiftCardSpent ? (error.message === 'The points have been used since' ? 'the points used on it have been spent since' : 'a gift card used on it has been spent since') : 'an item has sold out since';
       await orderEvent(c, orderId, 'paid_after_cancel', `Payment arrived after the order was cancelled, and ${why}. The payment is being refunded in full.`, { visible: true });
       return { refundNeeded: true };
     }
@@ -52,6 +60,8 @@ export async function markOrderPaid(c: Q, orderId: number, now: Date): Promise<{
   // Each discount on the order has now been used once more.
   await c.query('update discounts d set times_used = times_used + 1 from order_discounts od where od.order_id = $1 and od.discount_id = d.id', [orderId]);
   await orderEvent(c, orderId, 'paid', 'Payment confirmed', { visible: true });
+  // Gift cards bought on the order get their codes and are emailed (module 17).
+  await activateBoughtGiftCards(c, orderId, now);
   // A carrier order gets its label bought straight away by the worker (module 10).
   await c.query(
     "insert into jobs (kind, payload, unique_key) select 'buy_label', jsonb_build_object('orderId', id), 'buy_label:' || id from orders where id = $1 and shipping_carrier in ('dhl', 'ups', 'fedex') on conflict (unique_key) do nothing",

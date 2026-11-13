@@ -147,7 +147,7 @@ async function storeAddress(db: Q): Promise<string> {
 /** Details some templates need worked out: money written properly, return status in words. */
 async function enrich(db: Q, key: string, data: Record<string, string>): Promise<Record<string, string>> {
   const out = { ...data };
-  if (key === 'store_credit' && data.amountMinor && data.currency) {
+  if ((key === 'store_credit' || key === 'gift_card') && data.amountMinor && data.currency) {
     const c = (await db.query('select symbol, minor_units from currencies where code = $1', [data.currency])).rows[0];
     out.amount = formatMoney(Number(data.amountMinor), { code: data.currency, symbol: String(c?.symbol ?? ''), minorUnits: Number(c?.minor_units ?? 2) });
   }

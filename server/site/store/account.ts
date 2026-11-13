@@ -11,13 +11,13 @@ import { each, esc } from '../html.js';
 import { COUNTRIES } from './checkout.js';
 import { money, picture, type Currency, type SiteContext } from './view.js';
 
-const field = (id: string, label: string, attrs: string, value = '', help = ''): string =>
+export const field = (id: string, label: string, attrs: string, value = '', help = ''): string =>
   `<div class="field"><label class="field__label" for="${id}">${esc(label)}</label><input class="field__input" id="${id}" name="${id}" ${attrs} value="${esc(value)}">${help ? `<p class="field__help">${esc(help)}</p>` : ''}<p class="field__error" data-error-for="${id}" hidden></p></div>`;
 
-const formEnd = (label: string): string => `${button(label, { type: 'submit', fullPhone: true })}<p class="small" role="alert" data-form-error></p><p class="small" role="status" data-form-ok></p>`;
+export const formEnd = (label: string): string => `${button(label, { type: 'submit', fullPhone: true })}<p class="small" role="alert" data-form-error></p><p class="small" role="status" data-form-ok></p>`;
 
 /** A form the browser script sends as JSON to `action`, then goes to `next` (or reloads). */
-const jsonForm = (action: string, inner: string, o: { next?: string; reload?: boolean; confirm?: string } = {}): string =>
+export const jsonForm = (action: string, inner: string, o: { next?: string; reload?: boolean; confirm?: string } = {}): string =>
   `<form class="stack" data-json-form="${esc(action)}"${o.next ? ` data-next="${esc(o.next)}"` : ''}${o.reload ? ' data-reload' : ''}${o.confirm ? ` data-confirm="${esc(o.confirm)}"` : ''} novalidate>${inner}</form>`;
 
 function safeNext(sc: SiteContext): string {
@@ -37,11 +37,12 @@ ${google ? `<div class="stack stack--sm"><p class="small muted center">or</p><di
   };
 }
 
-export function createAccountPage(): { title: string; body: string } {
+export function createAccountPage(ref = ''): { title: string; body: string } {
   return {
     title: 'Create an account',
     body: `<div class="narrow stack"><h1 class="h1">Create an account</h1>
-${jsonForm('/api/auth/sign-up', `<div class="fields fields--2">${field('firstName', 'First name', 'autocomplete="given-name" required')}${field('lastName', 'Last name', 'autocomplete="family-name"')}</div>${field('email', 'Email', 'type="email" autocomplete="email" required')}${field('password', 'Password', 'type="password" autocomplete="new-password" minlength="10" required', '', 'At least 10 characters.')}
+${jsonForm('/api/auth/sign-up', `<div class="fields fields--2">${field('firstName', 'First name', 'autocomplete="given-name" required')}${field('lastName', 'Last name', 'autocomplete="family-name"')}</div>${field('email', 'Email', 'type="email" autocomplete="email" required')}${field('password', 'Password', 'type="password" autocomplete="new-password" minlength="8" required', '', 'At least 8 characters.')}
+${field('referralCode', "A friend's referral code (optional)", 'autocomplete="off"', /^[A-Za-z0-9]{4,20}$/.test(ref) ? ref.toUpperCase() : '')}
 <label class="check"><input type="checkbox" name="marketingConsent"><span>Email me new arrivals and offers. I can stop at any time.</span></label>${formEnd('Create account')}`, { next: '/verify-email/?email={email}' })}
 <p>Already have an account? <a class="link" href="/sign-in/">Sign in</a></p></div>`,
   };
@@ -81,11 +82,13 @@ const ACCOUNT_NAV: ReadonlyArray<[string, string]> = [
   ['Orders', '/account/orders/'],
   ['Addresses', '/account/addresses/'],
   ['Wishlist', '/account/wishlist/'],
+  ['Points and referrals', '/account/loyalty/'],
+  ['Reviews', '/account/reviews/'],
   ['Details and password', '/account/profile/'],
   ['Email and notifications', '/account/preferences/'],
 ];
 
-function accountShell(sc: SiteContext, current: string, title: string, inner: string): string {
+export function accountShell(sc: SiteContext, current: string, title: string, inner: string): string {
   return `<div class="split" style="--side:260px;--side-tablet:220px;grid-template-columns:var(--side) 1fr"><nav class="stack stack--sm" aria-label="Account">${each(ACCOUNT_NAV, ([l, h]) => `<a class="menu-link menu-link--small" href="${h}"${h === current ? ' aria-current="page"' : ''}>${esc(l)}</a>`)}<button class="menu-link menu-link--small" type="button" data-sign-out>Sign out</button></nav>
 <div class="stack stack--lg"><h1 class="h1">${esc(title)}</h1>${inner}</div></div>`;
 }

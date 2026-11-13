@@ -7,6 +7,7 @@ import { customerDetail, listCustomers, salesReport } from '../api.js';
 import { lineChart, num, panel, pageHead, raw, stat, table, tabs } from '../components.js';
 import { each, esc } from '../../site/html.js';
 import { checkbox, date, form, input, money, ORDER_STATUS, PAYMENT_STATUS, badge, pager, postButton, select, textarea, type AdminContext } from './view.js';
+import { customerPointsPanel } from './loyalty.js';
 
 export async function dashboard(ac: AdminContext): Promise<string> {
   const db = ac.deps.db;
@@ -212,6 +213,7 @@ ${panel('Orders', (c.orders as any[]).length ? table(['Order', 'Date', 'Total', 
 ${panel('Internal note', change ? form(`/api/customers/${id}`, textarea('internalNote', 'Seen by staff only', String(c.internalNote ?? ''), { rows: 3 }), { submit: 'Save note', secondary: true }) : `<p>${esc(String(c.internalNote ?? ''))}</p>`)}
 </div><div class="stack">
 ${panel('Details', `<p><a class="link" href="mailto:${esc(String(c.email))}">${esc(String(c.email))}</a>${c.emailVerified ? '' : ' (not verified)'}<br>${esc(String(c.phone ?? ''))}</p><p class="small muted">Joined ${esc(date(String(c.joinedAt)))} · offers by email: ${c.marketingConsent ? 'yes' : 'no'} · status: ${esc(String(c.status))}</p>${(c.spent as any[]).map((s) => `<p class="small">Spent: ${esc(money(ac, s.totalMinor, s.currency))}</p>`).join('')}`)}
+${await customerPointsPanel(ac, id)}
 ${panel('Addresses', (c.addresses as any[]).map((a) => `<p class="small">${esc(a.name)}, ${esc(a.line1)}, ${esc(a.city)}, ${esc(a.country)}${a.isDefault ? ' (default)' : ''}</p>`).join('') || '<p class="muted small">None saved.</p>')}
 </div></div>`,
   };

@@ -7,6 +7,7 @@ import { NIGERIAN_STATES } from '../../shipping/shipping.js';
 import { button, card, icon } from '../components.js';
 import { each, esc } from '../html.js';
 import { money, picture, type SiteContext } from './view.js';
+import { loyaltySettings } from '../../loyalty/loyalty.js';
 
 /** Every country by its two-letter code, named in English. */
 const CODES = 'AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS XK YE YT ZA ZM ZW'.split(' ');
@@ -79,6 +80,15 @@ export async function checkoutPage(sc: SiteContext): Promise<{ title: string; bo
   if (cart.lines.length === 0 || !cart.canCheckout) {
     return { title: 'Checkout', scripts: [], body: `<h1 class="h1">Checkout</h1>${card(`<p class="muted">${cart.lines.length ? 'Some items in your bag need attention first.' : 'Your bag is empty.'}</p>${button(cart.lines.length ? 'Back to your bag' : 'Start shopping', { href: cart.lines.length ? '/cart/' : '/' })}`)}` };
   }
+  // Loyalty points the customer can use (module 17).
+  let points = '';
+  if (sc.customer) {
+    const rules = await loyaltySettings(sc.deps.db);
+    const have = Number((await sc.deps.db.query('select loyalty_points from customers where id = $1', [sc.customer.id])).rows[0]?.loyalty_points ?? 0);
+    if (have >= rules.minimumToRedeem && rules.nairaPerPoint > 0) {
+      points = `<div class="field"><label class="field__label" for="usePoints">Use points (you have ${have.toLocaleString('en-NG')})</label><input class="field__input" id="usePoints" name="usePoints" inputmode="numeric" autocomplete="off" placeholder="${rules.minimumToRedeem}"><p class="field__help">Each point is worth ₦${rules.nairaPerPoint.toLocaleString('en-NG')}. Use ${rules.minimumToRedeem} or more, for up to ${rules.maxPercentOfOrder}% of the items. The points come off when you pay.</p></div>`;
+    }
+  }
   let saved: Array<Record<string, unknown>> = [];
   let email = '';
   let phone = '';
@@ -115,6 +125,7 @@ ${sc.customer ? '<label class="check"><input type="checkbox" name="saveAddress">
 ${button('See delivery options', { attrs: 'data-next="3"', fullPhone: true })}`)}
 ${step(3, 'Delivery', `<div class="stack stack--sm" data-options aria-live="polite"><p class="muted">Delivery options appear here.</p></div><p class="small muted" data-duties hidden></p>${button('Review your order', { attrs: 'data-next="4"', fullPhone: true })}`)}
 ${step(4, 'Review and pay', `<div class="card card--outline stack stack--sm" data-review></div>
+${points}
 <div class="field"><label class="field__label" for="note">Note for us (optional)</label><textarea class="field__input" id="note" name="note" rows="3" maxlength="500"></textarea></div>
 <p class="small muted">${stripe ? 'You pay by card, Apple Pay or Google Pay through Stripe.' : 'You pay by card, bank transfer or USSD through Paystack.'} By paying you agree to the <a class="link" href="/terms/">terms</a> and the <a class="link" href="/returns/">returns policy</a>.</p>
 <div data-stripe-element hidden></div>

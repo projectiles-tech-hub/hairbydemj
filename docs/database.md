@@ -90,6 +90,7 @@ not need `createdb`.
 | `0017_worker` | When each scheduled task last ran (`scheduled_runs`); bag reminders and low-stock alerts sent once |
 | `0018_search` | Words the shop knows (`search_words`, rebuilt by the database), search records (`search_queries`) |
 | `0019_try_on` | Try-on pictures (`try_on_images`): a see-through wig picture per product and colour, with where the temples sit |
+| `0020_loyalty_and_gift_card_orders` | When an order's points were last worked out (`orders.points_settled_at`); photo sizes on review photos; a look-up for gift cards bought on orders |
 | `0010_sign_in_protection` | `sign_in_attempts` (used to slow down password guessing) |
 
 65 tables in all, counting `schema_migrations`.

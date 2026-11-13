@@ -44,6 +44,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final _email = TextEditingController();
   final _address = AddressController();
   final _note = TextEditingController();
+  final _points = TextEditingController();
+  int _pointsHeld = 0;
+  int _pointsMinimum = 0;
   Map<String, String> _errors = {};
   List<Address> _saved = [];
   Quote? _quote;
@@ -64,12 +67,22 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     _email.dispose();
     _address.dispose();
     _note.dispose();
+    _points.dispose();
     super.dispose();
   }
 
   Future<void> _loadSaved() async {
     final state = AppScope.read(context);
     if (!state.signedIn) return;
+    try {
+      final l = ((await state.api.get('/v1/account/loyalty'))['loyalty'] as Map).cast<String, dynamic>();
+      setState(() {
+        _pointsHeld = (l['points'] as num).toInt();
+        _pointsMinimum = ((l['rules'] as Map)['minimumToRedeem'] as num).toInt();
+      });
+    } on ApiError {
+      // Points are simply not offered.
+    }
     try {
       final r = await state.api.get('/v1/account/addresses');
       final list = ((r['addresses'] as List?) ?? const []).whereType<Map>().map((m) => Address.fromJson(m.cast<String, dynamic>())).toList();
@@ -126,6 +139,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         'quoteId': q.id,
         'shippingOption': _option,
         if (_note.text.trim().isNotEmpty) 'note': _note.text.trim(),
+        if (int.tryParse(_points.text.trim()) != null) 'usePoints': int.parse(_points.text.trim()),
       });
       final order = Order(r['order'] as Json);
       final token = r['orderToken'];
@@ -213,6 +227,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               decoration: BoxDecoration(color: Brand.goldSoft, borderRadius: BorderRadius.circular(Brand.radiusControl)),
               child: Text(_quote!.dutiesNotice!, style: Type.body),
             ),
+          if (_pointsHeld > 0 && _pointsHeld >= _pointsMinimum) ...[
+            const SectionHead('Use points'),
+            LabelledField(label: 'Points to use (you have $_pointsHeld)', controller: _points, error: _errors['usePoints'], keyboardType: TextInputType.number, help: 'Use $_pointsMinimum or more. They come off the total when you place the order.'),
+          ],
           const SectionHead('Note for us (optional)'),
           Semantics(label: 'Note for us', child: TextField(controller: _note, maxLines: 3, style: Type.body)),
           const SectionHead('Summary'),

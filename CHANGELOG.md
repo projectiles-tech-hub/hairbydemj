@@ -4,6 +4,11 @@ All notable changes to this repository, newest first.
 
 ## 2026-11-13
 
+- Module 18, Live chat (`server/chat/`): customers chat from every website
+  page and the app's Help screen; staff answer from the admin's live chat
+  inbox with saved replies; messages arrive at once through Server-Sent
+  Events; replies to customers who left go by email; WhatsApp as an
+  alternative. Guide: `docs/chat.md`.
 - Module 17, Reviews, loyalty and gift cards (`server/loyalty/`,
   `server/reviews/`, `server/giftcards/`): loyalty points for delivered
   orders, reviews, birthdays and referrals, spent at checkout; tiers;

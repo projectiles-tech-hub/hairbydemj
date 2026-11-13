@@ -7,6 +7,7 @@ import { shopCartRoutes } from '../cart/routes.js';
 import { shopCatalogRoutes } from '../catalog/routes.js';
 import { shopTryOnRoutes } from '../tryon/routes.js';
 import { shopLoyaltyRoutes } from '../loyalty/routes.js';
+import { shopChatRoutes } from '../chat/routes.js';
 import type { MediaDeps } from '../media/media.js';
 import type { PaymentDeps } from '../payments/payments.js';
 import { shopPaymentRoutes } from '../payments/routes.js';
@@ -45,6 +46,7 @@ export function siteRoutes(accounts?: AccountDeps, payments?: PaymentDeps, shipp
     shopNotificationRoutes(router, accounts, '/api', 'cookie');
     customerAccountRoutes(router, accounts, '/api', 'cookie');
     shopLoyaltyRoutes(router, accounts, media, '/api', '/api/catalog', 'cookie');
+    shopChatRoutes(router, accounts, '/api', 'cookie');
     // The pages themselves (module 13).
     storeRoutes(router, accounts);
     unsubscribeRoutes(router, accounts);

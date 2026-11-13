@@ -4,6 +4,7 @@ import 'api/client.dart';
 import 'api/models.dart';
 import 'screens/account.dart';
 import 'screens/auth.dart';
+import 'screens/chat.dart';
 import 'screens/checkout.dart';
 import 'screens/info.dart';
 import 'screens/loyalty.dart';
@@ -38,6 +39,7 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     '/notification-settings' => const NotificationSettingsScreen(),
     '/settings' => const SettingsScreen(),
     '/help' => const HelpScreen(),
+    '/chat' => const ChatScreen(),
     '/loyalty' => const LoyaltyScreen(),
     '/gift-cards' => const GiftCardsScreen(),
     '/reviews' => const MyReviewsScreen(),

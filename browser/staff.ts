@@ -344,3 +344,77 @@ for (const form of $$<HTMLFormElement>('[data-upload]')) {
     reloadWith(done === 1 ? 'Uploaded. Sizes are being made.' : `${done} files uploaded. Sizes are being made.`);
   });
 }
+
+// ----- live chat inbox (module 18) -----
+
+const chatInbox = $('[data-chat-inbox]');
+if (chatInbox) {
+  const current = Number(chatInbox.dataset.current) || 0;
+  const box = $('[data-chat-messages]');
+  const scrollDown = (): void => {
+    if (box) box.scrollTop = box.scrollHeight;
+  };
+  scrollDown();
+  const text = (s: string): string => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c] ?? c);
+  interface ChatMessage { id: number; sender: string; staffName: string | null; body: string; at: string }
+  const append = (m: ChatMessage): void => {
+    if (!box || box.querySelector(`[data-message="${m.id}"]`)) return;
+    const at = new Date(m.at).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    box.insertAdjacentHTML('beforeend', `<div class="achat__msg achat__msg--${text(m.sender)}" data-message="${m.id}"><p>${text(m.body)}</p><span class="small muted">${m.sender === 'staff' ? text(m.staffName ?? 'Staff') : m.sender === 'system' ? '' : 'Customer'} · ${at}</span></div>`);
+    scrollDown();
+  };
+  /** The list of conversations, fetched again when another one changes. */
+  const refreshList = async (): Promise<void> => {
+    try {
+      const html = await (await fetch(location.href, { credentials: 'same-origin' })).text();
+      const fresh = new DOMParser().parseFromString(html, 'text/html').querySelector('[data-chat-list]');
+      const list = $('[data-chat-list]');
+      if (fresh && list) list.replaceWith(fresh);
+      else if (fresh && !list) location.reload();
+    } catch {
+      // Tried again on the next event.
+    }
+  };
+  const events = new EventSource('/api/chat/events');
+  events.addEventListener('message', (e) => {
+    const data = JSON.parse((e as MessageEvent<string>).data) as { conversationId: number; message?: ChatMessage };
+    if (data.conversationId === current && data.message) {
+      append(data.message);
+      // Seen straight away while it is open.
+      if (data.message.sender === 'customer') void fetch(`/api/chat/conversations/${current}`, { credentials: 'same-origin' });
+    }
+    if (data.conversationId !== current || data.message?.sender === 'customer') void refreshList();
+  });
+  events.addEventListener('conversation', () => void refreshList());
+
+  for (const b of $$<HTMLButtonElement>('[data-saved-reply]')) {
+    b.addEventListener('click', () => {
+      const area = $<HTMLTextAreaElement>('[data-chat-text]');
+      if (area) {
+        area.value = b.dataset.savedReply ?? '';
+        area.focus();
+      }
+    });
+  }
+  const reply = $<HTMLFormElement>('[data-chat-reply]');
+  reply?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const area = $<HTMLTextAreaElement>('[data-chat-text]', reply);
+    const body = area?.value.trim() ?? '';
+    if (!body) return;
+    const answer = await api(`/api/chat/conversations/${reply.dataset.chatReply}/messages`, { body });
+    if (!answer.ok) {
+      showErrors(reply, errorOf(answer).message, {});
+      return;
+    }
+    if (area) area.value = '';
+    append((answer.data as { message: ChatMessage }).message);
+  });
+  // Enter sends; Shift+Enter makes a new line.
+  $<HTMLTextAreaElement>('[data-chat-text]')?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      reply?.requestSubmit();
+    }
+  });
+}

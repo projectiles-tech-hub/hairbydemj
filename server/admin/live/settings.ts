@@ -220,6 +220,7 @@ const TASK_NAMES: Record<string, string> = {
   daily_cleanup: 'Daily clean-up',
   loyalty_points: 'Loyalty points for delivered orders and referrals',
   birthday_points: 'Birthday points',
+  close_quiet_chats: 'Close chats quiet for a week',
 };
 
 export async function systemPage(ac: AdminContext): Promise<string> {

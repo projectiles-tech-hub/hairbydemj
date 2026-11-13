@@ -156,6 +156,14 @@ export const TEMPLATES: TemplateDef[] = [
     build: (d, l, f) => ({ subject: f.subject, heading: 'Our reply to your review', paragraphs: [f.intro, `"${d.reply ?? ''}"`], button: { label: 'See your reviews', url: `${l.site}/account/reviews/` } }),
   },
   {
+    key: 'chat_reply',
+    name: 'Chat reply (when the customer has left the page)',
+    category: 'order',
+    subject: 'A reply from hairbydemj',
+    intro: '{{staffName}} from hairbydemj replied to your message:',
+    build: (d, l, f) => ({ subject: f.subject, heading: 'We replied to your message', paragraphs: [f.intro, `"${d.message ?? ''}"`, 'Open the chat on our website or in the app to carry on.'], button: { label: 'Open the chat', url: `${l.site}/?chat=1` } }),
+  },
+  {
     key: 'back_in_stock',
     name: 'Back in stock',
     category: 'stock',

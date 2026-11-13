@@ -14,6 +14,7 @@ import { buyLabel, pruneQuotes, refreshAllTracking, type ShippingDeps } from '..
 import { deliverEmail, deliverOrderUpdate, Undeliverable, type NotifyDeps } from '../notifications/notify.js';
 import { enqueue, QUEUE, type Job } from './queue.js';
 import { birthdayPoints, settleOrderPoints, settleReferrals } from '../loyalty/loyalty.js';
+import { closeQuietConversations } from '../chat/chat.js';
 
 export interface WorkerDeps {
   db: Db;
@@ -96,6 +97,11 @@ export const SCHEDULE: ScheduledTask[] = [
     name: 'birthday_points',
     everyMinutes: 24 * 60,
     run: async (deps) => ({ customers: await birthdayPoints(deps.db, deps.now()) }),
+  },
+  {
+    name: 'close_quiet_chats',
+    everyMinutes: 24 * 60,
+    run: async (deps) => ({ closed: await closeQuietConversations(deps.db, deps.now()) }),
   },
   {
     name: 'refresh_tracking',

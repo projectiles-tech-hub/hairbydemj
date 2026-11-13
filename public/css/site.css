@@ -454,3 +454,19 @@ select.field__input { appearance: none; background-image: linear-gradient(45deg,
 .tryon__style[aria-checked="true"] { border-color: var(--gold); }
 .tryon__style:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .tryon__actions { gap: 12px; align-items: center; }
+
+/* ----- live chat (module 18) ----- */
+.chat-fab { position: fixed; right: 16px; bottom: 16px; z-index: 40; display: inline-flex; gap: 8px; align-items: center; min-height: 48px; padding: 0 18px; border: 1px solid var(--gold); border-radius: 999px; background: var(--noir); color: var(--gold); font: inherit; font-weight: 600; cursor: pointer; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5); }
+.chat-fab.has-news::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--gold); }
+.chat-fab:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+@media (max-width: 767px) { .chat-fab span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } .chat-fab { padding: 0 14px; bottom: 80px; } }
+.chat-panel { position: fixed; right: 16px; bottom: 76px; z-index: 41; width: min(380px, calc(100vw - 32px)); max-height: min(640px, calc(100vh - 120px)); display: flex; flex-direction: column; gap: 12px; padding: 16px; background: var(--espresso); border: 1px solid var(--line); border-radius: var(--radius-card); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6); overflow-y: auto; }
+.chat-panel[hidden] { display: none; }
+@media (max-width: 767px) { .chat-panel { bottom: 140px; } }
+.chat-panel__head { display: flex; justify-content: space-between; align-items: center; }
+.chat-panel__messages { display: flex; flex-direction: column; gap: 8px; min-height: 40px; overflow-y: auto; }
+.chat-msg { max-width: 85%; padding: 8px 12px; border-radius: 12px; }
+.chat-msg p { margin: 0 0 2px; white-space: pre-wrap; }
+.chat-msg--customer { align-self: flex-end; background: var(--surface-raised); }
+.chat-msg--staff { align-self: flex-start; border: 1px solid var(--gold); }
+.chat-msg--system { align-self: center; color: var(--text-muted); font-size: 14px; }

@@ -47,26 +47,27 @@
 - Module 14 (Admin) is built; pull request #23 is open.
 - Module 15 (Phone app) is built; pull request #24 is open.
 - Module 16 (Try-on) is built; pull request #25 is open.
-- Module 17 (Reviews, loyalty, gift cards) is built; its pull request is open.
+- Module 17 (Reviews, loyalty, gift cards) is built; pull request #26 is open.
+- Module 18 (Live chat) is built; its pull request is open.
 - The Vercel preview was for viewing only. The real site runs from our own
   server; the page code written for the preview is kept as the starting
   point for modules 13 and 14.
 
 ## Current module
 
-[`modules/17-reviews-loyalty-gift-cards.md`](modules/17-reviews-loyalty-gift-cards.md):
-built and **in review** on branch `feature/loyalty`, on top of modules 2 to
-16. Server tests pass; the app's checks run in GitHub Actions.
+[`modules/18-live-chat.md`](modules/18-live-chat.md): built and **in review**
+on branch `feature/chat`, on top of modules 2 to 17. Server tests pass and
+the chat was walked through live in a real browser.
 
 ## Exact next step
 
-1. Owner merges, in order: #11 to #25, then Module 17's.
-2. Building continues with **Module 18. Live chat**.
+1. Owner merges, in order: #11 to #26, then Module 18's.
+2. Building continues with **Module 19. Deployment, backups, monitoring**.
 
-## Modules left after Module 17
+## Modules left after Module 18
 
-18 Live chat · 19 Deployment, backups, monitoring · 20 Testing and security
-review · 21 Launch.
+19 Deployment, backups, monitoring · 20 Testing and security review ·
+21 Launch.
 
 ## Waiting on the owner
 

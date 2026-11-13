@@ -7,6 +7,7 @@ import { shopCartRoutes } from '../cart/routes.js';
 import { shopCatalogRoutes } from '../catalog/routes.js';
 import { shopTryOnRoutes } from '../tryon/routes.js';
 import { shopLoyaltyRoutes } from '../loyalty/routes.js';
+import { shopChatRoutes } from '../chat/routes.js';
 import type { MediaDeps } from '../media/media.js';
 import type { PaymentDeps } from '../payments/payments.js';
 import { shopPaymentRoutes, webhookRoutes } from '../payments/routes.js';
@@ -38,6 +39,7 @@ export function apiRoutes(accounts?: AccountDeps, payments?: PaymentDeps, shippi
     shopNotificationRoutes(router, accounts, '/v1', 'bearer');
     customerAccountRoutes(router, accounts, '/v1', 'bearer');
     shopLoyaltyRoutes(router, accounts, media, '/v1', '/v1/catalog', 'bearer');
+    shopChatRoutes(router, accounts, '/v1', 'bearer');
   }
   return router;
 }

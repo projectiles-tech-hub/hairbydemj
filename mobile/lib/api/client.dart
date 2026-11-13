@@ -50,6 +50,8 @@ class ApiClient {
     if (token != null) headers['Authorization'] = 'Bearer $token';
     final cart = await store.read(TokenStore.cart);
     if (cart != null) headers['X-Cart-Token'] = cart;
+    final chat = await store.read(TokenStore.chat);
+    if (chat != null) headers['X-Chat-Token'] = chat;
     return headers;
   }
 
@@ -67,6 +69,34 @@ class ApiClient {
 
   Future<Json> post(String path, [Object? body]) async {
     return _send(() async => _http.post(uri(path), headers: await _headers(json: true), body: jsonEncode(body ?? const {})));
+  }
+
+  /// A Server-Sent Events stream (live chat): each event's name and JSON data.
+  Stream<(String, Json)> events(String path) async* {
+    final request = http.Request('GET', uri(path))..headers.addAll(await _headers());
+    request.headers['Accept'] = 'text/event-stream';
+    final response = await _http.send(request);
+    if (response.statusCode != 200) throw ApiError(response.statusCode, 'no_stream', 'Live updates are not available.');
+    var event = 'message';
+    final data = StringBuffer();
+    await for (final line in response.stream.transform(utf8.decoder).transform(const LineSplitter())) {
+      if (line.isEmpty) {
+        if (data.isNotEmpty) {
+          try {
+            final decoded = jsonDecode(data.toString());
+            if (decoded is Map<String, dynamic>) yield (event, decoded);
+          } on FormatException {
+            // A broken event is skipped.
+          }
+        }
+        event = 'message';
+        data.clear();
+      } else if (line.startsWith('event:')) {
+        event = line.substring(6).trim();
+      } else if (line.startsWith('data:')) {
+        data.write(line.substring(5).trim());
+      }
+    }
   }
 
   /// Sends a file as the body (photos on reviews).
@@ -99,6 +129,8 @@ class ApiClient {
     // A new bag made for this phone comes back with its token: keep it.
     final cartToken = body['cartToken'];
     if (cartToken is String) await store.write(TokenStore.cart, cartToken);
+    final chatToken = body['chatToken'];
+    if (chatToken is String) await store.write(TokenStore.chat, chatToken);
     if (res.statusCode >= 200 && res.statusCode < 300) return body;
     final e = body['error'] is Map ? (body['error'] as Map).cast<String, dynamic>() : <String, dynamic>{};
     final fields = <String, String>{};

@@ -33,7 +33,7 @@ Owner then invites everyone else from **Staff and roles**.
 | `/categories/` | Categories (with the menu order) and collections | Products |
 | `/inventory/` | Stock for every variant, the "Running low" tab, and adjusting stock with a reason | Products |
 | `/discounts/`, `/discounts/new/`, `/discounts/<id>/` | Discounts: codes and automatic ones, amounts per currency, limits, dates | Discounts |
-| `/homepage/` | Order of the homepage sections, which show, and the banner's words and button | Settings |
+| `/homepage/` | Order of the homepage sections, which show, the banner's words and button, the top banner's and promotional banners' pictures (desktop and phone), when and in which countries each section shows, and adding or removing promotional banners | Settings |
 | `/content/`, `/content/new/`, `/content/<id>/` | Information pages (shipping, returns, privacy, terms and others) that replace the shop's starting text when published | Settings |
 | `/emails/` | Every email the shop sends: subject and opening words, preview, "Send me a test" | Settings |
 | `/shipping/` | The sender address, delivery zones in Nigeria, carriers abroad (on or off, mark-up) and boxes | Settings |
@@ -62,7 +62,10 @@ All are on `admin.hairbydemj.com`, need a staff session, and check the role.
 | `POST /api/customers/:id` | `{ internalNote?, status? }` (status `active` or `disabled`; switching off signs them out) |
 | `GET /api/activity?area=&staff=&page=` | The activity log |
 | `GET /api/content`, `POST /api/content`, `POST /api/content/:id`, `POST /api/content/:id/delete` | Information pages: `{ slug, title, kind, body, searchDescription, status }` |
-| `GET /api/homepage`, `POST /api/homepage/:id` | Homepage sections: `{ position?, isShown?, settings? }`; the banner's settings are `headline`, `sentence`, `buttonLabel`, `buttonLink` (a page on the shop), others take `title` |
+| `GET /api/homepage`, `POST /api/homepage/:id` | Homepage sections: `{ position?, isShown?, settings?, showFrom?, showUntil?, countries? }`; the banners' settings are `headline`, `sentence`, `buttonLabel`, `buttonLink` (a page on the shop) and `alt` (what the picture shows), others take `title`. `showFrom` and `showUntil` are dates and times (a time without a zone is Lagos time; empty clears it); `countries` are two-letter codes (empty: every country) |
+| `POST /api/homepage/promos`, `POST /api/homepage/:id/delete` | Add a promotional banner (it starts hidden; up to 10), or remove one with its pictures. The fixed sections cannot be removed, only hidden |
+| `POST /api/homepage/:id/picture?slot=desktop\|phone`, `POST /api/homepage/:id/picture/delete?slot=` | Upload (the body is the photo) or remove the top banner's or a promotional banner's picture. Settings change |
+| `POST /api/categories/:id/picture`, `POST /api/collections/:id/picture` and their `/picture/delete` | A category's card picture; a collection's or look's banner. Products change |
 | `GET /api/settings/store`, `POST /api/settings/store` | `{ name, supportEmail, whatsapp }` |
 | `GET /api/reports/sales?from=&to=`, `GET /api/reports/sales.csv?from=&to=` | Paid sales by day (Lagos time); the spreadsheet is safe to open (no cell can start a formula) |
 

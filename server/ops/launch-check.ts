@@ -106,6 +106,11 @@ export async function checkDatabase(db: Db, now: Date): Promise<LaunchLine[]> {
     else if (page.status !== 'published') out.push(line('problem', 'Information pages', `"${slug}" is not published`));
   }
 
+  const hero = await q<{ shown: boolean; picture: boolean }>("select is_shown as shown, settings ? 'picture' as picture from homepage_sections where kind = 'hero'");
+  if (hero[0]?.shown && !hero[0].picture) out.push(line('check', 'Homepage', 'the top banner has no picture yet (admin: Homepage)'));
+  const noPicture = await q<{ name: string }>('select name from categories where parent_id is null and show_in_menu and image_path is null order by position, name');
+  if (noPicture.length) out.push(line('check', 'Categories', `no picture yet: ${noPicture.map((c) => c.name).join(', ')} (admin: Categories and collections)`));
+
   const rates = await q<{ code: string; updated: Date | null }>("select code, rate_updated_at as updated from currencies where enabled and not is_base");
   const stale = rates.filter((r) => !r.updated || now.getTime() - new Date(r.updated).getTime() > 2 * 86_400_000);
   out.push(stale.length === 0 ? line('ok', 'Exchange rates', 'updated in the last two days') : line('problem', 'Exchange rates', `not updated in two days: ${stale.map((r) => r.code).join(', ')} (is the worker running?)`));

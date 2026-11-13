@@ -7,8 +7,9 @@ import '../theme.dart';
 import '../widgets/common.dart';
 import 'product_list.dart';
 
-/// Home: the banner, categories, best-sellers, new arrivals and looks, in the
-/// order staff set in the admin.
+/// Home: the banner, promotional banners, categories, best-sellers, new
+/// arrivals and looks, in the order (and with the pictures, dates and
+/// countries) staff set in the admin.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -106,22 +107,60 @@ class _HomeScreenState extends State<HomeScreen> {
             switch (s['kind']) {
               case 'hero':
                 parts.add(_Banner(
+                  picture: _bannerPicture(settings),
+                  alt: word('alt', 'hairbydemj'),
                   headline: word('headline', 'Hair that moves the way you do'),
                   sentence: word('sentence', 'Human hair wigs, bundles and closures. Sent from Benin City to your door, anywhere in the world.'),
                   button: word('buttonLabel', 'Shop new arrivals'),
                   onTap: () => _openLink(word('buttonLink', '')),
                 ));
+              case 'promo':
+                final link = word('buttonLink', '');
+                parts.add(Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: _Banner(
+                    picture: _bannerPicture(settings),
+                    alt: word('alt', word('headline', 'Offer')),
+                    headline: word('headline', ''),
+                    sentence: word('sentence', ''),
+                    button: link.isEmpty ? '' : word('buttonLabel', ''),
+                    onTap: link.isEmpty ? null : () => _openLink(link),
+                    small: true,
+                  ),
+                ));
               case 'collections':
                 if (d.categories.isNotEmpty) {
+                  final withPictures = d.categories.any((c) => c.image != null);
                   parts.add(Padding(
                     padding: const EdgeInsets.only(top: 16),
-                    child: Wrap(spacing: 8, runSpacing: 8, children: [
-                      for (final c in d.categories)
-                        ActionChip(
-                          label: Text(c.name),
-                          onPressed: () => Navigator.of(context).pushNamed('/list', arguments: Listing(title: c.name, category: c.slug)),
-                        ),
-                    ]),
+                    child: withPictures
+                        ? GridView.count(
+                            crossAxisCount: 2,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            mainAxisSpacing: 12,
+                            crossAxisSpacing: 12,
+                            childAspectRatio: 0.8,
+                            children: [
+                              for (final c in d.categories)
+                                InkWell(
+                                  borderRadius: BorderRadius.circular(Brand.radiusCard),
+                                  onTap: () => Navigator.of(context).pushNamed('/list', arguments: Listing(title: c.name, category: c.slug)),
+                                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                    Photo(picture: c.image, aspect: 1, want: 640, label: c.name),
+                                    const SizedBox(height: 8),
+                                    Text(c.name, style: Type.strong, maxLines: 1, overflow: TextOverflow.ellipsis),
+                                  ]),
+                                ),
+                            ],
+                          )
+                        : Wrap(spacing: 8, runSpacing: 8, children: [
+                            for (final c in d.categories)
+                              ActionChip(
+                                label: Text(c.name),
+                                onPressed: () => Navigator.of(context).pushNamed('/list', arguments: Listing(title: c.name, category: c.slug)),
+                              ),
+                          ]),
                   ));
                 }
               case 'best_sellers':
@@ -140,6 +179,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (d.looks.isNotEmpty) {
                   parts.add(SectionHead(word('title', 'Shop the look')));
                   for (final l in d.looks.take(3)) {
+                    final banner = (l['banner'] as Map?)?.cast<String, dynamic>();
+                    if (banner != null) {
+                      parts.add(Padding(padding: const EdgeInsets.only(bottom: 8), child: Photo(picture: banner, aspect: 16 / 9, want: 960, label: '${l['name']}')));
+                    }
                     parts.add(Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: Material(
@@ -171,25 +214,42 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class _Banner extends StatelessWidget {
-  const _Banner({required this.headline, required this.sentence, required this.button, required this.onTap});
+/// The phone picture of a banner if staff added one, otherwise its desktop picture.
+Json? _bannerPicture(Map<String, dynamic> settings) {
+  Json? pic(Object? v) => v is Map ? v.cast<String, dynamic>() : null;
+  return pic(settings['phonePicture']) ?? pic(settings['picture']);
+}
 
+class _Banner extends StatelessWidget {
+  const _Banner({required this.picture, required this.alt, required this.headline, required this.sentence, required this.button, required this.onTap, this.small = false});
+
+  final Json? picture;
+  final String alt;
   final String headline;
   final String sentence;
   final String button;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
+
+  /// Promotional banners are a little shorter than the top banner.
+  final bool small;
 
   @override
   Widget build(BuildContext context) {
+    final width = (picture?['width'] as num?)?.toDouble();
+    final height = (picture?['height'] as num?)?.toDouble();
+    final aspect = width != null && height != null && height > 0 ? (width / height).clamp(0.7, 2.4).toDouble() : (small ? 1.6 : 0.85);
+    final words = <Widget>[
+      if (headline.isNotEmpty) Semantics(header: true, child: Text(headline, style: Type.display.copyWith(fontSize: small ? 26 : 32))),
+      if (sentence.isNotEmpty) ...[const SizedBox(height: 8), Text(sentence, style: Type.body)],
+      if (button.isNotEmpty && onTap != null) ...[const SizedBox(height: 16), BusyButton(label: button, onPressed: onTap, expand: false)],
+    ];
     return Container(
-      padding: const EdgeInsets.all(20),
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(color: Brand.espresso, borderRadius: BorderRadius.circular(Brand.radiusCard)),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Semantics(header: true, child: Text(headline, style: Type.display.copyWith(fontSize: 32))),
-        const SizedBox(height: 8),
-        Text(sentence, style: Type.body),
-        const SizedBox(height: 16),
-        BusyButton(label: button, onPressed: onTap, expand: false),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        if (picture != null)
+          GestureDetector(onTap: onTap, child: Photo(picture: {...picture!, 'alt': alt}, aspect: aspect, radius: 0, want: 1280)),
+        if (words.isNotEmpty) Padding(padding: const EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: words)),
       ]),
     );
   }

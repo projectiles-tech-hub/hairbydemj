@@ -156,13 +156,35 @@ export async function saveContent(db: Q, id: number | null, input: Record<string
 
 export const SECTION_KINDS = ['hero', 'collections', 'best_sellers', 'new_arrivals', 'shop_the_look', 'reviews'] as const;
 
-export async function listHomepage(db: Q): Promise<Array<{ id: number; kind: string; position: number; isShown: boolean; settings: Record<string, unknown> }>> {
+export interface HomepageSection {
+  id: number;
+  kind: string;
+  position: number;
+  isShown: boolean;
+  settings: Record<string, unknown>;
+  /** When it starts and stops showing (ISO times), and the countries it shows in (empty: everywhere). */
+  showFrom: string | null;
+  showUntil: string | null;
+  countries: string[];
+}
+
+export async function listHomepage(db: Q): Promise<HomepageSection[]> {
   // Every kind has a row, so staff always see all of them.
   for (const [i, kind] of SECTION_KINDS.entries()) {
     await db.query('insert into homepage_sections (kind, position, is_shown) select $1, $2, $3 where not exists (select 1 from homepage_sections where kind = $1)', [kind, i, kind !== 'reviews']);
   }
-  const found = await db.query('select id, kind, position, is_shown, settings from homepage_sections order by position, id');
-  return found.rows.map((r) => ({ id: Number(r.id), kind: String(r.kind), position: Number(r.position), isShown: r.is_shown === true, settings: (r.settings ?? {}) as Record<string, unknown> }));
+  const found = await db.query('select id, kind, position, is_shown, settings, show_from, show_until, countries from homepage_sections order by position, id');
+  const iso = (v: unknown): string | null => (v ? new Date(v as string).toISOString() : null);
+  return found.rows.map((r) => ({
+    id: Number(r.id),
+    kind: String(r.kind),
+    position: Number(r.position),
+    isShown: r.is_shown === true,
+    settings: (r.settings ?? {}) as Record<string, unknown>,
+    showFrom: iso(r.show_from),
+    showUntil: iso(r.show_until),
+    countries: ((r.countries as string[] | null) ?? []).map(String),
+  }));
 }
 
 export async function saveSection(db: Q, id: number, input: Record<string, unknown>): Promise<void> {
@@ -172,7 +194,8 @@ export async function saveSection(db: Q, id: number, input: Record<string, unkno
   if (input.settings && typeof input.settings === 'object') {
     const s = input.settings as Record<string, unknown>;
     // Only the words a section shows can be set; each is plain text.
-    for (const key of ['headline', 'sentence', 'buttonLabel', 'buttonLink', 'title']) {
+    // (Its pictures are set by uploading them: server/admin/pictures.ts.)
+    for (const key of ['headline', 'sentence', 'buttonLabel', 'buttonLink', 'title', 'alt']) {
       if (s[key] === undefined) continue;
       const v = text(s[key], key === 'sentence' ? 300 : 120);
       if (key === 'buttonLink' && v && !/^\/[a-z0-9/_?=&.-]*$/i.test(v)) throw invalid('buttonLink', 'Use a link on this shop, starting with /, such as /c/wigs/.');
@@ -181,8 +204,35 @@ export async function saveSection(db: Q, id: number, input: Record<string, unkno
   }
   const position = input.position === undefined ? null : Number(input.position);
   if (position !== null && (!Number.isInteger(position) || position < 0 || position > 100)) throw invalid('position', 'Enter a position from 0 to 100.');
-  await db.query('update homepage_sections set is_shown = coalesce($2, is_shown), position = coalesce($3, position), settings = $4 where id = $1', [id, typeof input.isShown === 'boolean' ? input.isShown : null, position, JSON.stringify(settings)]);
+  // Dates and countries: only changed when sent. An empty value clears them.
+  const when = (key: 'showFrom' | 'showUntil'): Date | null | undefined => {
+    const v = input[key];
+    if (v === undefined) return undefined;
+    if (v === null || v === '') return null;
+    // A date-and-time field sends Lagos time without a zone (UTC+1 all year).
+    const raw = String(v);
+    const d = new Date(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?$/.test(raw) ? `${raw.length === 16 ? `${raw}:00` : raw}+01:00` : raw);
+    if (Number.isNaN(d.getTime())) throw invalid(key, 'Enter a date and time.');
+    return d;
+  };
+  const current = (await db.query('select show_from, show_until, countries from homepage_sections where id = $1', [id])).rows[0] ?? {};
+  const fromIn = when('showFrom');
+  const untilIn = when('showUntil');
+  const from = fromIn === undefined ? ((current.show_from as Date | null) ?? null) : fromIn;
+  const until = untilIn === undefined ? ((current.show_until as Date | null) ?? null) : untilIn;
+  if (from && until && until.getTime() <= new Date(from).getTime()) throw invalid('showUntil', 'The end must be after the start.');
+  let countries = ((current.countries as string[] | null) ?? []).map(String);
+  if (input.countries !== undefined) {
+    const list = Array.isArray(input.countries) ? input.countries.map(String) : String(input.countries ?? '').split(/[\s,]+/);
+    countries = [...new Set(list.map((c) => c.trim().toUpperCase()).filter(Boolean))];
+    if (countries.some((c) => !/^[A-Z]{2}$/.test(c))) throw invalid('countries', 'Use two-letter country codes separated by commas, such as NG, GB, US.');
+  }
+  await db.query(
+    'update homepage_sections set is_shown = coalesce($2, is_shown), position = coalesce($3, position), settings = $4, show_from = $5, show_until = $6, countries = $7 where id = $1',
+    [id, typeof input.isShown === 'boolean' ? input.isShown : null, position, JSON.stringify(settings), from, until, countries],
+  );
 }
+
 
 // ----- store details -----
 

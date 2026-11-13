@@ -470,3 +470,14 @@ select.field__input { appearance: none; background-image: linear-gradient(45deg,
 .chat-msg--customer { align-self: flex-end; background: var(--surface-raised); }
 .chat-msg--staff { align-self: flex-start; border: 1px solid var(--gold); }
 .chat-msg--system { align-self: center; color: var(--text-muted); font-size: 14px; }
+
+/* ---------- banner pictures (homepage top banner, promotional banners, looks) ---------- */
+.hero .pic { --ratio: 358 / 420; }
+.hero .pic img { object-position: center top; }
+@media (min-width: 600px) { .hero .pic { --ratio: 704 / 460; } }
+@media (min-width: 1024px) { .hero .pic { --ratio: 1184 / 600; } }
+.hero--promo .pic, .hero--promo .photo { --ratio: 358 / 300; }
+@media (min-width: 600px) { .hero--promo .pic, .hero--promo .photo { --ratio: 704 / 300; } }
+@media (min-width: 1024px) { .hero--promo .pic, .hero--promo .photo { --ratio: 1184 / 420; } }
+.hero--promo:not(:has(.hero__copy))::after { content: none; }
+.card > .pic:first-child { margin: -4px -4px 0; }

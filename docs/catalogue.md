@@ -36,6 +36,15 @@ Every change staff make is written to the activity log.
   piece names the exact variant that goes in the bag, so the whole look can
   be added in one tap. (Migration `0011_shop_the_look.sql`.)
 
+## Pictures of categories and collections
+
+A category can have a picture (shown on its card under "Shop by category"),
+and a collection or look a banner (shown on its card and at the top of its
+page). Staff add them in the admin (Categories and collections). The
+catalogue gives them as `image` on each category and `banner` on each
+collection, in the same shape as product photos (`path`, `alt`, `widths`);
+`media.md` has the sizes.
+
 ## What customers can and cannot see
 
 - Only products that are **published**, or scheduled and past their time.

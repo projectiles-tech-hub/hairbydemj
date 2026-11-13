@@ -337,3 +337,79 @@ export async function prepareMediaDir(deps: MediaDeps): Promise<void> {
   await mkdir(join(deps.mediaDir, 'tmp'), { recursive: true });
   await stat(publicDir(deps));
 }
+
+// ----- pictures for the shop itself: homepage banners, categories, collections -----
+
+/** A picture made for the shop (not a product): where it is and which sizes exist. */
+export interface SitePicture {
+  /** Address folder; add "/1280.webp" or "/1280.jpg". */
+  path: string;
+  widths: number[];
+  width: number;
+  height: number;
+}
+
+export const SITE_PICTURES = {
+  /** Full-width banners: wide screens get up to 2560 pixels. */
+  banner: { widths: [640, 960, 1280, 1920, 2560], minSide: 500 },
+  /** Category cards and other small pictures. */
+  card: { widths: [320, 640, 960], minSide: 300 },
+} as const;
+
+/** The sizes to make from a picture this wide: never larger than the original. */
+export function sizesFor(originalWidth: number, steps: readonly number[]): number[] {
+  const widths = steps.filter((w) => w <= originalWidth);
+  const largest = steps[steps.length - 1] ?? 1920;
+  if (originalWidth < largest && !widths.includes(originalWidth)) widths.push(originalWidth);
+  return widths.sort((a, b) => a - b);
+}
+
+/**
+ * File an uploaded picture for the shop under public/s/<folder>/<key>/, in the
+ * sizes of its kind, as WebP and JPEG, turned the right way up and with its
+ * hidden details (camera, place) removed, just like product photos. The
+ * upload has already been received into a temporary place.
+ */
+export async function storeSitePicture(deps: MediaDeps, upload: { path: string; bytes: number }, kind: keyof typeof SITE_PICTURES, folder: string): Promise<SitePicture> {
+  const cleanUp: string[] = [upload.path];
+  try {
+    if (!/^[a-z0-9/-]+$/.test(folder)) throw new Error(`bad picture folder: ${folder}`);
+    const fileKind = await sniff(upload.path);
+    if (fileKind === null || !isImage(fileKind)) throw fieldError('file', 'Upload a JPEG, PNG, WebP or iPhone (HEIC) photo.');
+    if (upload.bytes > MEDIA.maxImageBytes) throw new ApiError(413, 'too_large', `That photo is too large. The limit is ${MEDIA.maxImageBytes / 1024 / 1024} MB.`);
+    let size: { width: number; height: number };
+    try {
+      size = await imageSize(upload.path);
+    } catch (error) {
+      if (error instanceof ToolError && !error.message.includes('not installed')) throw fieldError('file', 'That photo could not be read. Save it again as a JPEG and try once more.');
+      throw error;
+    }
+    const rules = SITE_PICTURES[kind];
+    if (size.width * size.height > MEDIA.maxPixels) throw fieldError('file', 'That photo is too large to process. Use one under 60 megapixels.');
+    if (Math.min(size.width, size.height) < rules.minSide) throw fieldError('file', `That photo is too small. Use one at least ${rules.minSide} pixels on its shorter side.`);
+    const key = randomBytes(8).toString('hex');
+    const path = `s/${folder}/${key}`;
+    const original = join(deps.mediaDir, 'originals', 's', ...folder.split('/'), `${key}.${fileKind}`);
+    await mkdir(join(original, '..'), { recursive: true });
+    await rename(upload.path, original);
+    cleanUp.length = 0;
+    cleanUp.push(original, join(publicDir(deps), path));
+    const widths = sizesFor(size.width, rules.widths);
+    await makeImageSizes(original, join(publicDir(deps), path), widths);
+    cleanUp.length = 0;
+    return { path, widths, width: size.width, height: size.height };
+  } catch (error) {
+    await Promise.all(cleanUp.map((p) => rm(p, { recursive: true, force: true })));
+    throw error;
+  }
+}
+
+/** Remove a shop picture's sizes and its original. */
+export async function removeSitePicture(deps: MediaDeps, path: string): Promise<void> {
+  if (!/^s\/[a-z0-9/-]+\/[0-9a-f]{16}$/.test(path)) return;
+  await rm(join(publicDir(deps), path), { recursive: true, force: true });
+  const parts = path.split('/');
+  const key = parts.pop() as string;
+  const dir = join(deps.mediaDir, 'originals', ...parts);
+  for (const ext of ['jpeg', 'png', 'webp', 'heic']) await rm(join(dir, `${key}.${ext}`), { force: true });
+}

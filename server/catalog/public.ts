@@ -394,18 +394,20 @@ export interface CategoryNode {
   description: string;
   productCount: number;
   children: CategoryNode[];
+  /** The category's card picture (added after module 21), if staff gave one. */
+  image: Picture | null;
 }
 
 /** The category menu as a tree. A category's count includes its sub-categories. */
 export async function listCategories(deps: CatalogDeps): Promise<CategoryNode[]> {
   const result = await deps.db.query(
-    `select c.id, c.parent_id, c.slug, c.name, c.description,
+    `select c.id, c.parent_id, c.slug, c.name, c.description, c.image_path, c.image_widths,
             (select count(*)::int from products p where p.category_id = c.id and ${VISIBLE_SQL('p', '$1')}) as own_count
      from categories c where c.show_in_menu order by c.position, c.name`,
     [deps.now()],
   );
   const nodes = new Map<number, CategoryNode & { parentId: number | null }>();
-  for (const r of result.rows) nodes.set(Number(r.id), { id: Number(r.id), slug: String(r.slug), name: String(r.name), description: String(r.description), productCount: Number(r.own_count), children: [], parentId: r.parent_id === null ? null : Number(r.parent_id) });
+  for (const r of result.rows) nodes.set(Number(r.id), { id: Number(r.id), slug: String(r.slug), name: String(r.name), description: String(r.description), productCount: Number(r.own_count), children: [], image: sitePicture(r.image_path, r.image_widths, String(r.name)), parentId: r.parent_id === null ? null : Number(r.parent_id) });
   const roots: CategoryNode[] = [];
   for (const node of nodes.values()) {
     const parent = node.parentId === null ? undefined : nodes.get(node.parentId);
@@ -417,7 +419,7 @@ export async function listCategories(deps: CatalogDeps): Promise<CategoryNode[]>
     return node.productCount;
   };
   roots.forEach(total);
-  const strip = (node: CategoryNode): CategoryNode => ({ id: node.id, slug: node.slug, name: node.name, description: node.description, productCount: node.productCount, children: node.children.map(strip) });
+  const strip = (node: CategoryNode): CategoryNode => ({ id: node.id, slug: node.slug, name: node.name, description: node.description, productCount: node.productCount, children: node.children.map(strip), image: node.image });
   return roots.map(strip);
 }
 
@@ -426,12 +428,20 @@ export interface CollectionSummary {
   name: string;
   description: string;
   bannerPath: string | null;
+  /** The banner with its sizes (added after module 21). */
+  banner: Picture | null;
   isLook: boolean;
 }
 
+/** A shop picture from its folder and sizes, or null when there is none. */
+export function sitePicture(path: unknown, widths: unknown, alt: string): Picture | null {
+  const list = ((widths as number[] | null) ?? []).map(Number);
+  return typeof path === 'string' && path !== '' && list.length > 0 ? { path, alt, widths: list } : null;
+}
+
 export async function listCollections(deps: CatalogDeps, options: { looks?: boolean } = {}): Promise<CollectionSummary[]> {
-  const result = await deps.db.query("select slug, name, description, banner_path, is_look from collections where status = 'live' and is_look = $1 order by position, name", [options.looks === true]);
-  return result.rows.map((r) => ({ slug: String(r.slug), name: String(r.name), description: String(r.description), bannerPath: (r.banner_path as string | null) ?? null, isLook: r.is_look === true }));
+  const result = await deps.db.query("select slug, name, description, banner_path, banner_widths, is_look from collections where status = 'live' and is_look = $1 order by position, name", [options.looks === true]);
+  return result.rows.map((r) => ({ slug: String(r.slug), name: String(r.name), description: String(r.description), bannerPath: (r.banner_path as string | null) ?? null, banner: sitePicture(r.banner_path, r.banner_widths, String(r.name)), isLook: r.is_look === true }));
 }
 
 export interface Look extends CollectionSummary {
@@ -445,7 +455,7 @@ export interface Look extends CollectionSummary {
 /** A shop-the-look set: the exact variants that go in the bag with one tap. */
 export async function getLook(deps: CatalogDeps, slug: string, currencyCode: string): Promise<Look> {
   const currency = await currencyOf(deps.db, currencyCode);
-  const found = await deps.db.query("select id, slug, name, description, banner_path from collections where slug = $1 and status = 'live' and is_look", [slug]);
+  const found = await deps.db.query("select id, slug, name, description, banner_path, banner_widths from collections where slug = $1 and status = 'live' and is_look", [slug]);
   const c = found.rows[0] as Record<string, unknown> | undefined;
   if (!c) throw notFound('look');
   // Each piece uses the variant staff chose; if none was chosen (or it was removed), the first one that has a price.
@@ -476,6 +486,7 @@ export async function getLook(deps: CatalogDeps, slug: string, currencyCode: str
     name: String(c.name),
     description: String(c.description),
     bannerPath: (c.banner_path as string | null) ?? null,
+    banner: sitePicture(c.banner_path, c.banner_widths, String(c.name)),
     isLook: true,
     currency,
     items: list,
@@ -484,9 +495,31 @@ export async function getLook(deps: CatalogDeps, slug: string, currencyCode: str
   };
 }
 
-/** The homepage sections staff chose in the admin (Homepage), shown ones only, in order. Used by the app. */
-export async function homeLayout(db: Db): Promise<{ sections: Array<{ kind: string; settings: Record<string, unknown> }> }> {
-  const rows = await db.query('select kind, settings from homepage_sections where is_shown order by position, id');
+/** Whether a section shows now to a visitor in this country (null: not known). */
+export function sectionShowsNow(section: { isShown: boolean; showFrom: string | Date | null; showUntil: string | Date | null; countries: string[] }, now: Date, country: string | null): boolean {
+  if (!section.isShown) return false;
+  if (section.showFrom && new Date(section.showFrom) > now) return false;
+  if (section.showUntil && new Date(section.showUntil) <= now) return false;
+  if (section.countries.length && (!country || !section.countries.includes(country.toUpperCase()))) return false;
+  return true;
+}
+
+/**
+ * The homepage sections staff chose in the admin (Homepage), in order: only
+ * the shown ones, within their dates, and for the visitor's country. Used by
+ * the app. Banner pictures are in each section's settings as `picture` and
+ * `phonePicture` ({ path, widths, width, height }).
+ */
+export async function homeLayout(db: Db, o: { now?: Date; country?: string | null } = {}): Promise<{ sections: Array<{ kind: string; settings: Record<string, unknown> }> }> {
+  const now = o.now ?? new Date();
+  const country = o.country ? o.country.toUpperCase() : null;
+  const rows = await db.query(
+    `select kind, settings from homepage_sections
+     where is_shown and (show_from is null or show_from <= $1) and (show_until is null or show_until > $1)
+       and (cardinality(countries) = 0 or $2::text = any(countries))
+     order by position, id`,
+    [now, country],
+  );
   if (rows.rows.length === 0 && Number((await db.query('select count(*)::int as n from homepage_sections')).rows[0]?.n ?? 0) === 0) {
     // Nothing set up yet: the same order the website uses.
     return { sections: ['hero', 'collections', 'best_sellers', 'new_arrivals', 'shop_the_look'].map((kind) => ({ kind, settings: {} })) };

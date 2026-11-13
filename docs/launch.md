@@ -179,7 +179,7 @@ Walk through the live site and the apps together:
 
 - Every product: name, photos, lengths, densities, colours, prices in each
   currency, stock.
-- The homepage sections and their order; categories and collections.
+- The homepage sections and their order, the top banner's pictures (desktop and phone), any promotional banners with their dates and countries; category pictures; categories, collections and look banners.
 - Information pages: about, shipping, returns, privacy, terms, FAQ; the
   shop's contact details and WhatsApp number (admin: Store settings).
 - Emails: send each one to yourself from the admin (Emails) and read it.

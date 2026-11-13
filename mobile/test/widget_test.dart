@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hairbydemj/api/client.dart';
 import 'package:hairbydemj/api/store.dart';
 import 'package:hairbydemj/screens/cart.dart';
+import 'package:hairbydemj/screens/home.dart';
 import 'package:hairbydemj/screens/onboarding.dart';
 import 'package:hairbydemj/state/app_state.dart';
 import 'package:hairbydemj/theme.dart';
@@ -66,5 +67,30 @@ void main() {
     await tester.tap(find.text('Start shopping'));
     await tester.pumpAndSettle();
     expect(state.onboarded, isTrue);
+  });
+
+  testWidgets('home shows the banner and a promotional banner staff added', (tester) async {
+    final state = AppState(fakeShop({
+      'GET /v1/catalog/home': {
+        'sections': [
+          {'kind': 'hero', 'settings': {}},
+          {'kind': 'promo', 'settings': {'headline': 'Black Friday: 20% off wigs', 'buttonLabel': 'Shop wigs', 'buttonLink': '/c/wigs/'}},
+          {'kind': 'collections', 'settings': {}},
+        ],
+      },
+      'GET /v1/catalog/categories': {
+        'categories': [
+          {'id': 1, 'slug': 'wigs', 'name': 'Wigs', 'description': '', 'productCount': 3, 'children': [], 'image': null},
+        ],
+      },
+      'GET /v1/catalog/products': {'products': [], 'nextCursor': null},
+      'GET /v1/catalog/collections': {'collections': []},
+    }));
+    await tester.pumpWidget(wrap(state, const HomeScreen()));
+    await tester.pumpAndSettle();
+    expect(find.text('Hair that moves the way you do'), findsOneWidget);
+    expect(find.text('Black Friday: 20% off wigs'), findsOneWidget);
+    expect(find.text('Shop wigs'), findsOneWidget);
+    expect(find.text('Wigs'), findsOneWidget);
   });
 }

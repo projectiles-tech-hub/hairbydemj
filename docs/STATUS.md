@@ -51,7 +51,8 @@
 - Module 18 (Live chat) is built; pull request #27 is open.
 - Module 19 (Deployment, backups, monitoring) is built; pull request #28 is open.
 - Module 20 (Testing and security review) is built; pull request #29 is open.
-- Module 21 (Launch) is prepared; its pull request is open. All 21 modules are built.
+- Module 21 (Launch) is prepared. All 21 modules are built and merged.
+- Homepage pictures (banner, promotional banners, category and collection pictures) are built; their pull request is open.
 - The Vercel preview was for viewing only. The real site runs from our own
   server; the page code written for the preview is kept as the starting
   point for modules 13 and 14.
@@ -65,7 +66,7 @@ the store reviews, and the launch itself, all written up in `launch.md`.
 
 ## Exact next step
 
-1. Owner merges, in order: #11 to #29, then Module 21's.
+1. Owner merges the homepage pictures pull request.
 2. The owner follows `operations.md` ("First-time set-up") and then
    `launch.md` from the timeline's first row.
 

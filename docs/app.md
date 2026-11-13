@@ -20,6 +20,12 @@ Saved cards are not offered (as on the website), so there is no payment
 methods screen. Changing the email address is done by contacting the shop
 (the server does not offer it yet).
 
+The home screen follows the admin's Homepage page: the top banner's phone
+picture (or its desktop picture), promotional banners within their dates and
+for the customer's country, category pictures (as picture tiles when any
+category has one, otherwise as buttons), and look banners. The server works
+out which sections show (`GET /v1/catalog/home`).
+
 ## How paying works in the app
 
 - **Naira (Paystack):** after the order is placed, the app opens Paystack's

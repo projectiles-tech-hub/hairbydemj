@@ -4,6 +4,13 @@ All notable changes to this repository, newest first.
 
 ## 2026-11-13
 
+- Homepage pictures (after module 21): staff upload the top banner's
+  desktop and phone pictures, add up to 10 promotional banners (each with
+  pictures, words, a button, dates and countries), a picture for each
+  category and a banner for each collection or look, in the admin. Pictures
+  are resized like product photos (banners up to 2560 pixels wide). The
+  website and the app show them; the launch check notes a top banner or
+  category without a picture. Migration 0022. Code: `server/admin/pictures.ts`.
 - Module 21, Launch: a release workflow that builds the signed Android App
   Bundle and iPhone app and uploads them to Google Play (`scripts/play-upload.mjs`)
   and App Store Connect; Apple's privacy manifest for the app; a launch check

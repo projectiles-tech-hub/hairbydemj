@@ -1,12 +1,12 @@
 // Shopping pages with real products: home, category lists with filters,
 // search results, product pages and shop-the-look sets.
 
-import { getLook, getProduct, listCollections, listFilters, listProducts, SORTS, type ProductPage, type ProductQuery, type Sort } from '../../catalog/public.js';
+import { getLook, getProduct, listCollections, sectionShowsNow, listFilters, listProducts, SORTS, type ProductPage, type ProductQuery, type Sort } from '../../catalog/public.js';
 import { ApiError } from '../../http.js';
 import { accordion, button, card, icon, sectionHead } from '../components.js';
 import { each, esc } from '../html.js';
 import { productReviewsSection } from './loyalty.js';
-import { crumbs, money, picture, priceRange, productGrid, type SiteContext } from './view.js';
+import { bannerPicture, crumbs, money, picture, priceRange, productGrid, type BannerPicture, type SiteContext } from './view.js';
 
 const SORT_LABELS: Record<Sort, string> = { newest: 'Newest', best_selling: 'Best-selling', price_low: 'Price: low to high', price_high: 'Price: high to low', name: 'Name', relevance: 'Best match' };
 
@@ -84,9 +84,20 @@ export async function homePage(sc: SiteContext): Promise<{ title: string; body: 
   const base = { currency: sc.currency.code, limit: 4 };
   const [best, fresh, looks] = await Promise.all([listProducts(sc.deps, { ...base, sort: 'best_selling' }), listProducts(sc.deps, { ...base, sort: 'newest' }), listCollections(sc.deps, { looks: true })]);
   const first = sc.categories[0];
-  // Staff choose the order, which sections show and the banner's words in the admin (Homepage).
-  const rows = await sc.deps.db.query('select kind, position, is_shown, settings from homepage_sections order by position, id');
-  const layout = new Map(rows.rows.map((r) => [String(r.kind), { shown: r.is_shown === true, position: Number(r.position), settings: (r.settings ?? {}) as Record<string, unknown> }]));
+  // Staff choose the order, which sections show, the banners' words and pictures, and when and where
+  // each shows, in the admin (Homepage).
+  const rows = await sc.deps.db.query('select id, kind, position, is_shown, settings, show_from, show_until, countries from homepage_sections order by position, id');
+  const showsNow = (r: Record<string, unknown>): boolean =>
+    sectionShowsNow({ isShown: r.is_shown === true, showFrom: (r.show_from as Date | null) ?? null, showUntil: (r.show_until as Date | null) ?? null, countries: ((r.countries as string[] | null) ?? []).map(String) }, sc.now, sc.country);
+  const layout = new Map(rows.rows.filter((r) => r.kind !== 'promo').map((r) => [String(r.kind), { shown: showsNow(r), position: Number(r.position), settings: (r.settings ?? {}) as Record<string, unknown> }]));
+  const promos = rows.rows.filter((r) => r.kind === 'promo' && showsNow(r)).map((r) => ({ id: Number(r.id), position: Number(r.position), settings: (r.settings ?? {}) as Record<string, unknown> }));
+  const pic = (v: unknown): BannerPicture | null => (v && typeof v === 'object' && typeof (v as BannerPicture).path === 'string' && Array.isArray((v as BannerPicture).widths) ? (v as BannerPicture) : null);
+  let firstBanner = true;
+  const bannerMedia = (settings: Record<string, unknown>, alt: string): string => {
+    const html = bannerPicture(pic(settings.picture), pic(settings.phonePicture), { alt, eager: firstBanner });
+    firstBanner = false;
+    return html;
+  };
   const DEFAULT_ORDER = ['hero', 'collections', 'best_sellers', 'new_arrivals', 'shop_the_look'];
   const word = (kind: string, key: string, fallback: string): string => {
     const v = layout.get(kind)?.settings[key];
@@ -94,20 +105,32 @@ export async function homePage(sc: SiteContext): Promise<{ title: string; body: 
   };
   const parts: Record<string, () => string> = {
     hero: () => `<section class="hero" aria-labelledby="hero-h">
-<div class="photo" role="img" aria-label="hairbydemj"></div>
+${bannerMedia(layout.get('hero')?.settings ?? {}, word('hero', 'alt', 'hairbydemj'))}
 <div class="hero__copy"><h1 class="display" id="hero-h">${esc(word('hero', 'headline', 'Hair that moves the way you do'))}</h1>
 <p class="body-large">${esc(word('hero', 'sentence', 'Human hair wigs, bundles and closures. Sent from Benin City to your door, anywhere in the world.'))}</p>
 <div class="row">${button(word('hero', 'buttonLabel', 'Shop new arrivals'), { href: word('hero', 'buttonLink', first ? `/c/${first.slug}/?sort=newest` : '/search/?q='), fullPhone: true })}</div></div>
 </section>`,
-    collections: () => (sc.categories.length ? `<section class="stack" aria-label="${esc(word('collections', 'title', 'Shop by category'))}">${sectionHead(word('collections', 'title', 'Shop by category'))}<div class="grid" style="--cols:4;--cols-tablet:4;--cols-phone:2">${each(sc.categories.slice(0, 8), (c) => `<a class="card stack stack--sm" href="/c/${esc(c.slug)}/" style="text-decoration:none"><span class="strong">${esc(c.name)}</span><span class="small muted">${c.productCount} ${c.productCount === 1 ? 'product' : 'products'}</span></a>`)}</div></section>` : ''),
+    collections: () => (sc.categories.length ? `<section class="stack" aria-label="${esc(word('collections', 'title', 'Shop by category'))}">${sectionHead(word('collections', 'title', 'Shop by category'))}<div class="grid" style="--cols:4;--cols-tablet:4;--cols-phone:2">${each(sc.categories.slice(0, 8), (c) => `<a class="card stack stack--sm" href="/c/${esc(c.slug)}/" style="text-decoration:none">${c.image ? picture(c.image, { alt: '', ratio: '1 / 1', sizes: '(max-width: 599px) 50vw, 25vw' }) : ''}<span class="strong">${esc(c.name)}</span><span class="small muted">${c.productCount} ${c.productCount === 1 ? 'product' : 'products'}</span></a>`)}</div></section>` : ''),
     best_sellers: () => (best.products.length ? `<section class="stack" aria-label="${esc(word('best_sellers', 'title', 'Best-sellers'))}">${sectionHead(word('best_sellers', 'title', 'Best-sellers'))}${productGrid(sc, best.products)}</section>` : ''),
     new_arrivals: () => (fresh.products.length ? `<section class="stack" aria-label="${esc(word('new_arrivals', 'title', 'New arrivals'))}">${sectionHead(word('new_arrivals', 'title', 'New arrivals'))}${productGrid(sc, fresh.products)}</section>` : ''),
-    shop_the_look: () => (looks.length ? `<section class="stack" aria-label="${esc(word('shop_the_look', 'title', 'Shop the look'))}">${sectionHead(word('shop_the_look', 'title', 'Shop the look'), ['See all looks', '/looks/'])}<div class="grid" style="--cols:3;--cols-tablet:2;--cols-phone:1">${each(looks.slice(0, 3), (l) => card(`<h3 class="h3"><a href="/looks/${esc(l.slug)}/">${esc(l.name)}</a></h3><p class="muted">${esc(l.description)}</p>`))}</div></section>` : ''),
+    shop_the_look: () => (looks.length ? `<section class="stack" aria-label="${esc(word('shop_the_look', 'title', 'Shop the look'))}">${sectionHead(word('shop_the_look', 'title', 'Shop the look'), ['See all looks', '/looks/'])}<div class="grid" style="--cols:3;--cols-tablet:2;--cols-phone:1">${each(looks.slice(0, 3), (l) => card(`${l.banner ? picture(l.banner, { alt: '', ratio: '16 / 9', sizes: '(max-width: 599px) 100vw, 33vw' }) : ''}<h3 class="h3"><a href="/looks/${esc(l.slug)}/">${esc(l.name)}</a></h3><p class="muted">${esc(l.description)}</p>`))}</div></section>` : ''),
     // Reviews arrive with module 17.
   };
-  const order = DEFAULT_ORDER.map((kind, i) => ({ kind, shown: layout.get(kind)?.shown ?? true, position: layout.get(kind)?.position ?? i, i })).filter((x) => x.shown).sort((x, y) => x.position - y.position || x.i - y.i);
+  // Promotional banners: as many as staff add, each placed by its position.
+  const promo = (p: { id: number; settings: Record<string, unknown> }): string => {
+    const t = (key: string): string => (typeof p.settings[key] === 'string' ? (p.settings[key] as string).trim() : '');
+    const link = t('buttonLink');
+    const words = t('headline') || t('sentence') || (t('buttonLabel') && link);
+    return `<section class="hero hero--promo"${t('headline') ? ` aria-labelledby="promo-${p.id}"` : ' aria-label="Offer"'}>${bannerMedia(p.settings, t('alt') || t('headline') || 'hairbydemj')}${words ? `<div class="hero__copy">${t('headline') ? `<h2 class="h1" id="promo-${p.id}">${esc(t('headline'))}</h2>` : ''}${t('sentence') ? `<p class="body-large">${esc(t('sentence'))}</p>` : ''}${t('buttonLabel') && link ? `<div class="row">${button(t('buttonLabel'), { href: link, fullPhone: true })}</div>` : ''}</div>` : ''}</section>`;
+  };
+  const order = [
+    ...DEFAULT_ORDER.map((kind, i) => ({ kind, shown: layout.get(kind)?.shown ?? true, position: layout.get(kind)?.position ?? i, i, html: () => parts[kind]?.() ?? '' })),
+    ...promos.map((p, i) => ({ kind: 'promo', shown: true, position: p.position, i: DEFAULT_ORDER.length + i, html: () => promo(p) })),
+  ]
+    .filter((x) => x.shown)
+    .sort((x, y) => x.position - y.position || x.i - y.i);
   const body = `${order.some((x) => x.kind === 'hero') ? '' : '<h1 class="visually-hidden">hairbydemj</h1>'}
-${order.map((x) => parts[x.kind]?.() ?? '').join('\n')}
+${order.map((x) => x.html()).join('\n')}
 ${!best.products.length && !fresh.products.length ? card('<p class="muted">New hair is on its way. Please check back soon.</p>', { title: 'Coming soon' }) : ''}`;
   return {
     title: 'hairbydemj',
@@ -254,7 +277,7 @@ export async function looksPage(sc: SiteContext): Promise<{ title: string; body:
   const looks = await listCollections(sc.deps, { looks: true });
   return {
     title: 'Shop the look',
-    body: `<h1 class="h1">Shop the look</h1>${looks.length ? `<div class="grid" style="--cols:3;--cols-tablet:2;--cols-phone:1">${each(looks, (l) => card(`<h2 class="h3"><a href="/looks/${esc(l.slug)}/">${esc(l.name)}</a></h2><p class="muted">${esc(l.description)}</p>${button('See the look', { kind: 'secondary', href: `/looks/${l.slug}/` })}`))}</div>` : card('<p class="muted">Looks are on their way.</p>')}`,
+    body: `<h1 class="h1">Shop the look</h1>${looks.length ? `<div class="grid" style="--cols:3;--cols-tablet:2;--cols-phone:1">${each(looks, (l) => card(`${l.banner ? picture(l.banner, { alt: '', ratio: '16 / 9', sizes: '(max-width: 599px) 100vw, 33vw' }) : ''}<h2 class="h3"><a href="/looks/${esc(l.slug)}/">${esc(l.name)}</a></h2><p class="muted">${esc(l.description)}</p>${button('See the look', { kind: 'secondary', href: `/looks/${l.slug}/` })}`))}</div>` : card('<p class="muted">Looks are on their way.</p>')}`,
   };
 }
 
@@ -268,7 +291,7 @@ export async function lookPage(sc: SiteContext, slug: string): Promise<{ title: 
   }
   return {
     title: look.name,
-    body: `${crumbs([['Home', '/'], ['Shop the look', '/looks/'], [look.name]])}<h1 class="h1">${esc(look.name)}</h1><p class="muted">${esc(look.description)}</p>
+    body: `${crumbs([['Home', '/'], ['Shop the look', '/looks/'], [look.name]])}${look.banner ? `<div class="hero">${bannerPicture(look.banner, null, { alt: look.name, eager: true })}</div>` : ''}<h1 class="h1">${esc(look.name)}</h1><p class="muted">${esc(look.description)}</p>
 <div class="stack">${each(look.items, (i) => `<div class="row row--top row--nowrap">${picture(i.product.image, { alt: i.product.name, sizes: '96px', className: 'photo--thumb', ratio: '1 / 1' })}<div class="stack stack--xs grow"><a class="strong" href="/products/${esc(i.product.slug)}/">${esc(i.product.name)}</a><span class="small muted">${esc(i.description)}</span>${i.available ? '' : '<span class="small">Sold out</span>'}</div><span class="strong">${esc(money(sc, i.priceMinor))}</span></div>`)}</div>
 <div class="kv strong"><span>Set total</span><span class="price">${esc(money(sc, look.totalMinor))}</span></div>
 ${look.allAvailable ? button('Add the set to bag', { attrs: `data-add-set="${esc(JSON.stringify(look.items.map((i) => i.variantId)))}"` }) : `<p class="muted">${icon('warning', 20)} One piece is sold out, so the set cannot be added in one go. Add the other pieces from their pages.</p>`}

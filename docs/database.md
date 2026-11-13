@@ -92,6 +92,7 @@ not need `createdb`.
 | `0019_try_on` | Try-on pictures (`try_on_images`): a see-through wig picture per product and colour, with where the temples sit |
 | `0020_loyalty_and_gift_card_orders` | When an order's points were last worked out (`orders.points_settled_at`); photo sizes on review photos; a look-up for gift cards bought on orders |
 | `0021_chat` | A visitor's email on a chat (`chat_conversations.visitor_email`), so a reply can reach them |
+| `0022_homepage_pictures` | Promotional banners as a homepage section kind (`promo`); category pictures (`categories.image_path`, `image_widths`); collection banner sizes (`collections.banner_widths`). Homepage banner pictures are kept in each section's `settings` |
 | `0010_sign_in_protection` | `sign_in_attempts` (used to slow down password guessing) |
 
 65 tables in all, counting `schema_migrations`.

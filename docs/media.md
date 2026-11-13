@@ -82,6 +82,28 @@ photo means uploading a new one, which gets a new address.
 Videos can be fetched in parts (`Range` requests), which players need to
 start early and to skip ahead.
 
+## Pictures for the shop itself
+
+The top banner and promotional banners on the homepage, category pictures
+and collection banners are uploaded in the admin (Homepage; Categories and
+collections) and go through the same checks and cleaning as product photos:
+recognised by their first bytes, turned the right way up, hidden details
+removed, WebP and JPEG copies, never enlarged. The code is
+`server/admin/pictures.ts` and `storeSitePicture` in `server/media/media.ts`.
+
+| Kind | Sizes made (pixels wide) | Smallest accepted (shorter side) | Advice shown to staff |
+| --- | --- | --- | --- |
+| Banners (top banner, promotional banners, collection banners) | 640, 960, 1280, 1920, 2560 | 500 | Desktop: wide, about 2560 × 1100. Phone (optional): tall, about 1200 × 1500 |
+| Category pictures | 320, 640, 960 | 300 | Square, at least 960 × 960 |
+
+They are kept under `public/s/` (`s/home/<section>/<key>/`,
+`s/category/<id>/<key>/`, `s/collection/<id>/<key>/`), with the originals
+under `originals/s/`. Replacing or removing a picture removes its files.
+A banner can have a separate phone picture: phones (under 600 pixels wide)
+get it, everything else gets the desktop picture; without one, phones show
+the desktop picture cropped. The first banner on the page loads straight
+away; the rest load as the visitor scrolls.
+
 ## Linking to products and variants
 
 - Each photo and video belongs to one product and has a position. The first

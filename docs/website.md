@@ -33,6 +33,15 @@ Any other address gets the shop's own "not found" page.
 Gift card buying (`/gift-cards/`), the AR try-on (`/try-on/`), loyalty and
 reviews come with modules 16 and 17. Saved cards are not offered.
 
+### Homepage banners
+
+The homepage shows what staff set in the admin (Homepage): the top banner
+with its desktop and phone pictures, any promotional banners (each placed by
+its position, shown only between its dates and, when countries are chosen,
+only to visitors from those countries, as Cloudflare reports them), category
+pictures and look banners. Visitors whose country is not known see only the
+banners meant for everyone.
+
 ## Paying
 
 - **Naira (Paystack):** after the order is placed, the customer goes to

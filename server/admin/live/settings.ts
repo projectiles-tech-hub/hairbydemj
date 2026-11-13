@@ -13,7 +13,8 @@ import { listJobs } from '../../worker/queue.js';
 import { SCHEDULE } from '../../worker/tasks.js';
 import { each, esc } from '../../site/html.js';
 import { num, panel, pageHead, raw, table, tabs } from '../components.js';
-import { listActivity, listContent, listHomepage, readStore } from '../api.js';
+import { listActivity, listContent, listHomepage, readStore, type HomepageSection } from '../api.js';
+import { MAX_PROMOS } from '../pictures.js';
 import { checkbox, date, form, input, money, postButton, select, textarea, type AdminContext } from './view.js';
 
 export interface LiveExtras {
@@ -82,30 +83,53 @@ ${panel('Roles', `${each(roles, (r) => `<details class="stack stack--sm"><summar
 
 // ----- homepage, content pages and emails -----
 
-const SECTION_NAMES: Record<string, string> = { hero: 'Top banner', collections: 'Collections', best_sellers: 'Best sellers', new_arrivals: 'New arrivals', shop_the_look: 'Shop the look', reviews: 'Reviews' };
+const SECTION_NAMES: Record<string, string> = { promo: 'Promotional banner', hero: 'Top banner', collections: 'Collections', best_sellers: 'Best sellers', new_arrivals: 'New arrivals', shop_the_look: 'Shop the look', reviews: 'Reviews' };
 
 export async function homepage(ac: AdminContext): Promise<string> {
   const sections = await listHomepage(ac.deps.db);
   const change = can(ac.staff, 'settings', 'change');
   const s = (v: unknown): string => (typeof v === 'string' ? v : '');
+  const promos = sections.filter((x) => x.kind === 'promo').length;
+  // Pictures: a preview, an upload form and a remove button for each of desktop and phone.
+  const pictures = (sec: HomepageSection): string => {
+    const slot = (key: 'picture' | 'phonePicture', name: 'desktop' | 'phone', label: string, help: string): string => {
+      const pic = sec.settings[key] as { path?: string; widths?: number[]; width?: number; height?: number } | undefined;
+      const smallest = pic?.widths?.find((w) => w >= 640) ?? pic?.widths?.[pic.widths.length - 1];
+      return `<div class="stack stack--sm"><p class="strong small">${esc(label)}</p>${
+        pic?.path && smallest
+          ? `<img src="/media/${esc(pic.path)}/${smallest}.jpg" alt="" style="width:100%;max-width:${name === 'phone' ? 220 : 420}px;aspect-ratio:${pic.width}/${pic.height};object-fit:cover;border-radius:8px;background:var(--surface-photo)"><p class="small muted">${pic.width} × ${pic.height} pixels</p>${change ? postButton('Remove this picture', `/api/homepage/${sec.id}/picture/delete?slot=${name}`, { kind: 'text', confirm: 'Remove this picture?' }) : ''}`
+          : `<p class="small muted">No picture yet.</p>`
+      }${change ? `<form class="stack stack--sm" data-upload="/api/homepage/${sec.id}/picture"><input type="hidden" data-upload-param="slot" value="${name}"><div class="field"><label class="field__label" for="hp-${sec.id}-${name}">${pic?.path ? 'Replace with' : 'Upload'} (JPEG, PNG, WebP or HEIC)</label><input class="field__input" id="hp-${sec.id}-${name}" type="file" accept="image/jpeg,image/png,image/webp,image/heic"><p class="field__help">${esc(help)}</p></div><button class="btn btn--secondary" type="submit">Upload</button><p class="small" role="status" data-upload-status></p></form>` : ''}</div>`;
+    };
+    return `<div class="fields fields--2">${slot('picture', 'desktop', 'Picture for computers and tablets', 'Wide, about 2560 × 1100 pixels. Keep faces and products away from the left third, where the words sit.')}${slot('phonePicture', 'phone', 'Picture for phones (optional)', 'Tall, about 1200 × 1500 pixels. Without one, phones show the desktop picture, cropped.')}</div>`;
+  };
+  const schedule = (sec: HomepageSection): string =>
+    `<details><summary class="small strong">When and where it shows${sec.showFrom || sec.showUntil || sec.countries.length ? ' (set)' : ''}</summary><div class="stack stack--sm"><div class="fields fields--2">${input('showFrom', 'Show from (Lagos time)', { type: 'datetime-local', value: lagosLocal(sec.showFrom), help: 'Empty: straight away' })}${input('showUntil', 'Show until (Lagos time)', { type: 'datetime-local', value: lagosLocal(sec.showUntil), help: 'Empty: until it is hidden' })}</div>${input('countries', 'Only in these countries', { value: sec.countries.join(', '), data: 'list', help: 'Two-letter codes separated by commas, such as NG, GH, GB, US. Empty: every country.' })}</div></details>`;
+  const banner = (sec: HomepageSection): string =>
+    `${input('settings.headline', 'Headline', { value: s(sec.settings.headline) })}${textarea('settings.sentence', 'Sentence under it', s(sec.settings.sentence), { rows: 2 })}<div class="fields fields--2">${input('settings.buttonLabel', 'Button words', { value: s(sec.settings.buttonLabel) })}${input('settings.buttonLink', 'Button link', { value: s(sec.settings.buttonLink), help: 'A page on this shop, such as /c/wigs/' })}</div>${input('settings.alt', 'What the picture shows (for people who cannot see it)', { value: s(sec.settings.alt) })}`;
   return `${pageHead('Homepage', `<a class="btn btn--secondary" href="${esc(siteBase(ac))}/" target="_blank" rel="noopener">View the shop</a>`)}
-<p class="muted">Sections show in order of their position, lowest first. Words left empty keep the shop's own wording.</p>
+<p class="muted">Sections show in order of their position, lowest first. Words left empty keep the shop's own wording. The website and the app both follow this page.</p>
 ${each(sections, (sec) =>
     panel(
-      `${SECTION_NAMES[sec.kind] ?? sec.kind}${sec.isShown ? '' : ' (hidden)'}`,
-      change
-        ? form(
-            `/api/homepage/${sec.id}`,
-            `<div class="fields fields--2">${input('position', 'Position', { value: sec.position, data: 'number' })}<div class="field">${checkbox('isShown', 'Shown on the homepage', sec.isShown)}</div></div>${
-              sec.kind === 'hero'
-                ? `${input('settings.headline', 'Headline', { value: s(sec.settings.headline) })}${textarea('settings.sentence', 'Sentence under it', s(sec.settings.sentence), { rows: 2 })}<div class="fields fields--2">${input('settings.buttonLabel', 'Button words', { value: s(sec.settings.buttonLabel) })}${input('settings.buttonLink', 'Button link', { value: s(sec.settings.buttonLink), help: 'A page on this shop, such as /c/wigs/' })}</div>`
-                : input('settings.title', 'Heading', { value: s(sec.settings.title) })
-            }`,
-            { submit: 'Save section' },
-          )
-        : '',
+      `${sec.kind === 'promo' ? `Promotional banner${s(sec.settings.headline) ? `: ${s(sec.settings.headline)}` : ''}` : (SECTION_NAMES[sec.kind] ?? sec.kind)}${sec.isShown ? '' : ' (hidden)'}`,
+      `${sec.kind === 'hero' || sec.kind === 'promo' ? pictures(sec) : ''}${
+        change
+          ? form(
+              `/api/homepage/${sec.id}`,
+              `<div class="fields fields--2">${input('position', 'Position', { value: sec.position, data: 'number' })}<div class="field">${checkbox('isShown', 'Shown on the homepage', sec.isShown)}</div></div>${sec.kind === 'hero' || sec.kind === 'promo' ? banner(sec) : input('settings.title', 'Heading', { value: s(sec.settings.title) })}${schedule(sec)}`,
+              { submit: 'Save section' },
+            ) + (sec.kind === 'promo' ? postButton('Remove this banner', `/api/homepage/${sec.id}/delete`, { kind: 'text', confirm: 'Remove this promotional banner and its pictures?' }) : '')
+          : ''
+      }`,
     ),
-  )}`;
+  )}
+${change ? (promos < MAX_PROMOS ? `<div class="row">${postButton('Add a promotional banner', '/api/homepage/promos')}<span class="small muted">It starts hidden: add its picture and words, then tick "Shown on the homepage".</span></div>` : `<p class="small muted">There are ${MAX_PROMOS} promotional banners, the most there can be.</p>`) : ''}`;
+}
+
+/** An ISO time as the value of a datetime-local field, in Lagos time (UTC+1, no summer time). */
+function lagosLocal(iso: string | null): string {
+  if (!iso) return '';
+  return new Date(new Date(iso).getTime() + 60 * 60_000).toISOString().slice(0, 16);
 }
 
 function siteBase(ac: AdminContext): string {

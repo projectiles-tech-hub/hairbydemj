@@ -53,6 +53,7 @@ Update this file at the end of every session.
 
 ## Completed
 
+- [x] Homepage pictures: top banner, promotional banners with dates and countries, category pictures, collection banners, on the website and in the app; pull request open (2026-11-13)
 - [x] Module 21 (Launch): release workflow, privacy manifest, launch check and guide; pull request open (2026-11-13)
 - [x] Module 20 (Testing and security review): browser journeys, speed budget, security tests and review, fixes; pull request open (2026-11-13)
 - [x] Module 19 (Deployment, backups, monitoring): built and tested; pull request open (2026-11-13)

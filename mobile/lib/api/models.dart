@@ -17,13 +17,17 @@ class Category {
         name = _str(j['name']),
         description = _str(j['description']),
         productCount = _int(j['productCount']),
-        children = _list(j['children']).map(Category.new).toList();
+        children = _list(j['children']).map(Category.new).toList(),
+        image = _map(j['image']);
   final int id;
   final String slug;
   final String name;
   final String description;
   final int productCount;
   final List<Category> children;
+
+  /// The category's card picture, when staff added one.
+  final Json? image;
 }
 
 class ProductSummary {

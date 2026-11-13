@@ -20,6 +20,7 @@ import { adminApiRoutes } from '../admin/api.js';
 import { adminLoyaltyRoutes } from '../loyalty/routes.js';
 import { adminChatRoutes } from '../chat/routes.js';
 import { liveAdminRoutes } from '../admin/live/routes.js';
+import { adminPictureRoutes } from '../admin/pictures.js';
 import { Router } from '../router.js';
 import { sendHtml } from '../http.js';
 
@@ -48,6 +49,8 @@ export function adminRoutes(accounts?: AccountDeps, media?: MediaDeps, payments?
   if (orders && payments) adminOrderRoutes(router, accounts, orders, payments);
   adminWorkerRoutes(router, accounts);
   adminMessageRoutes(router, accounts);
+  // Before adminApiRoutes, so /api/homepage/promos is not read as a section number.
+  if (media) adminPictureRoutes(router, accounts, media);
   adminApiRoutes(router, accounts);
   adminLoyaltyRoutes(router, accounts);
   adminChatRoutes(router, accounts);

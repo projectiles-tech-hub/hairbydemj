@@ -30,6 +30,8 @@ export interface SiteContext {
   now: Date;
   /** The site's own address, for canonical links and the sitemap: https://hairbydemj.com in production. */
   origin: string;
+  /** The visitor's country from Cloudflare (two letters), when known: for banners shown in some countries only. */
+  country: string | null;
 }
 
 export function siteOrigin(deps: AccountDeps): string {
@@ -60,6 +62,7 @@ export async function siteContext(deps: AccountDeps, ctx: RequestContext): Promi
     categories: await listCategories(deps),
     now: deps.now(),
     origin: siteOrigin(deps),
+    country: country ? country.toUpperCase() : null,
   };
 }
 
@@ -80,6 +83,28 @@ export function picture(pic: Picture | null, o: { alt?: string; sizes?: string; 
   const middle = widths[Math.min(widths.length - 1, 2)] as number;
   const sizes = o.sizes ?? '(max-width: 599px) 50vw, (max-width: 1023px) 33vw, 25vw';
   return `<picture class="${cls('pic', o.className)}"${o.ratio ? ` style="--ratio:${o.ratio}"` : ''}><source type="image/webp" srcset="${set('webp')}" sizes="${sizes}"><img src="${src(middle, 'jpg')}" srcset="${set('jpg')}" sizes="${sizes}" alt="${esc(o.alt ?? pic.alt)}" loading="${o.eager ? 'eager' : 'lazy'}" decoding="async"></picture>`;
+}
+
+/** A shop picture with its sizes, as homepage banners store it. */
+export interface BannerPicture {
+  path: string;
+  widths: number[];
+}
+
+/**
+ * A full-width banner: the phone picture on screens under 600 pixels wide
+ * (when there is one), the desktop picture elsewhere, each in WebP with a
+ * JPEG fallback. The first banner on a page loads straight away.
+ */
+export function bannerPicture(desktop: BannerPicture | null, phone: BannerPicture | null, o: { alt: string; eager?: boolean }): string {
+  const main = desktop ?? phone;
+  if (!main || main.widths.length === 0) return `<div class="photo" role="img" aria-label="${esc(o.alt)}"></div>`;
+  const set = (pic: BannerPicture, ext: string): string => [...pic.widths].sort((a, b) => a - b).map((w) => `/media/${pic.path}/${w}.${ext} ${w}w`).join(', ');
+  const phoneSources = phone && desktop ? `<source media="(max-width: 599px)" type="image/webp" srcset="${set(phone, 'webp')}" sizes="100vw"><source media="(max-width: 599px)" srcset="${set(phone, 'jpg')}" sizes="100vw">` : '';
+  const sizes = '(max-width: 1279px) 100vw, 1184px';
+  const widths = [...main.widths].sort((a, b) => a - b);
+  const fallback = widths.find((w) => w >= 1280) ?? widths[widths.length - 1];
+  return `<picture class="pic">${phoneSources}<source type="image/webp" srcset="${set(main, 'webp')}" sizes="${sizes}"><img src="/media/${main.path}/${fallback}.jpg" srcset="${set(main, 'jpg')}" sizes="${sizes}" alt="${esc(o.alt)}" loading="${o.eager ? 'eager' : 'lazy'}"${o.eager ? ' fetchpriority="high"' : ''} decoding="async"></picture>`;
 }
 
 export function priceRange(sc: SiteContext, from: number, to: number): string {

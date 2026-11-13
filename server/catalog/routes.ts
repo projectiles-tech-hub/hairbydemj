@@ -49,13 +49,15 @@ function text(query: URLSearchParams, name: string, max = 120): string | undefin
 const MAX_MINOR = 9_000_000_000_000;
 
 /** Read-only catalogue addresses for the website and the phone app. */
-export function shopCatalogRoutes(router: Router, deps: shop.CatalogDeps, prefix: string): Router {
+export function shopCatalogRoutes(router: Router, deps: shop.CatalogDeps & { config?: { trustProxy: boolean } }, prefix: string): Router {
   return router
     .get(`${prefix}/categories`, async (ctx) => {
       sendJson(ctx.res, 200, { categories: await shop.listCategories(deps) });
     })
     .get(`${prefix}/home`, async (ctx) => {
-      sendJson(ctx.res, 200, await shop.homeLayout(deps.db), { 'Cache-Control': 'public, max-age=60' });
+      // Banners can be for some countries only (Cloudflare tells us the visitor's), so this is never shared between visitors.
+      const country = deps.config?.trustProxy && typeof ctx.req.headers['cf-ipcountry'] === 'string' ? ctx.req.headers['cf-ipcountry'] : null;
+      sendJson(ctx.res, 200, await shop.homeLayout(deps.db, { now: deps.now(), country }), { 'Cache-Control': 'private, max-age=60' });
     })
     .get(`${prefix}/collections`, async (ctx) => {
       sendJson(ctx.res, 200, { collections: await shop.listCollections(deps, { looks: ctx.query.get('looks') === '1' }) });

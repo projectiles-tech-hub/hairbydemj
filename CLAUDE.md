@@ -104,6 +104,7 @@ same content, split by topic, is in `docs/spec/`.
 | `server/e2e/` | Browser journeys and speed checks (`npm run test:e2e`) |
 | `docs/launch.md` | Launch: accounts, store listings, privacy answers, signing the apps, live keys, launch check, launch day, first days |
 | `scripts/play-upload.mjs` | Uploads the Android App Bundle to Google Play (used by `app-release.yml`) |
+| `server/admin/pictures.ts` | Homepage banner pictures, promotional banners, category pictures and collection banners: uploads and their addresses |
 | `docs/preview.md` | The online design preview: what it is, how to build and publish it |
 | `server/site/`, `browser/`, `public/` | Website page code, browser script, styles, fonts and logo |
 | `server/admin/` | Admin page code |

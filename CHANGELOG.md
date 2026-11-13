@@ -4,6 +4,15 @@ All notable changes to this repository, newest first.
 
 ## 2026-11-13
 
+- Module 20, Testing and security review: browser journeys in Chromium
+  (guest checkout paying in naira, account creation, owner invitation and
+  two-step sign-in, sending an order, adding a product, live chat); a speed
+  budget on slow 4G; security tests across every admin and app address and
+  between customers; a check command for the real payment and carrier
+  accounts in test mode. Fixed: saved chat replies now need access to
+  customers; private tokens are hidden in logs; Caddy sends
+  Strict-Transport-Security. Guides: `docs/testing.md`,
+  `docs/security-review.md`.
 - Module 19, Deployment, backups and monitoring: `deploy/setup-server.sh`
   sets up the VPS (updates, firewall, PostgreSQL, Node.js 24, Caddy,
   Postfix, rclone, live and staging shops); GitHub Actions deploys

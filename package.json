@@ -19,11 +19,13 @@
     "db:seed": "npm run build && node --env-file-if-exists=.env dist/server/db/cli.js seed",
     "staff:invite-owner": "npm run build && node --env-file-if-exists=.env dist/server/accounts/cli.js invite-owner",
     "staff:reset-access": "npm run build && node --env-file-if-exists=.env dist/server/accounts/cli.js reset-access",
-    "tryon:model": "npm run build && node dist/server/tryon/model.js"
+    "tryon:model": "npm run build && node dist/server/tryon/model.js",
+    "test:e2e": "npm run build && node --test --test-concurrency=1 \"dist/server/e2e/*.e2e.js\""
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
     "@types/pg": "^8.23.1",
+    "playwright": "1.63.0",
     "typescript": "^5.6.0"
   },
   "dependencies": {

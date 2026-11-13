@@ -28,12 +28,27 @@
 (shop) {
 	import origin_tls
 	encode zstd gzip
-	header -Server
+	header {
+		-Server
+		# Browsers only ever use HTTPS for the shop once they have seen it.
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options nosniff
+	}
 
 	log {
 		output file /var/log/caddy/{args[0]}.log {
 			roll_size 50MiB
 			roll_keep 10
+		}
+		# Private links carry tokens and codes; keep them out of the log.
+		format filter {
+			fields {
+				request>uri query {
+					replace token [hidden]
+					replace code [hidden]
+					replace key [hidden]
+				}
+			}
 		}
 	}
 

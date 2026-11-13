@@ -35,6 +35,11 @@ export class Router {
     return this.add('POST', pattern, handler);
   }
 
+  /** Every route as "METHOD /pattern", in the order added (used by the security tests). */
+  list(): Array<{ method: string; pattern: string }> {
+    return this.routes.map((r) => ({ method: r.method, pattern: `/${r.segments.join('/')}` }));
+  }
+
   match(method: string, path: string): RouteMatch {
     const wanted = method.toUpperCase();
     const lookup = wanted === 'HEAD' ? 'GET' : wanted;

@@ -7,10 +7,12 @@ import { adminCartRoutes } from '../cart/routes.js';
 import { adminCatalogRoutes } from '../catalog/routes.js';
 import type { MediaDeps } from '../media/media.js';
 import { mediaRoutes } from '../media/routes.js';
+import type { PaymentDeps } from '../payments/payments.js';
+import { adminPaymentRoutes } from '../payments/routes.js';
 import { Router } from '../router.js';
 import { sendHtml } from '../http.js';
 
-export function adminRoutes(accounts?: AccountDeps, media?: MediaDeps): Router {
+export function adminRoutes(accounts?: AccountDeps, media?: MediaDeps, payments?: PaymentDeps): Router {
   const router = new Router().get('/', ({ res }) => {
     sendHtml(
       res,
@@ -26,6 +28,7 @@ export function adminRoutes(accounts?: AccountDeps, media?: MediaDeps): Router {
     adminCatalogRoutes(router, accounts, media);
     adminCartRoutes(router, accounts, { ratesUrl: accounts.config.ratesUrl });
     if (media) mediaRoutes(router, accounts, media);
+    if (payments) adminPaymentRoutes(router, accounts, payments);
   }
   return router;
 }

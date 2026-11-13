@@ -5,6 +5,7 @@ import { randomUUID } from 'node:crypto';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { AccountDeps } from './accounts/deps.js';
 import type { MediaDeps } from './media/media.js';
+import { paymentDeps } from './payments/routes.js';
 import { join } from 'node:path';
 import type { Config } from './config.js';
 import type { Logger } from './logger.js';
@@ -37,10 +38,12 @@ export function hostnameOf(hostHeader: string | undefined): string {
 }
 
 export function createApp(config: Config, logger: Logger, options: AppOptions): App {
+  // Payment providers are set up once, from the keys in the environment.
+  const payments = options.accounts ? paymentDeps(options.accounts, logger) : undefined;
   const routers: Record<Area, Router> = {
-    site: options.routers?.site ?? siteRoutes(options.accounts),
-    admin: options.routers?.admin ?? adminRoutes(options.accounts, options.media),
-    api: options.routers?.api ?? apiRoutes(options.accounts),
+    site: options.routers?.site ?? siteRoutes(options.accounts, payments),
+    admin: options.routers?.admin ?? adminRoutes(options.accounts, options.media, payments),
+    api: options.routers?.api ?? apiRoutes(options.accounts, payments),
   };
   const areaByHost = new Map<string, Area>([
     [config.hosts.site, 'site'],

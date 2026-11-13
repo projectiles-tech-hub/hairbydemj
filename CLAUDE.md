@@ -72,6 +72,8 @@ same content, split by topic, is in `docs/spec/`.
 | `server/media/` | Uploads, resizing with libvips, video compression with ffmpeg |
 | `docs/cart.md` | Cart, currencies and rates, discounts, gift cards, holding stock |
 | `server/cart/` | Cart, currency, discount, gift card and stock-holding code |
+| `docs/payments.md` | Payments: Paystack and Stripe keys, webhooks, refunds |
+| `server/payments/` | Payment start, webhook handling, refunds |
 | `docs/preview.md` | The online design preview: what it is, how to build and publish it |
 | `server/site/`, `browser/`, `public/` | Website page code, browser script, styles, fonts and logo |
 | `server/admin/` | Admin page code |

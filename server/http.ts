@@ -46,6 +46,23 @@ export class ApiError extends HttpError {
   }
 }
 
+/** Read the request body exactly as sent, for checking a webhook's signature. */
+export async function readRaw(req: IncomingMessage, maxBytes = 512 * 1024): Promise<Buffer> {
+  const chunks: Buffer[] = [];
+  let size = 0;
+  const stalled = setTimeout(() => req.destroy(), 30_000);
+  try {
+    for await (const chunk of req as AsyncIterable<Buffer>) {
+      size += chunk.length;
+      if (size > maxBytes) throw new ApiError(413, 'too_large', 'The request is too large');
+      chunks.push(chunk);
+    }
+  } finally {
+    clearTimeout(stalled);
+  }
+  return Buffer.concat(chunks);
+}
+
 /** Read a JSON object from the request body. Bodies over the limit are refused. */
 export async function readJson(req: IncomingMessage, maxBytes = 16 * 1024): Promise<Record<string, unknown>> {
   const type = (req.headers['content-type'] ?? '').split(';')[0]?.trim().toLowerCase();

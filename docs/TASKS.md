@@ -6,8 +6,8 @@ Update this file at the end of every session.
 
 - [ ] Make the changes the owner and reviewer ask for after seeing the preview
 - [ ] Check the 20 icons added in Figma during D3 against the Phosphor originals
-- [ ] Connect the coded website and admin pages to the server's routes (modules 13 and 14)
-- [ ] Customer account features in the designs but outside Module 3: change email, change password while signed in, delete account, edit profile
+- [ ] Connect the coded admin pages to the server's routes (module 14)
+- [ ] Customer account: change of email address (password change, profile and closing the account were added in module 13)
 
 ## Noted for later (not to be built until the owner says)
 
@@ -19,7 +19,7 @@ Update this file at the end of every session.
 
 ## Blocked / waiting on owner
 
-- [ ] Review and merge the Module 2 (Database) pull request (#11), then Module 3 (Accounts, #12), then Module 4 (Catalogue, #13), then Module 5 (Media, #14), then Module 6 (#15), then Module 7 (Payments, #16), then Module 8 (Shipping, #17), then Module 9 (Orders and returns, #18), then Module 10 (Background jobs, #19), then Module 11 (Notifications, #20), then the Module 12 (Search) pull request
+- [ ] Review and merge the Module 2 (Database) pull request (#11), then Module 3 (Accounts, #12), then Module 4 (Catalogue, #13), then Module 5 (Media, #14), then Module 6 (#15), then Module 7 (Payments, #16), then Module 8 (Shipping, #17), then Module 9 (Orders and returns, #18), then Module 10 (Background jobs, #19), then Module 11 (Notifications, #20), then Module 12 (Search, #21), then the Module 13 (Website) pull request
 - [ ] Paystack: create the account, send the test keys (secret and public); set the webhook address in docs/payments.md
 - [ ] Stripe: create the account, send the test keys (secret and publishable) and the webhook secret after adding the webhook address
 - [ ] DHL Express: ask the DHL account manager for MyDHL API access and send the API key, secret and account number (test keys first); see docs/shipping.md
@@ -86,3 +86,4 @@ Update this file at the end of every session.
 - [x] 2026-11-12 — Module 10 built: worker process, retries, scheduled tasks, alerts, reminders, cleanup, systemd service, tests
 - [x] 2026-11-12 — Module 11 built: own email sending with DKIM, templates, push to Apple and Google, in-app list, preferences, unsubscribe, tests
 - [x] 2026-11-12 — Module 12 built: search with typo correction, suggestions, shared filters, ranking, staff report, tests
+- [x] 2026-11-12 — Module 13 built: every website page on real data, checkout and payment, account pages, search-engine basics, browser walk-through, tests

@@ -4,6 +4,17 @@ All notable changes to this repository, newest first.
 
 ## 2026-11-12
 
+- Module 13, Website (`server/site/store/`, `browser/store.ts`): every
+  customer page made on the server with real data: home, categories with
+  filters, search, product pages with variant choice and exact stock, shop
+  the look, the bag, checkout with live delivery options and Paystack or
+  Stripe payment, the after-payment page, sign-in and sign-up pages,
+  account pages (orders with tracking, returns, invoices, addresses,
+  details, password, preferences, wishlist, closing the account), guest
+  order tracking, information pages, sitemap and robots.txt, structured
+  data, a content security policy. New customer addresses for profile,
+  password, addresses, wishlist and closing an account. Guide:
+  `docs/website.md`.
 - Module 12, Search (`server/search/`): PostgreSQL-only product search with
   typing mistakes corrected against the words the shop knows, the last
   word finished as it is typed, lengths such as "22 inch" understood,

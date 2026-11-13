@@ -1,0 +1,78 @@
+name: Uptime
+
+# Every 5 minutes, checks from outside that the shop answers. When an
+# address stops answering, it opens an issue labelled "downtime" (GitHub
+# emails everyone watching the repository); when all answer again, it
+# closes the issue with a note of how long it was down.
+#
+# Turned on by the repository variable UPTIME_URLS (Settings > Secrets and
+# variables > Actions > Variables), one address per line, for example:
+#   https://hairbydemj.com/health?db=1
+#   https://admin.hairbydemj.com/health
+#   https://api.hairbydemj.com/health
+#   https://hairbydemj.com/
+# Optional: UPTIME_NOTIFY, GitHub usernames to mention, such as "@someone".
+# GitHub may run scheduled checks a few minutes late when it is busy.
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: uptime
+  cancel-in-progress: false
+
+jobs:
+  check:
+    name: Check the shop answers
+    if: vars.UPTIME_URLS != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      URLS: ${{ vars.UPTIME_URLS }}
+      NOTIFY: ${{ vars.UPTIME_NOTIFY }}
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - name: Check each address
+        id: check
+        run: |
+          failures=""
+          while read -r url; do
+            url="$(echo "$url" | tr -d '[:space:]')"
+            [ -n "$url" ] || continue
+            # Three tries over about 30 seconds, so one slow moment is not an alert.
+            if result="$(curl -sS -o /dev/null -w '%{http_code} in %{time_total}s' --max-time 15 --retry 2 --retry-delay 5 --retry-all-errors -A 'hairbydemj-uptime' "$url" 2>&1)" && [[ "$result" == 2* || "$result" == 3* ]]; then
+              echo "ok    $url ($result)"
+            else
+              echo "DOWN  $url ($result)"
+              failures="$failures- $url: $result"$'\n'
+            fi
+          done <<< "$URLS"
+          {
+            echo "failures<<END_OF_LIST"
+            printf '%s' "$failures"
+            echo "END_OF_LIST"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Open, update or close the downtime issue
+        env:
+          FAILURES: ${{ steps.check.outputs.failures }}
+        run: |
+          open="$(gh issue list --label downtime --state open --json number --jq '.[0].number // empty')"
+          now="$(date -u '+%Y-%m-%d %H:%M UTC')"
+          if [ -n "$FAILURES" ]; then
+            if [ -z "$open" ]; then
+              gh label create downtime --color B60205 --description "The shop is not answering" --force >/dev/null
+              gh issue create --label downtime --title "The shop is not answering ($now)" --body "$(printf 'Found by the uptime check at %s:\n\n%s\nWhat to do: docs/operations.md, "When an alert arrives".\n\n%s' "$now" "$FAILURES" "$NOTIFY")"
+            fi
+            echo "::error::Some addresses are not answering."
+            exit 1
+          elif [ -n "$open" ]; then
+            gh issue close "$open" --comment "Answering again at $now."
+          fi

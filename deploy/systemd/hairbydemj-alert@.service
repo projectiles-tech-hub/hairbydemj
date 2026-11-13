@@ -1,0 +1,11 @@
+# Emails ALERT_EMAIL when a hairbydemj service fails for good (systemd runs
+# this through OnFailure=). %i is the name of the service that failed.
+
+[Unit]
+Description=Alert the owner that %i failed
+
+[Service]
+Type=oneshot
+User=hairbydemj
+Group=hairbydemj
+ExecStart=/srv/hairbydemj/current/deploy/bin/alert.sh production "%i failed" "systemd stopped trying to run %i. See: journalctl -u %i"

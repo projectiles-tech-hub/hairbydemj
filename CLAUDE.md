@@ -80,7 +80,7 @@ same content, split by topic, is in `docs/spec/`.
 | `server/orders/` | Checkout, order views, cancelling, invoices, returns |
 | `docs/worker.md` | Background worker: running it, jobs, retries, scheduled tasks |
 | `server/worker/` | Job queue, scheduled tasks, worker loop and entry point |
-| `deploy/` | Server files: systemd service for the worker |
+| `deploy/` | Server files: set-up script, Caddy, systemd services and timers, release, backup, restore and check scripts |
 | `docs/notifications.md` | Email (Postfix, DKIM, SPF, DMARC), push (Apple, Google), preferences, unsubscribe |
 | `server/notifications/` | Email building and signing, SMTP, push, templates, preferences |
 | `docs/search.md` | Product search: how it works, addresses, staff report |
@@ -97,6 +97,8 @@ same content, split by topic, is in `docs/spec/`.
 | `server/loyalty/`, `server/reviews/`, `server/giftcards/` | Points and referrals, reviews, gift cards bought and issued; their addresses are in `server/loyalty/routes.ts` |
 | `docs/chat.md` | Live chat: how it works, staff inbox, WhatsApp, addresses |
 | `server/chat/` | Chat messages, the live event streams and their addresses |
+| `docs/operations.md` | Running the live server: set-up, deployments, backups, monitoring, what to do when alerts arrive |
+| `server/ops/` | The alert email the server scripts send |
 | `docs/preview.md` | The online design preview: what it is, how to build and publish it |
 | `server/site/`, `browser/`, `public/` | Website page code, browser script, styles, fonts and logo |
 | `server/admin/` | Admin page code |

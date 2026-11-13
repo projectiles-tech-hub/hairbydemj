@@ -48,26 +48,27 @@
 - Module 15 (Phone app) is built; pull request #24 is open.
 - Module 16 (Try-on) is built; pull request #25 is open.
 - Module 17 (Reviews, loyalty, gift cards) is built; pull request #26 is open.
-- Module 18 (Live chat) is built; its pull request is open.
+- Module 18 (Live chat) is built; pull request #27 is open.
+- Module 19 (Deployment, backups, monitoring) is built; its pull request is open.
 - The Vercel preview was for viewing only. The real site runs from our own
   server; the page code written for the preview is kept as the starting
   point for modules 13 and 14.
 
 ## Current module
 
-[`modules/18-live-chat.md`](modules/18-live-chat.md): built and **in review**
-on branch `feature/chat`, on top of modules 2 to 17. Server tests pass and
-the chat was walked through live in a real browser.
+[`modules/19-deployment-backups-monitoring.md`](modules/19-deployment-backups-monitoring.md):
+built and **in review** on branch `feature/deploy`, on top of modules 2 to
+18. The server scripts, services and workflows are written and tested; they
+run on the VPS once the owner has it (`operations.md`, "First-time set-up").
 
 ## Exact next step
 
-1. Owner merges, in order: #11 to #26, then Module 18's.
-2. Building continues with **Module 19. Deployment, backups, monitoring**.
+1. Owner merges, in order: #11 to #27, then Module 19's.
+2. Building continues with **Module 20. Testing and security review**.
 
-## Modules left after Module 18
+## Modules left after Module 19
 
-19 Deployment, backups, monitoring · 20 Testing and security review ·
-21 Launch.
+20 Testing and security review · 21 Launch.
 
 ## Waiting on the owner
 
@@ -82,4 +83,5 @@ the chat was walked through live in a real browser.
 - Loyalty: confirm the sample figures (`loyalty.md`).
 - Try-on: wig pictures drawn to the template (`try-on.md`).
 - For the app: Apple Developer and Google Play accounts, a Firebase project, Google and Apple sign-in set-up, and real phones to test on (`app.md`).
+- For going live: the Namecheap Quasar VPS, a free Cloudflare account, a Google account for backups, and following `operations.md` ("First-time set-up").
 - See also the "Blocked / waiting on owner" section of [`TASKS.md`](TASKS.md).

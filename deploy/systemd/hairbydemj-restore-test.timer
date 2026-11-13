@@ -1,0 +1,10 @@
+[Unit]
+Description=Test restoring the hairbydemj backups every month
+
+[Timer]
+# The 3rd of each month, after that night's backup.
+OnCalendar=*-*-03 04:00:00 UTC
+Persistent=true
+
+[Install]
+WantedBy=timers.target

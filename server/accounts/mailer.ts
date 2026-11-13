@@ -5,7 +5,7 @@
 import type { Db } from '../db/pool.js';
 import type { Logger } from '../logger.js';
 
-export type EmailTemplate = 'verify_email' | 'reset_password' | 'password_changed' | 'staff_invite' | 'order_confirmation' | 'order_cancelled' | 'return_update' | 'store_credit';
+export type EmailTemplate = 'verify_email' | 'reset_password' | 'password_changed' | 'staff_invite' | 'order_confirmation' | 'order_cancelled' | 'return_update' | 'store_credit' | 'abandoned_cart' | 'back_in_stock' | 'low_stock';
 
 export interface Email {
   to: string;

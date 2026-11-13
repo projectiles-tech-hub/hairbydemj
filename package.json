@@ -12,6 +12,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.browser.json --noEmit",
     "test": "npm run build && node --test \"dist/**/*.test.js\"",
     "start": "node dist/server/main.js",
+    "worker": "node --env-file-if-exists=.env dist/server/worker/main.js",
     "build:preview": "npm run build && node dist/preview/build.js",
     "db:migrate": "npm run build && node --env-file-if-exists=.env dist/server/db/cli.js migrate",
     "db:status": "npm run build && node --env-file-if-exists=.env dist/server/db/cli.js status",

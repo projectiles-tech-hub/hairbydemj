@@ -78,6 +78,9 @@ same content, split by topic, is in `docs/spec/`.
 | `server/shipping/` | Packing, local zones, DHL, UPS and FedEx clients, labels and tracking |
 | `docs/orders.md` | Checkout, order statuses, customer and staff order addresses, returns and refunds |
 | `server/orders/` | Checkout, order views, cancelling, invoices, returns |
+| `docs/worker.md` | Background worker: running it, jobs, retries, scheduled tasks |
+| `server/worker/` | Job queue, scheduled tasks, worker loop and entry point |
+| `deploy/` | Server files: systemd service for the worker |
 | `docs/preview.md` | The online design preview: what it is, how to build and publish it |
 | `server/site/`, `browser/`, `public/` | Website page code, browser script, styles, fonts and logo |
 | `server/admin/` | Admin page code |

@@ -133,6 +133,7 @@ class Product {
         isFinalSale = j['isFinalSale'] == true,
         currency = _str(j['currency']),
         media = _list(j['media']).map(MediaItem.new).toList(),
+        tryOn = _list(j['tryOn']),
         variants = _list(j['variants']).map(Variant.new).toList();
   final int id;
   final String slug;
@@ -146,6 +147,9 @@ class Product {
   final bool isFinalSale;
   final String currency;
   final List<MediaItem> media;
+
+  /// See-through wig pictures for the camera try-on; empty when it cannot be tried on.
+  final List<Json> tryOn;
   final List<Variant> variants;
 }
 

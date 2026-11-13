@@ -310,6 +310,8 @@ export interface ProductDetail {
   seoDescription: string | null;
   currency: string;
   /** Photos and video, in the order staff set. A video's pictures are its poster; add "/video.mp4" for the film. */
+  /** See-through wig pictures for the camera try-on (module 16); empty when it cannot be tried on. */
+  tryOn: Array<{ colour: string | null; path: string; width: number; height: number; temples: { leftX: number; leftY: number; rightX: number; rightY: number } }>;
   media: Array<{ kind: 'image' | 'video'; path: string; alt: string; colour: string | null; width: number | null; height: number | null; widths: number[]; durationMs: number | null }>;
   variants: Array<{
     id: number;
@@ -336,7 +338,7 @@ export async function getProduct(deps: CatalogDeps, slug: string, currencyCode: 
   );
   const p = found.rows[0] as Record<string, unknown> | undefined;
   if (!p) throw notFound('product');
-  const [media, variants] = await Promise.all([
+  const [media, variants, tryOn] = await Promise.all([
     deps.db.query("select kind, path, alt, colour, width, height, widths, duration_ms from product_media where product_id = $1 and status = 'ready' order by position, id", [p.id]),
     deps.db.query(
       `select v.id, v.sku, v.length_inches, v.density_percent, v.colour, v.lace_type, v.cap_size, pr.amount_minor, pr.compare_at_minor,
@@ -346,6 +348,7 @@ export async function getProduct(deps: CatalogDeps, slug: string, currencyCode: 
        where v.product_id = $1 and v.is_active order by v.position, v.id`,
       [p.id, currency],
     ),
+    deps.db.query('select colour, path, width, height, left_x, left_y, right_x, right_y from try_on_images where product_id = $1 order by position, id', [p.id]),
   ]);
   if (variants.rows.length === 0) throw notFound('product');
   return {
@@ -364,6 +367,7 @@ export async function getProduct(deps: CatalogDeps, slug: string, currencyCode: 
     seoDescription: (p.seo_description as string | null) ?? null,
     currency,
     media: media.rows.map((m) => ({ kind: m.kind as 'image' | 'video', path: String(m.path), alt: String(m.alt), colour: (m.colour as string | null) ?? null, width: m.width === null ? null : Number(m.width), height: m.height === null ? null : Number(m.height), widths: ((m.widths as number[] | null) ?? []).map(Number), durationMs: m.duration_ms === null ? null : Number(m.duration_ms) })),
+    tryOn: tryOn.rows.map((t) => ({ colour: (t.colour as string | null) ?? null, path: String(t.path), width: Number(t.width), height: Number(t.height), temples: { leftX: Number(t.left_x), leftY: Number(t.left_y), rightX: Number(t.right_x), rightY: Number(t.right_y) } })),
     variants: variants.rows.map((v) => {
       const available = Number(v.available);
       return {

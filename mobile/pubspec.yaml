@@ -25,6 +25,8 @@ dependencies:
   # Signing in with Google and Apple. Off until the client IDs are set.
   google_sign_in: ^6.2.1
   sign_in_with_apple: ^6.1.3
+  # Choosing a photo for the try-on when the camera is not used.
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:

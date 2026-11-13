@@ -4,6 +4,13 @@ All notable changes to this repository, newest first.
 
 ## 2026-11-13
 
+- Module 16, Try-on (`server/tryon/`, `browser/try-on.ts`, the app's Try on
+  tab): customers see a wig on themselves with the camera, on the website
+  (MediaPipe, served from our server) and in the app (ARKit on iPhone, ARCore
+  on Android), or on a photo; switch style and colour, choose the length,
+  add to the bag and save a photo. Staff upload see-through wig pictures per
+  colour on the product page. New table `try_on_images`. Guide:
+  `docs/try-on.md`.
 - Module 15, Phone app (`mobile/`): the Flutter app for iPhone and Android
   on the shop's API: onboarding, home (following the admin's homepage
   settings), shop, product lists with filters, sorting and endless

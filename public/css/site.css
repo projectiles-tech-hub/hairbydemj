@@ -431,3 +431,26 @@ select.field__input { appearance: none; background-image: linear-gradient(45deg,
 .thumb:focus-visible, .thumb:hover { border-color: var(--gold); }
 .thumb .pic { --ratio: 1 / 1; border-radius: var(--radius-control); }
 [data-stripe-element] { display: grid; gap: 16px; padding: 16px; border: 1px solid var(--line); border-radius: var(--radius-card); }
+
+/* ----- try-on (module 16) ----- */
+.tryon { display: grid; gap: 16px; }
+.tryon__stage { position: relative; background: var(--surface-photo); border-radius: var(--radius-card); overflow: hidden; aspect-ratio: 3 / 4; max-height: 72vh; width: 100%; }
+@media (min-width: 768px) { .tryon__stage { aspect-ratio: 4 / 3; } }
+.tryon__video { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.tryon__canvas { width: 100%; height: 100%; object-fit: cover; display: block; }
+.tryon__panel { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; background: var(--noir); }
+.tryon__panel[hidden] { display: none; }
+.tryon__panel .muted { max-width: 46ch; }
+.tryon__badge { width: 96px; height: 96px; border-radius: 50%; background: var(--gold-soft); color: var(--gold); display: grid; place-items: center; }
+.tryon__upload { cursor: pointer; }
+.tryon__status { position: absolute; left: 16px; right: 16px; bottom: 16px; text-align: center; color: var(--ivory); text-shadow: 0 1px 3px #000; margin: 0; }
+.tryon__bar { gap: 12px; align-items: center; }
+.tryon__colour { display: flex; gap: 8px; align-items: center; }
+.tryon__colour[hidden] { display: none; }
+.tryon__colour .field__input { min-height: 44px; padding-block: 8px; }
+.tryon__styles { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scroll-snap-type: x mandatory; }
+.tryon__style { flex: 0 0 104px; scroll-snap-align: start; display: grid; gap: 4px; padding: 6px; background: var(--surface-photo); border: 2px solid transparent; border-radius: var(--radius-control); color: var(--ivory); text-align: left; cursor: pointer; font: inherit; }
+.tryon__style img { width: 100%; aspect-ratio: 5 / 6; object-fit: contain; }
+.tryon__style[aria-checked="true"] { border-color: var(--gold); }
+.tryon__style:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.tryon__actions { gap: 12px; align-items: center; }

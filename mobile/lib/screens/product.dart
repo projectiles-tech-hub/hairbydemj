@@ -9,6 +9,7 @@ import '../theme.dart';
 import '../util/money.dart';
 import '../widgets/common.dart';
 import 'shell.dart';
+import 'try_on.dart';
 
 /// A product: photos, choosing length, density, lace and colour, the price and
 /// exact stock for that choice, and "Add to bag".
@@ -154,6 +155,11 @@ class _ProductScreenState extends State<ProductScreen> {
               ]),
               const SizedBox(height: 16),
             ],
+            if (p.tryOn.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: OutlinedButton.icon(onPressed: () => openTryOn(context, p.slug), icon: const Icon(Icons.auto_awesome_outlined), label: const Text('Try it on with your camera')),
+              ),
             if (p.isFinalSale)
               Container(
                 margin: const EdgeInsets.only(bottom: 16),

@@ -32,6 +32,8 @@ jobs:
           cache: true
       - run: flutter --version
       - run: flutter pub get
+      # When a package was added, show the new lock file so it can be committed.
+      - run: git diff --quiet pubspec.lock || (echo "=====LOCK START=====" && cat pubspec.lock && echo "=====LOCK END=====")
       - run: flutter analyze
       - run: flutter test
       - run: flutter build apk --debug

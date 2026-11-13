@@ -66,6 +66,12 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>The try-on uses the camera to show a wig on you. The picture stays on your phone.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Choose a photo of yourself to try a wig on.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Save your try-on photo to Photos.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

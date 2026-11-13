@@ -11,6 +11,7 @@ import type { Router } from '../../router.js';
 import * as account from './account.js';
 import { cartPage, checkoutPage, completePage, miniCartHtml } from './checkout.js';
 import { infoPage, notFoundBody, robotsTxt, sitemapXml } from './info.js';
+import { tryOnPage } from './tryon.js';
 import { categoryPage, homePage, lookPage, looksPage, moreCards, productPage, searchPage } from './shop.js';
 import { PAGE_HEADERS, sendPage, siteContext, siteOrigin, storePage, type SiteContext } from './view.js';
 
@@ -49,6 +50,7 @@ export function storeRoutes(router: Router, deps: AccountDeps): Router {
       if (!p) return false;
       sendPage(sc, p);
     }))
+    .get('/try-on/', page(async (sc) => sendPage(sc, { ...(await tryOnPage(sc)), canonical: '/try-on/', tryOn: true, modules: ['/js/try-on.js'] })))
     .get('/looks/', page(async (sc) => sendPage(sc, { ...(await looksPage(sc)), canonical: '/looks/' })))
     .get('/looks/:slug/', page(async (sc, ctx) => {
       const p = await lookPage(sc, String(ctx.params.slug));

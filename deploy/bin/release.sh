@@ -9,6 +9,7 @@
 # check /health. If the check fails, "current" goes back to the previous
 # version and the services are restarted again. The last 5 versions are kept.
 
+# shellcheck source=lib.sh
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 [ $# -eq 2 ] || die "usage: release.sh <production|staging> <commit>"
@@ -42,10 +43,10 @@ restart() {
 }
 
 healthy() {
-  local port host i
+  local port host
   port="$(env_value PORT 3000)"
   host="$(env_value API_HOST api.hairbydemj.com)"
-  for i in $(seq 1 "${HBD_HEALTH_TRIES:-20}"); do
+  for _ in $(seq 1 "${HBD_HEALTH_TRIES:-20}"); do
     if curl -fsS --max-time 5 -H "Host: $host" "http://127.0.0.1:$port/health?db=1" >/dev/null 2>&1; then
       return 0
     fi

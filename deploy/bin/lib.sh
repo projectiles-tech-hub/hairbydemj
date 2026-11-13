@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # Shared by the scripts in deploy/bin. Not run on its own.
 #
 # Each copy of the shop on the server is an "instance":
@@ -57,6 +58,10 @@ env_value() {
 SYSTEMCTL="${HBD_SYSTEMCTL:-sudo -n /usr/bin/systemctl}"
 RCLONE="${HBD_RCLONE:-rclone}"
 NODE="${HBD_NODE:-node}"
+export SYSTEMCTL RCLONE NODE
+# PostgreSQL's tools of the same version as the server (only needed where
+# several versions are installed, as on GitHub's test machines).
+if [ -n "${HBD_PG_BIN:-}" ]; then PATH="$HBD_PG_BIN:$PATH"; fi
 
 # alert SUBJECT BODY: emails ALERT_EMAIL from the shop's own mail settings
 # (signed like every other email). Never fails the calling script.

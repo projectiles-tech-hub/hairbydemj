@@ -7,6 +7,7 @@
 # uploaded files against the live copies. The live database is only read.
 # The result is emailed to ALERT_EMAIL either way.
 
+# shellcheck source=lib.sh
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 use_instance "${1:-production}"

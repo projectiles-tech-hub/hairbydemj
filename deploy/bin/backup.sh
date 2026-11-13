@@ -10,6 +10,7 @@
 # scrambled files. Kept: daily database copies for 35 days, the copy from the
 # 1st of each month for 13 months, a local copy for 7 days.
 
+# shellcheck source=lib.sh
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 use_instance "${1:-production}"

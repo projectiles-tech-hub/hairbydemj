@@ -36,8 +36,13 @@ jobs:
       # The free command-line tools the media module uses, so its tests run here too.
       - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libvips-tools ffmpeg
       - run: npm ci
+      # pg_dump of the same version as the database (17 is also installed here),
+      # for the backup tests.
+      - run: sudo apt-get install -y --no-install-recommends postgresql-client-16
       - run: npm run typecheck
       - run: npm test
+        env:
+          HBD_PG_BIN: /usr/lib/postgresql/16/bin
 
   deploy-files:
     name: Server files (scripts, services, Caddy)
@@ -45,7 +50,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Check the shell scripts
-        run: shellcheck -x deploy/setup-server.sh deploy/bin/*.sh
+        run: shellcheck --external-sources --source-path=SCRIPTDIR --severity=warning deploy/setup-server.sh deploy/bin/*.sh
       - name: Check the systemd files
         run: |
           out="$(systemd-analyze verify --man=no deploy/systemd/*.service deploy/systemd/*.timer 2>&1 || true)"

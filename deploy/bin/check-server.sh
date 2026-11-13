@@ -8,6 +8,7 @@
 # - the live database is not answering.
 # The outside check that the website answers is .github/workflows/uptime.yml.
 
+# shellcheck source=lib.sh
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 use_instance "${1:-production}"

@@ -93,7 +93,7 @@ jobs:
           case "$TARGET" in production) BASE=/srv/hairbydemj ;; *) BASE=/srv/hairbydemj-staging ;; esac
           SSH="ssh -i $HOME/.ssh/deploy -p $DEPLOY_PORT -o StrictHostKeyChecking=yes -o BatchMode=yes"
           # The release steps come from this commit, so changes to them apply at once.
-          { cat deploy/bin/lib.sh; sed '/^source /d' deploy/bin/release.sh; } > "$RUNNER_TEMP/release.sh"
+          { cat deploy/bin/lib.sh; sed -e '/^source /d' -e '/^# shellcheck source=/d' deploy/bin/release.sh; } > "$RUNNER_TEMP/release.sh"
           scp -i ~/.ssh/deploy -P "$DEPLOY_PORT" -o StrictHostKeyChecking=yes -o BatchMode=yes "$RUNNER_TEMP/release.tgz" "$DEPLOY_USER@$DEPLOY_HOST:$BASE/incoming/$COMMIT.tgz"
           scp -i ~/.ssh/deploy -P "$DEPLOY_PORT" -o StrictHostKeyChecking=yes -o BatchMode=yes "$RUNNER_TEMP/release.sh" "$DEPLOY_USER@$DEPLOY_HOST:$BASE/incoming/release-$COMMIT.sh"
           $SSH "$DEPLOY_USER@$DEPLOY_HOST" "bash $BASE/incoming/release-$COMMIT.sh $TARGET $COMMIT; status=\$?; rm -f $BASE/incoming/release-$COMMIT.sh; exit \$status"

@@ -4,6 +4,7 @@
 # Run on the server as the hairbydemj user. Database migrations are not
 # undone; they only ever add, so the older version still works with them.
 
+# shellcheck source=lib.sh
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 [ $# -eq 1 ] || die "usage: rollback.sh <production|staging>"

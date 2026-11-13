@@ -6,6 +6,7 @@
 # hairbydemj user. Steps (and how to rebuild a whole server) are in
 # docs/operations.md.
 
+# shellcheck source=lib.sh
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 [ $# -ge 1 ] || die "usage: restore.sh <production|staging> [YYYY-MM-DD] --yes"

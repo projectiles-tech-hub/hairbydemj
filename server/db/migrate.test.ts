@@ -146,7 +146,7 @@ describe('the store schema', { skip }, () => {
     const expected = [
       'products', 'product_media', 'categories', 'collections', 'variants', 'prices', 'inventory', 'stock_movements',
       'customers', 'addresses', 'customer_sessions', 'wishlist_items', 'carts', 'cart_items', 'orders', 'order_items',
-      'payments', 'payment_events', 'refunds', 'shipments', 'shipment_events', 'returns', 'return_items',
+      'payments', 'payment_events', 'refunds', 'shipments', 'shipment_events', 'shipping_quotes', 'returns', 'return_items',
       'discounts', 'gift_cards', 'gift_card_transactions', 'referrals', 'loyalty_transactions', 'reviews', 'review_media',
       'staff', 'roles', 'role_permissions', 'activity_log', 'jobs', 'currencies', 'store_settings', 'content_pages', 'chat_messages',
     ];
@@ -174,6 +174,7 @@ describe('the store schema', { skip }, () => {
       'reviews.replied_by', 'loyalty_transactions.review_id', 'loyalty_transactions.staff_id', 'referrals.first_order_id', 'store_settings.updated_by',
       'content_pages.updated_by', 'chat_conversations.assigned_staff_id', 'chat_conversations.order_id', 'chat_messages.staff_id', 'order_items.gift_card_id',
       'newsletter_subscribers.customer_id', 'product_media.created_by', 'back_in_stock_requests.customer_id', 'refund_items.order_item_id', 'return_items.order_item_id',
+      'shipping_quotes.currency',
     ]);
     const missing = result.rows.map((r) => `${r.tbl}.${r.col}`).filter((x) => !allowed.has(x));
     assert.deepEqual(missing, []);

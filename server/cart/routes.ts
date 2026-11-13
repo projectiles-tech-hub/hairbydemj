@@ -44,6 +44,12 @@ function country(deps: AccountDeps, ctx: RequestContext): string | null {
   return typeof header === 'string' ? header : null;
 }
 
+/** Whose cart this request is about: the signed-in customer, the guest token, or both. Used by checkout and shipping. */
+export async function cartOwner(deps: AccountDeps, ctx: RequestContext, transport: Transport): Promise<cart.CartOwner> {
+  const signedIn = await currentCustomer(deps, ctx, transport === 'cookie' ? 'cookie' : 'bearer');
+  return { customerId: signedIn?.customer.id ?? null, token: guestToken(deps, ctx, transport) };
+}
+
 export function shopCartRoutes(router: Router, deps: AccountDeps, prefix: string, transport: Transport): Router {
   const owner = async (ctx: RequestContext): Promise<{ owner: cart.CartOwner; preferred: string | null }> => {
     const signedIn = await currentCustomer(deps, ctx, transport === 'cookie' ? 'cookie' : 'bearer');

@@ -1,6 +1,6 @@
 # Status
 
-**Last updated:** 2026-11-11
+**Last updated:** 2026-11-12
 
 ## Where we are
 
@@ -37,23 +37,24 @@
 - Owner decided on 2026-11-11: customers stay on `hairbydemj.com`; one Owner
   super user at `admin.hairbydemj.com`
   (`decisions/0006-sign-in-addresses-and-owner.md`).
+- Module 7 (Payments) is built; pull request #16 is open.
 - The Vercel preview was for viewing only. The real site runs from our own
   server; the page code written for the preview is kept as the starting
   point for modules 13 and 14.
 
 ## Current module
 
-[`modules/07-payments.md`](modules/07-payments.md): built and **in review**
-on branch `feature/payments`, on top of modules 2 to 6. 168 tests pass.
+[`modules/08-shipping.md`](modules/08-shipping.md): built and **in review**
+on branch `feature/shipping`, on top of modules 2 to 7. 184 tests pass.
 
 ## Exact next step
 
-1. Owner merges, in order: #11, #12, #13, #14, #15, then Module 7's.
-2. Building continues with **Module 8. Shipping**.
+1. Owner merges, in order: #11, #12, #13, #14, #15, #16, then Module 8's.
+2. Building continues with **Module 9. Orders and returns**.
 
-## Modules left after Module 7
+## Modules left after Module 8
 
-8 Shipping · 9 Orders and returns · 10 Background jobs · 11 Notifications ·
+9 Orders and returns · 10 Background jobs · 11 Notifications ·
 12 Search · 13 Website · 14 Admin dashboard · 15 Phone app · 16 AR try-on ·
 17 Reviews, loyalty, gift cards · 18 Live chat · 19 Deployment, backups,
 monitoring · 20 Testing and security review · 21 Launch.
@@ -64,4 +65,6 @@ monitoring · 20 Testing and security review · 21 Launch.
   values to confirm" in
   [`design/journeys-and-wireframes.md`](design/journeys-and-wireframes.md).
 - Paystack and Stripe test keys (needed for module 20; live keys at launch).
+- DHL, UPS and FedEx API keys (test first), the sender address for labels,
+  the boxes used and the local delivery zones (see `shipping.md`).
 - See also the "Blocked / waiting on owner" section of [`TASKS.md`](TASKS.md).

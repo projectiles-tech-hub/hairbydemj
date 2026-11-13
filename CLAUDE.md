@@ -89,6 +89,8 @@ same content, split by topic, is in `docs/spec/`.
 | `server/site/store/` | Live website pages (real data); `browser/store.ts` is their script |
 | `docs/admin.md` | The live admin: pages, who sees them, sign-in, addresses it adds |
 | `server/admin/live/`, `server/admin/api.ts` | Live admin pages (real data); `browser/staff.ts` is their script |
+| `docs/app.md` | The phone app: screens, paying, build settings, stores, push and sign-in set-up |
+| `mobile/` | The Flutter app for iPhone and Android |
 | `docs/preview.md` | The online design preview: what it is, how to build and publish it |
 | `server/site/`, `browser/`, `public/` | Website page code, browser script, styles, fonts and logo |
 | `server/admin/` | Admin page code |

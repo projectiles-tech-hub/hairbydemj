@@ -479,3 +479,13 @@ export async function getLook(deps: CatalogDeps, slug: string, currencyCode: str
     allAvailable: list.length > 0 && list.every((item) => item.available),
   };
 }
+
+/** The homepage sections staff chose in the admin (Homepage), shown ones only, in order. Used by the app. */
+export async function homeLayout(db: Db): Promise<{ sections: Array<{ kind: string; settings: Record<string, unknown> }> }> {
+  const rows = await db.query('select kind, settings from homepage_sections where is_shown order by position, id');
+  if (rows.rows.length === 0 && Number((await db.query('select count(*)::int as n from homepage_sections')).rows[0]?.n ?? 0) === 0) {
+    // Nothing set up yet: the same order the website uses.
+    return { sections: ['hero', 'collections', 'best_sellers', 'new_arrivals', 'shop_the_look'].map((kind) => ({ kind, settings: {} })) };
+  }
+  return { sections: rows.rows.map((r) => ({ kind: String(r.kind), settings: (r.settings ?? {}) as Record<string, unknown> })) };
+}

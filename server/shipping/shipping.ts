@@ -14,7 +14,7 @@ import { withTransaction } from '../db/pool.js';
 import { ApiError } from '../http.js';
 import type { Logger } from '../logger.js';
 import type { Cart } from '../cart/cart.js';
-import { orderEvent } from '../payments/order-paid.js';
+import { orderEvent, shipOrderStock } from '../payments/order-paid.js';
 import { mkdir, writeFile, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { CarrierError, trackingUrl, type Address, type Carrier, type CarrierCode, type Customs, type Rate, type TrackingStatus } from './carriers.js';
@@ -368,6 +368,8 @@ export interface ChosenOption {
   address: Address;
   parcels: Parcel[];
   dutiesNotice: boolean;
+  /** True when the quote was worked out with a free-delivery discount. */
+  freeShipping: boolean;
 }
 
 /**
@@ -388,7 +390,8 @@ export async function chosenOption(db: Q, input: { quoteId: unknown; optionId: u
   const option = (q.options as StoredOption[]).find((o) => o.id === input.optionId);
   if (!option) throw new ApiError(422, 'invalid', 'Choose a delivery option.', { shippingOption: 'Choose a delivery option.' });
   const { cost: _cost, ...shown } = option;
-  return { option: shown, address: quoted, parcels: q.packages as Parcel[], dutiesNotice: q.duties_notice === true };
+  const freeShipping = (q.options as StoredOption[]).some((o) => o.originalPriceMinor !== null);
+  return { option: shown, address: quoted, parcels: q.packages as Parcel[], dutiesNotice: q.duties_notice === true, freeShipping };
 }
 
 /** Quotes older than a day are of no use to anyone. Run daily by the worker (module 10). */
@@ -556,6 +559,7 @@ export async function recordLocalDispatch(deps: ShippingDeps, orderId: number, i
       [orderId, order.serviceName, courier, tracking, url, order.shippingMinor, order.currency, deps.now(), staffId],
     );
     await c.query("update orders set status = 'shipped' where id = $1 and status = 'to_fulfil'", [orderId]);
+    await shipOrderStock(c, orderId, deps.now());
     await orderEvent(c, orderId, 'shipped', `Sent with ${courier}${tracking ? `, tracking number ${tracking}` : ''}.`, { staffId, visible: true });
     return { shipmentId: Number(made.rows[0]?.id) };
   });
@@ -625,7 +629,10 @@ export async function refreshTracking(deps: ShippingDeps, shipmentId: number): P
     await c.query('update shipments set status = $2, last_tracked_at = $3, shipped_at = coalesce(shipped_at, $4), delivered_at = coalesce(delivered_at, $5) where id = $1', [shipmentId, status, deps.now(), status === 'label_bought' ? null : firstMove, delivered]);
     const orderId = Number(s.order_id);
     if (status !== before && status !== 'label_bought') {
-      if (status === 'in_transit' || status === 'out_for_delivery') await c.query("update orders set status = 'shipped' where id = $1 and status = 'to_fulfil'", [orderId]);
+      if (status === 'in_transit' || status === 'out_for_delivery' || status === 'delivered') {
+        await c.query("update orders set status = 'shipped' where id = $1 and status = 'to_fulfil'", [orderId]);
+        await shipOrderStock(c, orderId, deps.now());
+      }
       if (status === 'delivered') await settleOrder(c, orderId, deps.now(), null);
       else await orderEvent(c, orderId, `shipment_${status}`, STATUS_WORDS[status as TrackingStatus] ?? `Delivery status: ${status}`, { visible: true });
     }

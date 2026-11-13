@@ -9,12 +9,14 @@ import type { MediaDeps } from '../media/media.js';
 import { mediaRoutes } from '../media/routes.js';
 import type { PaymentDeps } from '../payments/payments.js';
 import { adminPaymentRoutes } from '../payments/routes.js';
+import type { OrderDeps } from '../orders/checkout.js';
+import { adminOrderRoutes } from '../orders/routes.js';
 import type { ShippingDeps } from '../shipping/shipping.js';
 import { adminShippingRoutes } from '../shipping/routes.js';
 import { Router } from '../router.js';
 import { sendHtml } from '../http.js';
 
-export function adminRoutes(accounts?: AccountDeps, media?: MediaDeps, payments?: PaymentDeps, shipping?: ShippingDeps): Router {
+export function adminRoutes(accounts?: AccountDeps, media?: MediaDeps, payments?: PaymentDeps, shipping?: ShippingDeps, orders?: OrderDeps): Router {
   const router = new Router().get('/', ({ res }) => {
     sendHtml(
       res,
@@ -32,6 +34,7 @@ export function adminRoutes(accounts?: AccountDeps, media?: MediaDeps, payments?
     if (media) mediaRoutes(router, accounts, media);
     if (payments) adminPaymentRoutes(router, accounts, payments);
     if (shipping) adminShippingRoutes(router, accounts, shipping);
+    if (orders && payments) adminOrderRoutes(router, accounts, orders, payments);
   }
   return router;
 }

@@ -86,6 +86,7 @@ not need `createdb`.
 | `0013_cart` | `cart_gift_cards`; rate source on `currencies`; gift card codes added to the guessing limits |
 | `0014_payments` | Order access token for guests; payment form details on `payments` |
 | `0015_shipping` | Saved delivery quotes (`shipping_quotes`); carrier id, parcels, label format and courier on `shipments` |
+| `0016_orders_and_returns` | When an order's stock left the shelf; store credit card on a return; guest order look-up limits |
 | `0010_sign_in_protection` | `sign_in_attempts` (used to slow down password guessing) |
 
 65 tables in all, counting `schema_migrations`.

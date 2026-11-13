@@ -38,23 +38,25 @@
   super user at `admin.hairbydemj.com`
   (`decisions/0006-sign-in-addresses-and-owner.md`).
 - Module 7 (Payments) is built; pull request #16 is open.
+- Module 8 (Shipping) is built; pull request #17 is open.
 - The Vercel preview was for viewing only. The real site runs from our own
   server; the page code written for the preview is kept as the starting
   point for modules 13 and 14.
 
 ## Current module
 
-[`modules/08-shipping.md`](modules/08-shipping.md): built and **in review**
-on branch `feature/shipping`, on top of modules 2 to 7. 184 tests pass.
+[`modules/09-orders-and-returns.md`](modules/09-orders-and-returns.md):
+built and **in review** on branch `feature/orders`, on top of modules 2
+to 8. 195 tests pass.
 
 ## Exact next step
 
-1. Owner merges, in order: #11, #12, #13, #14, #15, #16, then Module 8's.
-2. Building continues with **Module 9. Orders and returns**.
+1. Owner merges, in order: #11, #12, #13, #14, #15, #16, #17, then Module 9's.
+2. Building continues with **Module 10. Background jobs**.
 
-## Modules left after Module 8
+## Modules left after Module 9
 
-9 Orders and returns · 10 Background jobs · 11 Notifications ·
+10 Background jobs · 11 Notifications ·
 12 Search · 13 Website · 14 Admin dashboard · 15 Phone app · 16 AR try-on ·
 17 Reviews, loyalty, gift cards · 18 Live chat · 19 Deployment, backups,
 monitoring · 20 Testing and security review · 21 Launch.
@@ -67,4 +69,5 @@ monitoring · 20 Testing and security review · 21 Launch.
 - Paystack and Stripe test keys (needed for module 20; live keys at launch).
 - DHL, UPS and FedEx API keys (test first), the sender address for labels,
   the boxes used and the local delivery zones (see `shipping.md`).
+- The return window and store credit bonus (sample figures in use: 14 days, 10%).
 - See also the "Blocked / waiting on owner" section of [`TASKS.md`](TASKS.md).

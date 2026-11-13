@@ -4,6 +4,14 @@ All notable changes to this repository, newest first.
 
 ## 2026-11-12
 
+- Module 12, Search (`server/search/`): PostgreSQL-only product search with
+  typing mistakes corrected against the words the shop knows, the last
+  word finished as it is typed, lengths such as "22 inch" understood,
+  matching on names, details, descriptions, categories, tags and colours,
+  "any word" when no product has all, ranking by fit; shares all filters,
+  sorts and pages of the category pages; as-you-type suggestions; a staff
+  report of top searches and searches that find nothing. Migration 0018.
+  Guide: `docs/search.md`.
 - Module 11, Notifications (`server/notifications/`): emails built and
   signed with DKIM by our own code and handed to Postfix on the server; all
   store emails written with a branded layout, editable by staff; order

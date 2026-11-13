@@ -88,6 +88,7 @@ not need `createdb`.
 | `0015_shipping` | Saved delivery quotes (`shipping_quotes`); carrier id, parcels, label format and courier on `shipments` |
 | `0016_orders_and_returns` | When an order's stock left the shelf; store credit card on a return; guest order look-up limits |
 | `0017_worker` | When each scheduled task last ran (`scheduled_runs`); bag reminders and low-stock alerts sent once |
+| `0018_search` | Words the shop knows (`search_words`, rebuilt by the database), search records (`search_queries`) |
 | `0010_sign_in_protection` | `sign_in_attempts` (used to slow down password guessing) |
 
 65 tables in all, counting `schema_migrations`.

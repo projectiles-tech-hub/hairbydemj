@@ -196,6 +196,7 @@ export async function dailyCleanup(deps: WorkerDeps): Promise<Record<string, num
     // Guest bags nobody has touched for 60 days (the cookie has run out by then).
     guestCarts: await count("delete from carts where customer_id is null and updated_at < $1::timestamptz - interval '60 days'", [now]),
     finishedJobs: await count("delete from jobs where status = 'done' and finished_at < $1::timestamptz - make_interval(days => $2)", [now, QUEUE.keepDoneDays]),
+    searchRecords: await count("delete from search_queries where created_at < $1::timestamptz - interval '180 days'", [now]),
     expiredGiftCards: await count("update gift_cards set status = 'expired' where status in ('active', 'pending') and expires_at is not null and expires_at < $1", [now]),
   };
 }

@@ -10,8 +10,10 @@
 import type { AccountDeps } from '../accounts/deps.js';
 import { requireStaff } from '../accounts/routes.js';
 import { requireSameOrigin } from '../accounts/web.js';
+import { requireAccess } from '../accounts/staff.js';
 import { ApiError, clientIp, readJson, sendJson, type RequestContext } from '../http.js';
 import type { Router } from '../router.js';
+import { searchReport, suggest } from '../search/search.js';
 import { removeProductFiles, type MediaDeps } from '../media/media.js';
 import * as manage from './manage.js';
 import * as shop from './public.js';
@@ -64,6 +66,7 @@ export function shopCatalogRoutes(router: Router, deps: shop.CatalogDeps, prefix
       if (sort !== undefined && !(shop.SORTS as readonly string[]).includes(sort)) throw invalid('sort', `Sort by one of: ${shop.SORTS.join(', ')}.`);
       const page = await shop.listProducts(deps, {
         currency: text(q, 'currency', 3) ?? '',
+        q: text(q, 'q', 200),
         category: text(q, 'category'),
         collection: text(q, 'collection'),
         textures: list(q, 'texture'),
@@ -80,6 +83,12 @@ export function shopCatalogRoutes(router: Router, deps: shop.CatalogDeps, prefix
         limit: whole(q, 'limit', 1, shop.PAGE_SIZE.max),
       });
       sendJson(ctx.res, 200, page);
+    })
+    .get(`${prefix}/search/suggest`, async (ctx) => {
+      const currency = (text(ctx.query, 'currency', 3) ?? '').toUpperCase();
+      const known = await deps.db.query('select code from currencies where enabled order by is_base desc');
+      const codes = known.rows.map((r) => String(r.code));
+      sendJson(ctx.res, 200, await suggest(deps.db, text(ctx.query, 'q', 200) ?? '', codes.includes(currency) ? currency : (codes[0] ?? 'NGN'), deps.now()), { 'Cache-Control': 'public, max-age=60' });
     })
     .get(`${prefix}/products/:slug`, async (ctx) => {
       sendJson(ctx.res, 200, { product: await shop.getProduct(deps, ctx.params.slug ?? '', text(ctx.query, 'currency', 3) ?? '') });
@@ -114,6 +123,11 @@ export function adminCatalogRoutes(router: Router, deps: AccountDeps, media?: Me
 
   return router
     // products
+    .get('/api/search/report', read(async (actor, ctx) => {
+      requireAccess(actor, 'reports', 'view');
+      const days = Number(ctx.query.get('days') ?? 30);
+      return searchReport(deps.db, deps.now(), Number.isInteger(days) && days >= 1 && days <= 180 ? days : 30);
+    }))
     .get('/api/products', read((actor, ctx) => {
       const stock = text(ctx.query, 'stock', 4);
       if (stock !== undefined && stock !== 'in' && stock !== 'low' && stock !== 'out') throw invalid('stock', 'Stock must be in, low or out.');

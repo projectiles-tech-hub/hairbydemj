@@ -3,6 +3,7 @@
 
 import type { AccountDeps } from '../accounts/deps.js';
 import { customerAuthRoutes } from '../accounts/routes.js';
+import { shopCatalogRoutes } from '../catalog/routes.js';
 import { Router } from '../router.js';
 import { sendHtml } from '../http.js';
 
@@ -16,6 +17,9 @@ export function siteRoutes(accounts?: AccountDeps): Router {
         '<title>hairbydemj</title></head><body><h1>hairbydemj</h1></body></html>',
     );
   });
-  if (accounts) customerAuthRoutes(router, accounts, '/api/auth', 'cookie');
+  if (accounts) {
+    customerAuthRoutes(router, accounts, '/api/auth', 'cookie');
+    shopCatalogRoutes(router, accounts, '/api/catalog');
+  }
   return router;
 }

@@ -27,6 +27,7 @@
   under `/admin/` (pull request #10 merged).
 - Owner instructed on 2026-11-11 to start the backend.
 - Module 2 (Database) is built; pull request #11 is open.
+- Module 3 (Accounts and sign-in) is built; pull request #12 is open.
 - Owner decided on 2026-11-11: customers stay on `hairbydemj.com`; one Owner
   super user at `admin.hairbydemj.com`
   (`decisions/0006-sign-in-addresses-and-owner.md`).
@@ -36,16 +37,26 @@
 
 ## Current module
 
-[`modules/03-accounts.md`](modules/03-accounts.md): built and **in review**
-on branch `feature/accounts`, on top of Module 2. Customer and staff
-accounts, sessions, Google and Apple sign-in, two-step verification, roles.
-101 tests pass against PostgreSQL 16.
+[`modules/04-catalog.md`](modules/04-catalog.md): built and **in review** on
+branch `feature/catalogue`, on top of modules 2 and 3. Products, variants,
+prices in four currencies, stock, categories, collections with rules,
+shop-the-look sets; shop lists with filters and endless scrolling.
+121 tests pass against PostgreSQL 16.
 
 ## Exact next step
 
-1. Owner merges pull request #11 (Database), then the Module 3 pull request.
-2. Then **Module 4. Catalogue** ([`modules/04-catalog.md`](modules/04-catalog.md)),
+1. Owner merges, in this order: pull request #11 (Database), #12 (Accounts),
+   then the Module 4 pull request.
+2. Then **Module 5. Media** ([`modules/05-media.md`](modules/05-media.md)),
    confirmed with the owner before starting.
+
+## Modules left after Module 4
+
+5 Media · 6 Cart and currencies · 7 Payments · 8 Shipping · 9 Orders and
+returns · 10 Background jobs · 11 Notifications · 12 Search · 13 Website ·
+14 Admin dashboard · 15 Phone app · 16 AR try-on · 17 Reviews, loyalty, gift
+cards · 18 Live chat · 19 Deployment, backups, monitoring · 20 Testing and
+security review · 21 Launch.
 
 ## Waiting on the owner
 

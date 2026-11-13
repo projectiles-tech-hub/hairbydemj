@@ -4,6 +4,12 @@ All notable changes to this repository, newest first.
 
 ## 2026-11-11
 
+- Module 4, Catalogue (`server/catalog/`): products with hair attributes,
+  variants with generated SKUs, a price per currency with conversion from
+  naira, stock with reasons and a low-stock level, a category tree,
+  hand-picked and rule-based collections, shop-the-look sets. Shop
+  addresses with filters, sorting and endless scrolling; staff addresses
+  guarded by role. Migration 0011. Guide: `docs/catalogue.md`.
 - Module 3, Accounts and sign-in (`server/accounts/`): customer sign-up
   with emailed 6-digit code, sign-in and sign-out, forgot and reset
   password, Google and Apple sign-in linked to one customer; staff invites,

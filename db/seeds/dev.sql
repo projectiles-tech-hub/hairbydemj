@@ -44,6 +44,7 @@ insert into collections (name, slug, kind, rules, status, position) values
   ('Best-sellers', 'best-sellers', 'rules', '[{"field": "sales", "condition": "top", "value": 20}]', 'live', 0),
   ('New arrivals', 'new-arrivals', 'rules', '[{"field": "date_added", "condition": "in_the_last_days", "value": 30}]', 'live', 1),
   ('Shop the look: Soft glam', 'shop-the-look-soft-glam', 'manual', '[]', 'live', 2);
+update collections set is_look = true where slug = 'shop-the-look-soft-glam';
 
 insert into products (name, slug, description, care_guide, category_id, hair_origin, texture, grade, tags, status, package_size_id, customs_description, hs_code)
 select p.name, p.slug, p.description, 'Wash gently with sulphate-free shampoo and let it air dry.', c.id, p.origin, p.texture, p.grade, p.tags, 'published', s.id, p.customs, p.hs
@@ -87,6 +88,7 @@ insert into collection_products (collection_id, product_id, position)
 select c.id, p.id, row_number() over (order by p.id)
 from collections c cross join products p
 where c.slug = 'shop-the-look-soft-glam' and p.slug in ('bone-straight-wig', 'hd-lace-closure-5x5', 'silk-bonnet');
+update collection_products cp set variant_id = (select v.id from variants v where v.product_id = cp.product_id order by v.position, v.id limit 1);
 
 insert into customers (email, email_verified_at, first_name, last_name, phone, country, preferred_currency, marketing_consent, referral_code)
 values ('customer@example.com', now(), 'Sample', 'Customer', '+2340000000000', 'NG', 'NGN', false, 'SAMPLE10');

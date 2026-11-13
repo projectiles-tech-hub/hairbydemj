@@ -132,7 +132,7 @@ export function adminChatRoutes(router: Router, deps: AccountDeps): Router {
       stop = chatHub.listenAsStaff((event) => send(event.type, event));
     })
     .get('/api/chat/saved-replies', async (ctx) => {
-      await staffOf(ctx);
+      requireAccess(await staffOf(ctx), 'customers', 'view');
       sendJson(ctx.res, 200, { replies: await savedReplies(deps.db) });
     })
     .post('/api/chat/saved-replies', async (ctx) => {

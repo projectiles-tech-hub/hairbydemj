@@ -42,6 +42,33 @@ export function hostnameOf(hostHeader: string | undefined): string {
   return colon === -1 ? host : host.slice(0, colon);
 }
 
+/**
+ * The address for the log, with private values in it hidden: order links,
+ * invitations, password resets and unsubscribe links carry tokens and codes
+ * that would let anyone who reads the log act as the customer or staff member.
+ */
+export function safePath(url: string | undefined): string {
+  if (!url) return '';
+  const q = url.indexOf('?');
+  if (q === -1) return url;
+  const params = url
+    .slice(q + 1)
+    .split('&')
+    .map((pair) => {
+      const name = pair.split('=')[0] ?? '';
+      return /token|code|secret|key|signature|password|session/i.test(decodeName(name)) ? `${name}=[hidden]` : pair;
+    });
+  return `${url.slice(0, q)}?${params.join('&')}`;
+}
+
+function decodeName(name: string): string {
+  try {
+    return decodeURIComponent(name);
+  } catch {
+    return name;
+  }
+}
+
 export function createApp(config: Config, logger: Logger, options: AppOptions): App {
   // Payment providers are set up once, from the keys in the environment.
   const payments = options.accounts ? paymentDeps(options.accounts, logger) : undefined;
@@ -170,7 +197,7 @@ export function createApp(config: Config, logger: Logger, options: AppOptions): 
         requestId,
         method: req.method,
         host: hostnameOf(req.headers.host),
-        path: req.url,
+        path: safePath(req.url),
         area,
         status: res.statusCode,
         durationMs: Number((process.hrtime.bigint() - start) / 1_000_000n),

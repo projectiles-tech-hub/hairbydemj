@@ -18,11 +18,14 @@ Update this file at the end of every session.
 
 ## Blocked / waiting on owner
 
+- [ ] Testing with the real accounts: run `provider-check.js` with the Paystack and Stripe test keys and the carriers' test addresses, then pay one staging order per currency with the test cards (docs/testing.md)
+- [ ] Beta testers on real iPhones and Android phones through TestFlight and Google Play internal testing (docs/testing.md)
+- [ ] An independent security review of sign-in, checkout and payments (docs/security-review.md)
 - [ ] Server: the Namecheap Quasar VPS, a free Cloudflare account and a Google account for backups; then the set-up in docs/operations.md ("First-time set-up"), the GitHub environments and secrets, and the UPTIME_URLS variable
 - [ ] Confirm the loyalty figures (points per ₦1,000, worth of a point, minimum, share of an order, review, birthday and referral points) and the tiers; see docs/loyalty.md
 - [ ] Try-on: see-through wig pictures drawn to the template in docs/try-on.md, one per colour; then tuning on real phones and browsers
 - [ ] Phone app: test on real iPhones and Android phones with the owner (module 15's last step); Apple Developer and Google Play accounts; a free Firebase project for push; Google and Apple sign-in set-up (see docs/app.md)
-- [ ] Review and merge the Module 2 (Database) pull request (#11), then Module 3 (Accounts, #12), then Module 4 (Catalogue, #13), then Module 5 (Media, #14), then Module 6 (#15), then Module 7 (Payments, #16), then Module 8 (Shipping, #17), then Module 9 (Orders and returns, #18), then Module 10 (Background jobs, #19), then Module 11 (Notifications, #20), then Module 12 (Search, #21), then Module 13 (Website, #22), then Module 14 (Admin, #23), then Module 15 (Phone app, #24), then Module 16 (Try-on, #25), then Module 17 (Reviews, loyalty, gift cards, #26), then Module 18 (Live chat, #27), then the Module 19 (Deployment, backups, monitoring) pull request
+- [ ] Review and merge the Module 2 (Database) pull request (#11), then Module 3 (Accounts, #12), then Module 4 (Catalogue, #13), then Module 5 (Media, #14), then Module 6 (#15), then Module 7 (Payments, #16), then Module 8 (Shipping, #17), then Module 9 (Orders and returns, #18), then Module 10 (Background jobs, #19), then Module 11 (Notifications, #20), then Module 12 (Search, #21), then Module 13 (Website, #22), then Module 14 (Admin, #23), then Module 15 (Phone app, #24), then Module 16 (Try-on, #25), then Module 17 (Reviews, loyalty, gift cards, #26), then Module 18 (Live chat, #27), then Module 19 (Deployment, backups, monitoring, #28), then the Module 20 (Testing and security review) pull request
 - [ ] Paystack: create the account, send the test keys (secret and public); set the webhook address in docs/payments.md
 - [ ] Stripe: create the account, send the test keys (secret and publishable) and the webhook secret after adding the webhook address
 - [ ] DHL Express: ask the DHL account manager for MyDHL API access and send the API key, secret and account number (test keys first); see docs/shipping.md
@@ -49,6 +52,7 @@ Update this file at the end of every session.
 
 ## Completed
 
+- [x] Module 20 (Testing and security review): browser journeys, speed budget, security tests and review, fixes; pull request open (2026-11-13)
 - [x] Module 19 (Deployment, backups, monitoring): built and tested; pull request open (2026-11-13)
 - [x] Module 18 (Live chat): built, tests and browser walkthrough; pull request open (2026-11-13)
 - [x] Module 17 (Reviews, loyalty, gift cards): built with tests; pull request open (2026-11-13)

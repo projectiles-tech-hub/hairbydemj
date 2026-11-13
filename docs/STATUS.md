@@ -49,26 +49,28 @@
 - Module 16 (Try-on) is built; pull request #25 is open.
 - Module 17 (Reviews, loyalty, gift cards) is built; pull request #26 is open.
 - Module 18 (Live chat) is built; pull request #27 is open.
-- Module 19 (Deployment, backups, monitoring) is built; its pull request is open.
+- Module 19 (Deployment, backups, monitoring) is built; pull request #28 is open.
+- Module 20 (Testing and security review) is built; its pull request is open.
 - The Vercel preview was for viewing only. The real site runs from our own
   server; the page code written for the preview is kept as the starting
   point for modules 13 and 14.
 
 ## Current module
 
-[`modules/19-deployment-backups-monitoring.md`](modules/19-deployment-backups-monitoring.md):
-built and **in review** on branch `feature/deploy`, on top of modules 2 to
-18. The server scripts, services and workflows are written and tested; they
-run on the VPS once the owner has it (`operations.md`, "First-time set-up").
+[`modules/20-testing-and-security-review.md`](modules/20-testing-and-security-review.md):
+built and **in review** on branch `feature/security-review`, on top of
+modules 2 to 19. The automatic parts are done and pass; the steps that need
+the owner's test accounts, beta testers and an independent reviewer are
+written up in `testing.md` and `security-review.md`.
 
 ## Exact next step
 
-1. Owner merges, in order: #11 to #27, then Module 19's.
-2. Building continues with **Module 20. Testing and security review**.
+1. Owner merges, in order: #11 to #28, then Module 20's.
+2. Building continues with **Module 21. Launch**.
 
-## Modules left after Module 19
+## Modules left after Module 20
 
-20 Testing and security review · 21 Launch.
+21 Launch.
 
 ## Waiting on the owner
 

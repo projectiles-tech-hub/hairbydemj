@@ -36,9 +36,12 @@ jobs:
       # The free command-line tools the media module uses, so its tests run here too.
       - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libvips-tools ffmpeg
       - run: npm ci
-      # pg_dump of the same version as the database (17 is also installed here),
+      # pg_dump of the same version as the database (a newer one is installed here),
       # for the backup tests.
-      - run: sudo apt-get install -y --no-install-recommends postgresql-client-16
+      - run: |
+          sudo apt-get install -y --no-install-recommends postgresql-common
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install -y --no-install-recommends postgresql-client-16
       - run: npm run typecheck
       - run: npm test
         env:

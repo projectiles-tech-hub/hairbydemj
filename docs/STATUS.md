@@ -24,20 +24,21 @@
 - Design preview is live at https://hairbydemj.vercel.app/ : 37 website
   pages as coded pages (pull request #9 merged), 52 app screens as pictures.
 - Admin preview: 23 admin pages, 3 dialogs and 3 list states as coded pages
-  under `/admin/`, on branch `feature/admin-preview`.
+  under `/admin/` (pull request #10 merged).
+- Owner instructed on 2026-11-11 to start the backend.
 
 ## Current module
 
-Design preview (see [`preview.md`](preview.md)). No backend module is in
-progress.
+[`modules/02-database.md`](modules/02-database.md): built and **in review**
+on branch `feature/database`. 9 migrations, 63 tables, migration runner,
+sample data, tests against PostgreSQL 16.
 
 ## Exact next step
 
-1. Owner merges the admin preview pull request; Vercel then publishes it.
-2. Owner and the reviewer look through the preview and say what to change.
-3. Changes, if any, are made to the designs and the coded pages.
-4. Then the backend: **Module 2. Database**
-   ([`modules/02-database.md`](modules/02-database.md)).
+1. Owner reviews and merges the Module 2 pull request, and looks at the
+   "Choices made here, to confirm" table in [`database.md`](database.md).
+2. Then **Module 3** in [`modules/`](modules/), confirmed with the owner
+   before starting.
 
 ## Waiting on the owner
 

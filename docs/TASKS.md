@@ -10,7 +10,8 @@ Update this file at the end of every session.
 
 ## Blocked / waiting on owner
 
-- [ ] Merge the admin preview pull request
+- [ ] Review and merge the Module 2 (Database) pull request
+- [ ] Confirm or change the choices listed at the end of docs/database.md
 - [ ] Look through the preview with the reviewer and list any changes
 - [ ] Supply product photographs
 - [ ] Decide whether the repository should be private (it is currently public)
@@ -50,3 +51,5 @@ Update this file at the end of every session.
 - [x] 2026-11-11 — Website preview built: 37 coded pages, app and admin picture galleries (pull request #9 merged)
 - [x] 2026-11-11 — Owner put the preview on Vercel: https://hairbydemj.vercel.app/
 - [x] 2026-11-11 — Admin preview built: 23 coded admin pages, 3 dialogs, 3 list states
+- [x] 2026-11-11 — Owner merged the admin preview (pull request #10)
+- [x] 2026-11-11 — Module 2 (Database) built: 9 migrations, 63 tables, migration runner, sample data, tests

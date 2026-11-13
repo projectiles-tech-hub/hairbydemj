@@ -4,6 +4,11 @@ All notable changes to this repository, newest first.
 
 ## 2026-11-11
 
+- Module 2, Database: PostgreSQL schema in 9 numbered migrations (63
+  tables) covering the whole data model; our own migration runner with
+  checksums and a lock (`server/db/`); `npm run db:migrate`, `db:status`,
+  `db:seed`; sample data for development; tests against PostgreSQL 16, also
+  in GitHub Actions. New setting `DATABASE_URL`. Guide: `docs/database.md`.
 - Admin preview: the 23 admin pages as coded pages under `/admin/`
   (`server/admin/`, `browser/admin.ts`, `public/css/admin.css`), with the
   refund, adjust stock and invite staff dialogs, and the empty, loading and

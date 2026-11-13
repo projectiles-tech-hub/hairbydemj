@@ -11,7 +11,7 @@ test('uses development defaults when nothing is set', () => {
 });
 
 test('uses the real hostnames in production', () => {
-  const config = loadConfig({ NODE_ENV: 'production' });
+  const config = loadConfig({ NODE_ENV: 'production', DATABASE_URL: 'postgres://u:p@127.0.0.1:5432/shop' });
   assert.deepEqual(config.hosts, {
     site: 'hairbydemj.com',
     admin: 'admin.hairbydemj.com',
@@ -34,4 +34,20 @@ test('rejects invalid settings', () => {
   assert.throws(() => loadConfig({ LOG_LEVEL: 'loud' }), ConfigError);
   assert.throws(() => loadConfig({ SITE_HOST: 'https://hairbydemj.com' }), ConfigError);
   assert.throws(() => loadConfig({ SITE_HOST: 'same.test', ADMIN_HOST: 'same.test' }), ConfigError);
+});
+
+test('reads the database address and leaves it empty in development when unset', () => {
+  assert.equal(loadConfig({}).databaseUrl, null);
+  assert.equal(loadConfig({ DATABASE_URL: 'postgres://u:p@127.0.0.1:5432/shop' }).databaseUrl, 'postgres://u:p@127.0.0.1:5432/shop');
+});
+
+test('production needs a database address', () => {
+  assert.throws(() => loadConfig({ NODE_ENV: 'production' }), /DATABASE_URL must be set in production/);
+});
+
+test('a wrong database address is refused without printing it', () => {
+  assert.throws(
+    () => loadConfig({ DATABASE_URL: 'mysql://u:s3cret@host/db' }),
+    (e: Error) => e instanceof ConfigError && !e.message.includes('s3cret'),
+  );
 });

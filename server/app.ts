@@ -3,10 +3,11 @@
 
 import { randomUUID } from 'node:crypto';
 import type { IncomingMessage, ServerResponse } from 'node:http';
+import type { AccountDeps } from './accounts/deps.js';
 import type { Config } from './config.js';
 import type { Logger } from './logger.js';
 import type { Router } from './router.js';
-import { type Area, HttpError, escapeHtml, sendHtml, sendJson } from './http.js';
+import { ApiError, type Area, HttpError, escapeHtml, sendHtml, sendJson } from './http.js';
 import { serveStatic } from './static.js';
 import { siteRoutes } from './routes/site.js';
 import { adminRoutes } from './routes/admin.js';
@@ -16,6 +17,8 @@ export interface AppOptions {
   version: string;
   /** Routers per area; defaults to the real routes. Tests can pass their own. */
   routers?: Partial<Record<Area, Router>>;
+  /** Database, mailer and the rest that accounts need. Without it the account addresses do not exist. */
+  accounts?: AccountDeps;
 }
 
 export type App = (req: IncomingMessage, res: ServerResponse) => void;
@@ -31,9 +34,9 @@ export function hostnameOf(hostHeader: string | undefined): string {
 
 export function createApp(config: Config, logger: Logger, options: AppOptions): App {
   const routers: Record<Area, Router> = {
-    site: options.routers?.site ?? siteRoutes(),
-    admin: options.routers?.admin ?? adminRoutes(),
-    api: options.routers?.api ?? apiRoutes(),
+    site: options.routers?.site ?? siteRoutes(options.accounts),
+    admin: options.routers?.admin ?? adminRoutes(options.accounts),
+    api: options.routers?.api ?? apiRoutes(options.accounts),
   };
   const areaByHost = new Map<string, Area>([
     [config.hosts.site, 'site'],
@@ -129,6 +132,11 @@ export function createApp(config: Config, logger: Logger, options: AppOptions): 
     });
 
     handle(req, res, requestId).catch((error: unknown) => {
+      if (error instanceof ApiError && !res.headersSent) {
+        const fields = Object.keys(error.fields).length ? { fields: error.fields } : {};
+        sendJson(res, error.status, { error: { status: error.status, code: error.code, message: error.message, ...fields } }, error.headers);
+        return;
+      }
       if (error instanceof HttpError) {
         sendError(res, area, error.status, error.message, error.headers);
         return;

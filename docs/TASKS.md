@@ -7,10 +7,21 @@ Update this file at the end of every session.
 - [ ] Make the changes the owner and reviewer ask for after seeing the preview
 - [ ] Check the 20 icons added in Figma during D3 against the Phosphor originals
 - [ ] Connect the coded website and admin pages to the server's routes (modules 13 and 14)
+- [ ] Customer account features in the designs but outside Module 3: change email, change password while signed in, delete account, edit profile
+
+## Noted for later (not to be built until the owner says)
+
+- **"DemJ woman" customer gallery** (owner, 2026-11-11). A way to celebrate
+  customers: a customer uploads a picture of herself wearing hair bought
+  from us; we place it in a picture frame stamped "DemJ woman" with our
+  logo; and we post it on our gallery and on the reviews page, with her
+  name. Fits with module 17 (reviews) and module 5 (media).
 
 ## Blocked / waiting on owner
 
-- [ ] Review and merge the Module 2 (Database) pull request
+- [ ] Review and merge the Module 2 (Database) pull request (#11), then the Module 3 (Accounts) pull request
+- [ ] Google sign-in: create the client IDs in Google Cloud Console (free) for the website and the apps
+- [ ] Apple sign-in: Services ID and bundle ID (needs the Apple Developer account)
 - [ ] Confirm or change the choices listed at the end of docs/database.md
 - [ ] Look through the preview with the reviewer and list any changes
 - [ ] Supply product photographs
@@ -53,3 +64,5 @@ Update this file at the end of every session.
 - [x] 2026-11-11 — Admin preview built: 23 coded admin pages, 3 dialogs, 3 list states
 - [x] 2026-11-11 — Owner merged the admin preview (pull request #10)
 - [x] 2026-11-11 — Module 2 (Database) built: 9 migrations, 63 tables, migration runner, sample data, tests
+- [x] 2026-11-11 — Owner decided the sign-in addresses and the Owner super user (decision 0006)
+- [x] 2026-11-11 — Module 3 (Accounts and sign-in) built: customers, staff, Google and Apple, two-step verification, roles, tests

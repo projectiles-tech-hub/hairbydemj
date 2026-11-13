@@ -17,7 +17,17 @@ export interface Config {
   logLevel: LogLevel;
   /** Address of the PostgreSQL database, with its password. Null when not set (development only). */
   databaseUrl: string | null;
+  /** Secret used to sign short-lived tokens and to encrypt two-step verification secrets. */
+  authSecret: string;
+  /** Client IDs our Google and Apple sign-in tokens must be issued for. Not secret. */
+  googleClientIds: string[];
+  appleClientIds: string[];
+  /** True when the server sits behind our own proxy (Caddy), which passes on the visitor's address. */
+  trustProxy: boolean;
 }
+
+/** Used only in development, so sign-in works without any setup. Never valid in production. */
+export const DEV_AUTH_SECRET = 'development-only-secret-not-for-production-use';
 
 export class ConfigError extends Error {
   override name = 'ConfigError';
@@ -74,6 +84,16 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     throw new ConfigError('DATABASE_URL must be set in production');
   }
 
+  const authSecret = read(env, 'AUTH_SECRET', production ? '' : DEV_AUTH_SECRET);
+  if (authSecret.length < 32 || (production && authSecret === DEV_AUTH_SECRET)) {
+    throw new ConfigError('AUTH_SECRET must be set to a random value of at least 32 characters');
+  }
+  const list = (name: string): string[] => read(env, name, '').split(',').map((x) => x.trim()).filter(Boolean);
+  const trustProxyText = read(env, 'TRUST_PROXY', production ? 'true' : 'false');
+  if (trustProxyText !== 'true' && trustProxyText !== 'false') {
+    throw new ConfigError(`TRUST_PROXY must be "true" or "false", got "${trustProxyText}"`);
+  }
+
   return {
     env: envName,
     host: read(env, 'HOST', '127.0.0.1'),
@@ -82,5 +102,9 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     publicDir: read(env, 'PUBLIC_DIR', 'public'),
     logLevel,
     databaseUrl: databaseUrl === '' ? null : databaseUrl,
+    authSecret,
+    googleClientIds: list('GOOGLE_CLIENT_IDS'),
+    appleClientIds: list('APPLE_CLIENT_IDS'),
+    trustProxy: trustProxyText === 'true',
   };
 }

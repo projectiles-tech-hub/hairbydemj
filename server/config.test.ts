@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { ConfigError, loadConfig } from './config.js';
+import { ConfigError, DEV_AUTH_SECRET, loadConfig } from './config.js';
 
 test('uses development defaults when nothing is set', () => {
   const config = loadConfig({});
@@ -11,7 +11,7 @@ test('uses development defaults when nothing is set', () => {
 });
 
 test('uses the real hostnames in production', () => {
-  const config = loadConfig({ NODE_ENV: 'production', DATABASE_URL: 'postgres://u:p@127.0.0.1:5432/shop' });
+  const config = loadConfig({ NODE_ENV: 'production', DATABASE_URL: 'postgres://u:p@127.0.0.1:5432/shop', AUTH_SECRET: 'x'.repeat(40) });
   assert.deepEqual(config.hosts, {
     site: 'hairbydemj.com',
     admin: 'admin.hairbydemj.com',
@@ -38,11 +38,11 @@ test('rejects invalid settings', () => {
 
 test('reads the database address and leaves it empty in development when unset', () => {
   assert.equal(loadConfig({}).databaseUrl, null);
-  assert.equal(loadConfig({ DATABASE_URL: 'postgres://u:p@127.0.0.1:5432/shop' }).databaseUrl, 'postgres://u:p@127.0.0.1:5432/shop');
+  assert.equal(loadConfig({ DATABASE_URL: 'postgres://u:p@127.0.0.1:5432/shop', AUTH_SECRET: 'x'.repeat(40) }).databaseUrl, 'postgres://u:p@127.0.0.1:5432/shop');
 });
 
 test('production needs a database address', () => {
-  assert.throws(() => loadConfig({ NODE_ENV: 'production' }), /DATABASE_URL must be set in production/);
+  assert.throws(() => loadConfig({ NODE_ENV: 'production', AUTH_SECRET: 'x'.repeat(40) }), /DATABASE_URL must be set in production/);
 });
 
 test('a wrong database address is refused without printing it', () => {
@@ -50,4 +50,20 @@ test('a wrong database address is refused without printing it', () => {
     () => loadConfig({ DATABASE_URL: 'mysql://u:s3cret@host/db' }),
     (e: Error) => e instanceof ConfigError && !e.message.includes('s3cret'),
   );
+});
+
+test('production needs its own long AUTH_SECRET', () => {
+  const base = { NODE_ENV: 'production', DATABASE_URL: 'postgres://u:p@127.0.0.1:5432/shop' };
+  assert.throws(() => loadConfig(base), /AUTH_SECRET/);
+  assert.throws(() => loadConfig({ ...base, AUTH_SECRET: 'short' }), /AUTH_SECRET/);
+  assert.throws(() => loadConfig({ ...base, AUTH_SECRET: DEV_AUTH_SECRET }), /AUTH_SECRET/);
+  assert.equal(loadConfig({}).authSecret, DEV_AUTH_SECRET);
+});
+
+test('reads the sign-in client IDs and the proxy setting', () => {
+  const config = loadConfig({ GOOGLE_CLIENT_IDS: 'a.apps.googleusercontent.com, b.apps.googleusercontent.com', APPLE_CLIENT_IDS: 'com.hairbydemj.app' });
+  assert.deepEqual(config.googleClientIds, ['a.apps.googleusercontent.com', 'b.apps.googleusercontent.com']);
+  assert.deepEqual(config.appleClientIds, ['com.hairbydemj.app']);
+  assert.equal(config.trustProxy, false);
+  assert.throws(() => loadConfig({ TRUST_PROXY: 'yes' }), /TRUST_PROXY/);
 });

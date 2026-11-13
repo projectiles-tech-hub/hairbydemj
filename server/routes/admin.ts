@@ -1,11 +1,13 @@
 // Routes for the staff admin dashboard (admin.hairbydemj.com).
 // Pages are added in module 14, from approved designs.
 
+import type { AccountDeps } from '../accounts/deps.js';
+import { staffRoutes } from '../accounts/routes.js';
 import { Router } from '../router.js';
 import { sendHtml } from '../http.js';
 
-export function adminRoutes(): Router {
-  return new Router().get('/', ({ res }) => {
+export function adminRoutes(accounts?: AccountDeps): Router {
+  const router = new Router().get('/', ({ res }) => {
     sendHtml(
       res,
       200,
@@ -15,4 +17,6 @@ export function adminRoutes(): Router {
         '<title>hairbydemj admin</title></head><body><h1>hairbydemj admin</h1></body></html>',
     );
   });
+  if (accounts) staffRoutes(router, accounts);
+  return router;
 }

@@ -81,8 +81,9 @@ not need `createdb`.
 | `0007_loyalty_and_reviews` | `loyalty_tiers`, `loyalty_transactions`, `referrals`, `reviews`, `review_media` |
 | `0008_content_settings_and_chat` | `store_settings`, `carriers`, `local_shipping_rates`, `message_templates`, `content_pages`, `homepage_sections`, `chat_conversations`, `chat_messages`, `saved_replies` |
 | `0009_jobs` | `jobs` (work waiting for the background worker) |
+| `0010_sign_in_protection` | `sign_in_attempts` (used to slow down password guessing) |
 
-63 tables in all, counting `schema_migrations`.
+64 tables in all, counting `schema_migrations`.
 
 ## Rules the database itself enforces
 

@@ -100,10 +100,12 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
         api.post('/v1/chat/read').catchError((_) => <String, dynamic>{});
       }
     } on ApiError catch (e) {
-      if (mounted) setState(() {
-        _loading = false;
-        _error = e.message;
-      });
+      if (mounted) {
+        setState(() {
+          _loading = false;
+          _error = e.message;
+        });
+      }
     }
   }
 

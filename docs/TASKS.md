@@ -19,7 +19,7 @@ Update this file at the end of every session.
 
 ## Blocked / waiting on owner
 
-- [ ] Review and merge the Module 2 (Database) pull request (#11), then Module 3 (Accounts, #12), then Module 4 (Catalogue, #13), then Module 5 (Media, #14), then Module 6 (#15), then Module 7 (Payments, #16), then Module 8 (Shipping, #17), then Module 9 (Orders and returns, #18), then the Module 10 (Background jobs) pull request
+- [ ] Review and merge the Module 2 (Database) pull request (#11), then Module 3 (Accounts, #12), then Module 4 (Catalogue, #13), then Module 5 (Media, #14), then Module 6 (#15), then Module 7 (Payments, #16), then Module 8 (Shipping, #17), then Module 9 (Orders and returns, #18), then Module 10 (Background jobs, #19), then the Module 11 (Notifications) pull request
 - [ ] Paystack: create the account, send the test keys (secret and public); set the webhook address in docs/payments.md
 - [ ] Stripe: create the account, send the test keys (secret and publishable) and the webhook secret after adding the webhook address
 - [ ] DHL Express: ask the DHL account manager for MyDHL API access and send the API key, secret and account number (test keys first); see docs/shipping.md
@@ -28,6 +28,8 @@ Update this file at the end of every session.
 - [ ] Confirm or change the return window (sample: 14 days) and the store credit bonus (sample: 10%)
 - [ ] Give the store address to print on labels as the sender, and where the hair is made (for customs forms)
 - [ ] List the boxes you pack in (inside size and empty weight) and the local delivery zones, couriers and prices inside Nigeria
+- [ ] Apple push key (.p8, Key ID, Team ID) once the Apple Developer account exists; Firebase project and service account key for Android push
+- [ ] Decide the email address customers see (MAIL_FROM, suggested hello@hairbydemj.com) and where replies go
 - [ ] Google sign-in: create the client IDs in Google Cloud Console (free) for the website and the apps
 - [ ] Apple sign-in: Services ID and bundle ID (needs the Apple Developer account)
 - [ ] Confirm or change the choices listed at the end of docs/database.md
@@ -82,3 +84,4 @@ Update this file at the end of every session.
 - [x] 2026-11-12 — Module 8 built: packing, local zones, DHL, UPS and FedEx prices, labels and tracking, duties notice, tests
 - [x] 2026-11-12 — Module 9 built: checkout, order statuses, guest look-up, invoices, staff notes and cancellation, returns with refunds and store credit, tests
 - [x] 2026-11-12 — Module 10 built: worker process, retries, scheduled tasks, alerts, reminders, cleanup, systemd service, tests
+- [x] 2026-11-12 — Module 11 built: own email sending with DKIM, templates, push to Apple and Google, in-app list, preferences, unsubscribe, tests

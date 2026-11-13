@@ -49,6 +49,40 @@ export interface Config {
     ups: { clientId: string; clientSecret: string; accountNumber: string; apiUrl: string };
     fedex: { apiKey: string; secretKey: string; accountNumber: string; apiUrl: string };
   };
+  /**
+   * Email. "smtp" hands each email to the mail server on the VPS (Postfix,
+   * listening only on the machine itself); "log" writes it to the log
+   * instead, for development. The DKIM key signs every email; it is secret.
+   */
+  mail: {
+    transport: 'smtp' | 'log';
+    smtpHost: string;
+    smtpPort: number;
+    smtpUser: string;
+    smtpPassword: string;
+    /** The name the server gives itself when it speaks to the mail server. */
+    heloName: string;
+    from: string;
+    replyTo: string;
+    dkimDomain: string;
+    dkimSelector: string;
+    dkimPrivateKey: string;
+  };
+  /** App push notifications. Keys are secret. Empty means that platform is not set up. */
+  push: {
+    apnsKeyId: string;
+    apnsTeamId: string;
+    apnsPrivateKey: string;
+    apnsBundleId: string;
+    /** https://api.push.apple.com for the App Store app; https://api.sandbox.push.apple.com for test builds. */
+    apnsUrl: string;
+    fcmProjectId: string;
+    fcmClientEmail: string;
+    fcmPrivateKey: string;
+    /** Changed only by tests. */
+    fcmApiUrl: string;
+    fcmTokenUrl: string;
+  };
 }
 
 /** Used only in development, so sign-in works without any setup. Never valid in production. */
@@ -119,6 +153,14 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     throw new ConfigError(`TRUST_PROXY must be "true" or "false", got "${trustProxyText}"`);
   }
 
+  const transport = read(env, 'MAIL_TRANSPORT', production ? 'smtp' : 'log');
+  if (transport !== 'smtp' && transport !== 'log') throw new ConfigError(`MAIL_TRANSPORT must be "smtp" or "log", got "${transport}"`);
+  const smtpPortText = read(env, 'SMTP_PORT', '25');
+  const smtpPort = Number(smtpPortText);
+  if (!Number.isInteger(smtpPort) || smtpPort < 1 || smtpPort > 65535) throw new ConfigError(`SMTP_PORT must be a port number, got "${smtpPortText}"`);
+  // Keys pasted into a settings file often have their line breaks written as \n.
+  const pem = (name: string): string => read(env, name, '').replace(/\\n/g, '\n');
+
   return {
     env: envName,
     host: read(env, 'HOST', '127.0.0.1'),
@@ -146,6 +188,31 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
       dhl: { apiKey: read(env, 'DHL_API_KEY', ''), apiSecret: read(env, 'DHL_API_SECRET', ''), accountNumber: read(env, 'DHL_ACCOUNT_NUMBER', ''), apiUrl: read(env, 'DHL_API_URL', 'https://express.api.dhl.com/mydhlapi') },
       ups: { clientId: read(env, 'UPS_CLIENT_ID', ''), clientSecret: read(env, 'UPS_CLIENT_SECRET', ''), accountNumber: read(env, 'UPS_ACCOUNT_NUMBER', ''), apiUrl: read(env, 'UPS_API_URL', 'https://onlinetools.ups.com') },
       fedex: { apiKey: read(env, 'FEDEX_API_KEY', ''), secretKey: read(env, 'FEDEX_SECRET_KEY', ''), accountNumber: read(env, 'FEDEX_ACCOUNT_NUMBER', ''), apiUrl: read(env, 'FEDEX_API_URL', 'https://apis.fedex.com') },
+    },
+    mail: {
+      transport,
+      smtpHost: read(env, 'SMTP_HOST', '127.0.0.1'),
+      smtpPort,
+      smtpUser: read(env, 'SMTP_USER', ''),
+      smtpPassword: read(env, 'SMTP_PASSWORD', ''),
+      heloName: read(env, 'MAIL_HELO_NAME', hosts.site),
+      from: read(env, 'MAIL_FROM', `hairbydemj <hello@${hosts.site}>`),
+      replyTo: read(env, 'MAIL_REPLY_TO', ''),
+      dkimDomain: read(env, 'DKIM_DOMAIN', hosts.site),
+      dkimSelector: read(env, 'DKIM_SELECTOR', 'mail'),
+      dkimPrivateKey: pem('DKIM_PRIVATE_KEY'),
+    },
+    push: {
+      apnsKeyId: read(env, 'APNS_KEY_ID', ''),
+      apnsTeamId: read(env, 'APNS_TEAM_ID', ''),
+      apnsPrivateKey: pem('APNS_PRIVATE_KEY'),
+      apnsBundleId: read(env, 'APNS_BUNDLE_ID', 'com.hairbydemj.app'),
+      apnsUrl: read(env, 'APNS_URL', 'https://api.push.apple.com'),
+      fcmProjectId: read(env, 'FCM_PROJECT_ID', ''),
+      fcmClientEmail: read(env, 'FCM_CLIENT_EMAIL', ''),
+      fcmPrivateKey: pem('FCM_PRIVATE_KEY'),
+      fcmApiUrl: read(env, 'FCM_API_URL', 'https://fcm.googleapis.com'),
+      fcmTokenUrl: read(env, 'FCM_TOKEN_URL', 'https://oauth2.googleapis.com/token'),
     },
   };
 }

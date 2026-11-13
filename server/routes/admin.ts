@@ -14,6 +14,7 @@ import { adminOrderRoutes } from '../orders/routes.js';
 import type { ShippingDeps } from '../shipping/shipping.js';
 import { adminShippingRoutes } from '../shipping/routes.js';
 import { adminWorkerRoutes } from '../worker/routes.js';
+import { adminMessageRoutes } from '../notifications/routes.js';
 import { Router } from '../router.js';
 import { sendHtml } from '../http.js';
 
@@ -37,6 +38,7 @@ export function adminRoutes(accounts?: AccountDeps, media?: MediaDeps, payments?
     if (shipping) adminShippingRoutes(router, accounts, shipping);
     if (orders && payments) adminOrderRoutes(router, accounts, orders, payments);
     adminWorkerRoutes(router, accounts);
+    adminMessageRoutes(router, accounts);
   }
   return router;
 }

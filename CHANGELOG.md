@@ -4,6 +4,13 @@ All notable changes to this repository, newest first.
 
 ## 2026-11-12
 
+- Module 11, Notifications (`server/notifications/`): emails built and
+  signed with DKIM by our own code and handed to Postfix on the server; all
+  store emails written with a branded layout, editable by staff; order
+  progress sent by email, Apple and Google push (called directly) and the
+  in-app list; customer preferences, newsletter sign-up, signed
+  unsubscribe links with one-click support; the worker now sends queued
+  emails. Guide with Postfix and DNS steps: `docs/notifications.md`.
 - Module 10, Background jobs (`server/worker/`): a separate worker process
   run by systemd; jobs claimed safely one at a time, tried again with longer
   waits, given up after the last try or at once when they can never work,

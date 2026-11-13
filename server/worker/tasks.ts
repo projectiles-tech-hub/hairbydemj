@@ -11,7 +11,8 @@ import { refreshDailyRates, type RatesFetcher } from '../cart/rates.js';
 import { VISIBLE_SQL } from '../catalog/rules.js';
 import { expireUnpaidOrders, type OrderDeps } from '../orders/checkout.js';
 import { buyLabel, pruneQuotes, refreshAllTracking, type ShippingDeps } from '../shipping/shipping.js';
-import { QUEUE, type Job } from './queue.js';
+import { deliverEmail, deliverOrderUpdate, Undeliverable, type NotifyDeps } from '../notifications/notify.js';
+import { enqueue, QUEUE, type Job } from './queue.js';
 
 export interface WorkerDeps {
   db: Db;
@@ -22,6 +23,7 @@ export interface WorkerDeps {
   shipping: ShippingDeps;
   orders: OrderDeps;
   fetchRates: RatesFetcher;
+  notify: NotifyDeps;
 }
 
 /** Thrown by a job that can never succeed, so it is not tried again. */
@@ -36,6 +38,25 @@ export type JobHandler = (deps: WorkerDeps, job: Job) => Promise<void>;
  * queue untouched until a module adds one (emails are sent from module 11).
  */
 export const HANDLERS: Record<string, JobHandler> = {
+  async 'email.send'(deps, job) {
+    try {
+      const outcome = await deliverEmail(deps.notify, job.payload);
+      if (outcome === 'skipped') deps.logger.info('email not sent: the person has turned this kind off', { jobId: job.id, template: job.payload.template });
+    } catch (error) {
+      if (error instanceof Undeliverable) throw new PermanentFailure(error.message);
+      throw error;
+    }
+  },
+  async order_update(deps, job) {
+    try {
+      await deliverOrderUpdate(deps.notify, job.payload, async (to, data) => {
+        await enqueue(deps.db, 'email.send', { to, template: 'order_update', data }, { uniqueKey: `order_update_email:${job.id}` });
+      });
+    } catch (error) {
+      if (error instanceof Undeliverable) throw new PermanentFailure(error.message);
+      throw error;
+    }
+  },
   async buy_label(deps, job) {
     const orderId = Number(job.payload.orderId);
     if (!Number.isInteger(orderId) || orderId < 1) throw new PermanentFailure('The job has no order');

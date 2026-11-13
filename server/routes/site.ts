@@ -11,6 +11,7 @@ import type { OrderDeps } from '../orders/checkout.js';
 import { shopOrderRoutes } from '../orders/routes.js';
 import type { ShippingDeps } from '../shipping/shipping.js';
 import { shopShippingRoutes } from '../shipping/routes.js';
+import { shopNotificationRoutes, unsubscribeRoutes } from '../notifications/routes.js';
 import { Router } from '../router.js';
 import { sendHtml } from '../http.js';
 
@@ -31,6 +32,8 @@ export function siteRoutes(accounts?: AccountDeps, payments?: PaymentDeps, shipp
     if (payments) shopPaymentRoutes(router, accounts, payments, '/api', 'cookie');
     if (shipping) shopShippingRoutes(router, accounts, shipping, '/api', 'cookie');
     if (orders) shopOrderRoutes(router, accounts, orders, '/api', 'cookie');
+    shopNotificationRoutes(router, accounts, '/api', 'cookie');
+    unsubscribeRoutes(router, accounts);
   }
   return router;
 }

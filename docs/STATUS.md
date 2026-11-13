@@ -40,24 +40,25 @@
 - Module 7 (Payments) is built; pull request #16 is open.
 - Module 8 (Shipping) is built; pull request #17 is open.
 - Module 9 (Orders and returns) is built; pull request #18 is open.
+- Module 10 (Background jobs) is built; pull request #19 is open.
+- Module 11 (Notifications) is built; pull request #20 is open.
 - The Vercel preview was for viewing only. The real site runs from our own
   server; the page code written for the preview is kept as the starting
   point for modules 13 and 14.
 
 ## Current module
 
-[`modules/10-background-jobs.md`](modules/10-background-jobs.md): built and
-**in review** on branch `feature/jobs`, on top of modules 2 to 9. 207 tests
-pass.
+[`modules/11-notifications.md`](modules/11-notifications.md): built and
+**in review** on branch `feature/notifications`, on top of modules 2 to 10.
+220 tests pass.
 
 ## Exact next step
 
-1. Owner merges, in order: #11 to #18, then Module 10's.
-2. Building continues with **Module 11. Notifications**.
+1. Owner merges, in order: #11 to #19, then Module 11's (#20).
+2. Building continues with **Module 12. Search**.
 
-## Modules left after Module 10
+## Modules left after Module 11
 
-11 Notifications ·
 12 Search · 13 Website · 14 Admin dashboard · 15 Phone app · 16 AR try-on ·
 17 Reviews, loyalty, gift cards · 18 Live chat · 19 Deployment, backups,
 monitoring · 20 Testing and security review · 21 Launch.
@@ -70,5 +71,6 @@ monitoring · 20 Testing and security review · 21 Launch.
 - Paystack and Stripe test keys (needed for module 20; live keys at launch).
 - DHL, UPS and FedEx API keys (test first), the sender address for labels,
   the boxes used and the local delivery zones (see `shipping.md`).
+- Apple push key and Firebase service account (for app push); the From address for emails.
 - The return window and store credit bonus (sample figures in use: 14 days, 10%).
 - See also the "Blocked / waiting on owner" section of [`TASKS.md`](TASKS.md).
